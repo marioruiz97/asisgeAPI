@@ -5,7 +5,7 @@ import java.util.ResourceBundle;
 
 public class Messages {
 
-	private static final String BUNDLE_NAME = "com.asisge.elenchos.config.utils.messages";
+	private static final String BUNDLE_NAME = "messages";
 	private static final ResourceBundle RESOURCE_BUNDLE = ResourceBundle.getBundle(BUNDLE_NAME);
 
 	private Messages() {

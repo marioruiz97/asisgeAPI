@@ -5,6 +5,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.asisge.apirest.config.response.ApiError;
 import com.asisge.apirest.config.response.ApiResponse;
@@ -25,10 +27,17 @@ public abstract class BaseController {
 	@Autowired
 	public AuditManager auditManager;
 
-	/**
-	 * crear metodos para los manejos de errores (illegal, numberFormat, DataAccess,
-	 * nullPointer)
-	 */
+	
+
+	public static String getEmail(ModelMap model) {
+		String email = "";
+		try {
+			email = model.getAttribute("email").toString();
+		} catch (Exception e) {
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Usuario en sesión inválido", e);
+		}
+		return email;
+	}
 
 	/**
 	 * método usado para retornar respuestas de tipo 404

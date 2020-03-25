@@ -1,28 +1,21 @@
 package com.asisge.apirest.config.response;
 
+import java.util.List;
+
 public class ApiError extends ApiResponse {
 
-	private String error;
-	private String detailMessage;
+	private List<String> errors;
 
 	public ApiError() {
 		super("error");
 	}
 
-	public String getError() {
-		return error;
+	public List<String> getErrors() {
+		return errors;
 	}
 
-	public void setError(String error) {
-		this.error = error;
-	}
-
-	public String getDetailMessage() {
-		return detailMessage;
-	}
-
-	public void setDetailMessage(String detailMessage) {
-		this.detailMessage = detailMessage;
+	public void setErrors(List<String> errors) {
+		this.errors = errors;
 	}
 
 }
