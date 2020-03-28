@@ -14,7 +14,7 @@ import com.asisge.apirest.model.entity.audit.Auditoria;
 import com.asisge.apirest.service.IAuditManager;
 
 @RestController
-@RequestMapping("/api/audit")
+@RequestMapping("/audit")
 public class AuditoriaController extends BaseController {
 
 	@Autowired

@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
@@ -32,7 +31,6 @@ import com.asisge.apirest.model.entity.terceros.ContactoCliente;
 import com.asisge.apirest.service.IClienteService;
 
 @RestController
-@RequestMapping("/api/")
 public class ClienteController extends BaseController {
 
 	private static final String ID_CLIENTE = "idCliente";

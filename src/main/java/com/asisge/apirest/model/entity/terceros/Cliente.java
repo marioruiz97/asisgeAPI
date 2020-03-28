@@ -51,6 +51,10 @@ public @Data class Cliente implements Serializable {
 	@UniqueElements
 	private List<ContactoCliente> contactos;
 
+	public Cliente(Long id) {
+		this.idCliente = id;
+	}
+
 	@Override
 	public String toString() {
 		return "Cliente [identificacion: " + identificacion + ", nombre comercial: " + nombreComercial + "]";

@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
@@ -28,7 +27,6 @@ import com.asisge.apirest.model.entity.terceros.Usuario;
 import com.asisge.apirest.service.IUsuarioService;
 
 @RestController
-@RequestMapping("/api/")
 public class UsuarioController extends BaseController {
 
 	private static final String CHANGE_STATUS = Messages.getString("message.action.change-status");
@@ -103,17 +101,17 @@ public class UsuarioController extends BaseController {
 		String mensaje;
 		if (usuario.getEstado().equals(estado)) {
 			// mensaje de que el estado no se ha cambiado por que es el mismo
-			mensaje = Messages.getString("massage.resut.changestate.nochange");
+			mensaje = Messages.getString("massage.result.changestate.nochange");
 		} else {
 			// se setea nuevo estado, se crea mensaje correspondiente para la auditoria
 			usuario.setEstado(estado);
 			usuario = service.changeEstadoUsuario(id, estado);
 			if (estado.booleanValue()) {
 				// mensaje si se activa
-				mensaje = Messages.getString("massage.resut.changestate.activate");
+				mensaje = Messages.getString("massage.result.changestate.activate");
 			} else {
 				// mensaje si se desactiva
-				mensaje = Messages.getString("massage.resut.changestate.deactivate");
+				mensaje = Messages.getString("massage.result.changestate.deactivate");
 			}
 			auditManager.saveAudit("prueba@correo.com", CHANGE_STATUS, String.format(mensaje, usuario.toString()));
 		}

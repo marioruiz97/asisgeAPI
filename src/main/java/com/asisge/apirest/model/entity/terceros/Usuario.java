@@ -2,6 +2,7 @@ package com.asisge.apirest.model.entity.terceros;
 
 import java.io.Serializable;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -49,9 +50,8 @@ public @Data class Usuario implements Serializable {
 	@Size(max = 11)
 	private String telefono;
 
-	@Email(message = "El correo no tiene formato válido")
-	@NotBlank
-	@Size(max = 75)
+	@Email(message = "El correo no tiene formato válido")	
+	@Column(nullable = false, length = 75, unique = true)
 	private String correo;
 
 	@NotBlank
@@ -63,6 +63,10 @@ public @Data class Usuario implements Serializable {
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "id_tipo_documento", nullable = false)
 	private TipoDocumento tipoDocumento;
+
+	public Usuario(Long id) {
+		this.id = id;
+	}
 
 	@Override
 	public String toString() {
