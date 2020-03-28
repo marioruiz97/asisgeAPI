@@ -1,11 +1,16 @@
 package com.asisge.apirest.controller;
 
+import java.util.List;
+import java.util.stream.Collectors;
+
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
 import org.springframework.ui.ModelMap;
+import org.springframework.validation.BindingResult;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.asisge.apirest.config.response.ApiError;
@@ -27,7 +32,17 @@ public abstract class BaseController {
 	@Autowired
 	public AuditManager auditManager;
 
-	
+	public static Long convertToLong(String toLong, String field, boolean isNulleable) {
+		if (isNulleable && (toLong == null || toLong.equals(""))) {
+			return null;
+		}
+		try {
+			return Long.parseLong(toLong);
+		} catch (NumberFormatException e) {
+			String errorMessage = String.format(Messages.getString("message.error.number-exception"), field, toLong);
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, errorMessage);
+		}
+	}
 
 	public static String getEmail(ModelMap model) {
 		String email = "";
@@ -37,6 +52,16 @@ public abstract class BaseController {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Usuario en sesión inválido", e);
 		}
 		return email;
+	}
+
+	public ResponseEntity<ApiResponse> validateDto(BindingResult result) {
+		List<String> errores = result.getFieldErrors().stream().map(err -> {
+			String field = StringUtils.join(StringUtils.splitByCharacterTypeCamelCase(err.getField()), ' ') + ": ";
+			return field + err.getDefaultMessage();
+		}).collect(Collectors.toList());
+		ApiError error = buildFail(Messages.getString("message.error.constraint-violation"));
+		error.setErrors(errores);
+		return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
 	}
 
 	/**
@@ -63,6 +88,14 @@ public abstract class BaseController {
 	 * controladores
 	 * 
 	 */
+	public ApiSuccess buildOk(Object body) {
+		ApiSuccess result = new ApiSuccess();
+		result.setMessage(RESULT_SUCCESS);
+		result.formatMessage("");
+		result.setBody(body);
+		return result;
+	}
+
 	public ApiSuccess buildSuccess(String message, Object body, String... args) {
 		ApiSuccess result = new ApiSuccess();
 		result.setMessage(message);

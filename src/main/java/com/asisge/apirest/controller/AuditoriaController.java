@@ -31,7 +31,7 @@ public class AuditoriaController extends BaseController {
 				response = buildSuccess(RESULT_SUCCESS, auditorias, "Consulta de auditoria");
 			}
 		} catch (Exception e) {
-			response = buildFail(e.getMessage());
+			response = buildFail(e.getLocalizedMessage());
 			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		return new ResponseEntity<>(response, HttpStatus.OK);

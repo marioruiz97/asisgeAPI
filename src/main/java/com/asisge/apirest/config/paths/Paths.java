@@ -28,6 +28,9 @@ public final class Paths {
 		public static final String USUARIOS = "usuarios";
 		public static final String CLIENTES = "clientes";
 		public static final String CLIENTE_ID = "clientes/{idCliente}";
+		public static final String CONTACTOS = CLIENTE_ID+"/contactos";
+		public static final String CONTACTO_ID = CONTACTOS+"/{id}";
+		public static final String CAMBIO_ESTADO = "estado-usuario/{idUsuario}";
 
 		private TercerosPath() {
 		}
@@ -40,8 +43,8 @@ public final class Paths {
 	 *
 	 */
 	public static final class LoginPath {
-		public static final String LOGIN = "Path.LOGIN";
-		public static final String RECOVERY = "Path.RECOVERY";
+		public static final String LOGIN = "login";
+		public static final String RECOVERY = "recovery";
 
 		private LoginPath() {
 		}
@@ -54,11 +57,11 @@ public final class Paths {
 	 *
 	 */
 	public static final class MaestrosPath {
-		// TODO crear las rutas para estos paths
 		public static final String TIPO_DOCUMENTOS = "tipo-documento";
 		public static final String TIPO_DOCUMENTO_ID = "tipo-documento/{idTipo}";
 		public static final String ESTADO_PROYECTO = "estado-proyecto";
 		public static final String ESTADO_PROYECTO_ID = "estado-proyecto/{idEstado}";
+		public static final String POSIBLES_ESTADOS = ESTADO_PROYECTO_ID+"/estados-siguientes";
 
 		private MaestrosPath() {
 		}
@@ -73,7 +76,6 @@ public final class Paths {
 	 *
 	 */
 	public static final class ProyectosPath {
-		// TODO crear las rutas para estos paths
 		public static final String PROYECTOS = "proyectos";
 		public static final String PROYECTO_ID = "proyectos/{idProyecto}";
 		public static final String PROYECTO_MIEMBROS = "proyectos/{idProyecto}/miembros";

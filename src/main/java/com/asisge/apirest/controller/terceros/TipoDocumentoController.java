@@ -2,8 +2,6 @@ package com.asisge.apirest.controller.terceros;
 
 import java.util.List;
 
-import javax.persistence.EntityNotFoundException;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
@@ -17,13 +15,16 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.server.ResponseStatusException;
 
 import com.asisge.apirest.controller.BaseController;
 import com.asisge.apirest.model.entity.terceros.TipoDocumento;
 import com.asisge.apirest.repository.ITipoDocumentoDao;
 import com.asisge.apirest.config.paths.Paths.MaestrosPath;
 import com.asisge.apirest.config.response.ApiResponse;
+import com.asisge.apirest.config.utils.Messages;
 
 @RestController
 @RequestMapping("/maestros/")
@@ -35,20 +36,19 @@ public class TipoDocumentoController extends BaseController {
 	@GetMapping(MaestrosPath.TIPO_DOCUMENTOS)
 	public ResponseEntity<ApiResponse> findAll() {
 		List<TipoDocumento> tipos = repository.findAll(Sort.by(Direction.ASC, "nombreTipoDocumento"));
-		return new ResponseEntity<>(buildSuccess("", tipos, ""), HttpStatus.OK);
+		if (tipos.isEmpty()) {
+			return respondNotFound(null);
+		}
+		return new ResponseEntity<>(buildOk(tipos), HttpStatus.OK);
 	}
 
-	// forma real : findById(id).orElse(null);
 	@GetMapping(MaestrosPath.TIPO_DOCUMENTO_ID)
 	public ResponseEntity<ApiResponse> findById(@PathVariable("idTipo") Long id) {
-		ApiResponse response;
-		try {
-			TipoDocumento tipoDocumento = repository.getOne(id);
-			response = buildSuccess("", tipoDocumento, "");
-		} catch (EntityNotFoundException e) {
-			response = buildSuccess("", e, "");
+		TipoDocumento tipoDocumento = repository.findById(id).orElse(null);
+		if (tipoDocumento == null) {
+			return respondNotFound(id.toString());
 		}
-		return new ResponseEntity<>(response, HttpStatus.OK);
+		return new ResponseEntity<>(buildOk(tipoDocumento), HttpStatus.OK);
 	}
 
 	@PostMapping(MaestrosPath.TIPO_DOCUMENTOS)
@@ -62,12 +62,30 @@ public class TipoDocumentoController extends BaseController {
 	}
 
 	@PatchMapping(MaestrosPath.TIPO_DOCUMENTO_ID)
-	public ResponseEntity<ApiResponse> update() {
-		return null;
+	public ResponseEntity<ApiResponse> update(@RequestBody ModelMap model, @PathVariable("idTipo") Long id) {
+		TipoDocumento tipo = repository.findById(id).orElse(null);
+		if (tipo == null) {
+			return respondNotFound(id.toString());
+		}
+		tipo.setId(id);
+		tipo.setNombreTipoDocumento(model.get("nombre").toString());
+		tipo = repository.save(tipo);
+		String descripcion = String.format(RESULT_UPDATED, tipo.toString(), tipo.getId());
+		auditManager.saveAudit(getEmail(model), ACTION_UPDATE, descripcion);
+		return new ResponseEntity<>(buildSuccess(descripcion, tipo, ""), HttpStatus.CREATED);
 	}
 
 	@DeleteMapping(MaestrosPath.TIPO_DOCUMENTO_ID)
-	public ResponseEntity<ApiResponse> delete() {
-		return null;
+	public ResponseEntity<ApiResponse> delete(@PathVariable("idTipo") Long id, @RequestParam String email) {
+		try {			 
+			repository.deleteById(id);
+			ApiResponse response = buildDeleted("tipo de documento", id.toString());
+			String descripcion = response.getMessage();
+			auditManager.saveAudit(email, ACTION_DELETE, descripcion);
+			return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
+		} catch (Exception e) {
+			String message = String.format(Messages.getString("message.error.delete.record"), "tipo de documento", id.toString());
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, message, e);
+		}
 	}
 }
