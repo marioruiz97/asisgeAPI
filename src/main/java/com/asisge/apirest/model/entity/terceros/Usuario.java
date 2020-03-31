@@ -17,15 +17,19 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+import com.asisge.apirest.model.entity.audit.AuditModel;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "usuario", uniqueConstraints = @UniqueConstraint(columnNames = { "identificacion", "correo" }))
 @AllArgsConstructor
 @NoArgsConstructor
-public @Data class Usuario implements Serializable {
+@EqualsAndHashCode(callSuper = false)
+public @Data class Usuario extends AuditModel<String> implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -50,7 +54,7 @@ public @Data class Usuario implements Serializable {
 	@Size(max = 11)
 	private String telefono;
 
-	@Email(message = "El correo no tiene formato válido")	
+	@Email(message = "El correo no tiene formato válido")
 	@Column(nullable = false, length = 75, unique = true)
 	private String correo;
 

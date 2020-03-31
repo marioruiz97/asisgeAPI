@@ -12,6 +12,8 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
+import com.asisge.apirest.model.entity.audit.AuditModel;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -21,21 +23,22 @@ import lombok.NoArgsConstructor;
 @Table(name = "contacto_cliente")
 @NoArgsConstructor
 @AllArgsConstructor
-public @Data class ContactoCliente implements Serializable {
+@EqualsAndHashCode(callSuper = false)
+public @Data class ContactoCliente extends AuditModel<String> implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	@EqualsAndHashCode.Exclude
 	private Long id;
-	
+
 	@NotBlank
 	@Size(max = 80)
 	private String nombre;
-	
+
 	@Size(max = 11)
 	@Pattern(regexp = "(^$|[0-9]*)")
 	private String telefono;
-	
+
 	@Email
 	@NotBlank
 	@Size(max = 75)

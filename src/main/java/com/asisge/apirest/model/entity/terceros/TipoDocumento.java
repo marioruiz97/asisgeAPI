@@ -11,11 +11,15 @@ import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
+import com.asisge.apirest.model.entity.audit.AuditModel;
+
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Entity
+@EqualsAndHashCode(callSuper = false)
 @Table(name = "tipo_documento", uniqueConstraints = @UniqueConstraint(columnNames = "nombreTipoDocumento"))
-public @Data class TipoDocumento implements Serializable {
+public @Data class TipoDocumento extends AuditModel<String> implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

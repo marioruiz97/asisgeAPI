@@ -18,15 +18,19 @@ import javax.validation.constraints.Size;
 
 import org.hibernate.validator.constraints.UniqueElements;
 
+import com.asisge.apirest.model.entity.audit.AuditModel;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "cliente", uniqueConstraints = @UniqueConstraint(columnNames = "identificacion"))
 @NoArgsConstructor
 @AllArgsConstructor
-public @Data class Cliente implements Serializable {
+@EqualsAndHashCode(callSuper = false)
+public @Data class Cliente extends AuditModel<String> implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

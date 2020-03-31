@@ -28,8 +28,8 @@ public final class Paths {
 		public static final String USUARIOS = "usuarios";
 		public static final String CLIENTES = "clientes";
 		public static final String CLIENTE_ID = "clientes/{idCliente}";
-		public static final String CONTACTOS = CLIENTE_ID+"/contactos";
-		public static final String CONTACTO_ID = CONTACTOS+"/{id}";
+		public static final String CONTACTOS = CLIENTE_ID + "/contactos";
+		public static final String CONTACTO_ID = CONTACTOS + "/{id}";
 		public static final String CAMBIO_ESTADO = "estado-usuario/{idUsuario}";
 		public static final String ASESORES = "usuarios/clientes";
 
@@ -62,7 +62,7 @@ public final class Paths {
 		public static final String TIPO_DOCUMENTO_ID = "tipo-documento/{idTipo}";
 		public static final String ESTADO_PROYECTO = "estado-proyecto";
 		public static final String ESTADO_PROYECTO_ID = "estado-proyecto/{idEstado}";
-		public static final String POSIBLES_ESTADOS = ESTADO_PROYECTO_ID+"/estados-siguientes";
+		public static final String POSIBLES_ESTADOS = ESTADO_PROYECTO_ID + "/estados-siguientes";
 
 		private MaestrosPath() {
 		}
@@ -80,9 +80,11 @@ public final class Paths {
 		public static final String PROYECTOS = "proyectos";
 		public static final String PROYECTO_ID = "proyectos/{idProyecto}";
 		public static final String PROYECTO_MIEMBROS = "proyectos/{idProyecto}/miembros";
-		public static final String PLANES_TRABAJO = "planes-trabajo";
-		public static final String ETAPA_PLAN = "etapas-planes";
-		public static final String ETAPA_PLAN_ID = "etapas-planes/{idEtapa}";
+		public static final String MIEMBRO_PROYECTOS = "usuarios/{idUsuario}/mis-proyectos";
+		public static final String PLANES_TRABAJO = "planes"; // TODO verificar si dejar ruta asi o con  proyectos/{idProyecto}/planes
+		public static final String PLAN_TRABAJO_ID = PLANES_TRABAJO + "/{idPlan}";
+		public static final String ETAPA_PLAN = "planes/{idPlan}/etapas";
+		public static final String ETAPA_PLAN_ID = ETAPA_PLAN + "/{idEtapa}";
 
 		private ProyectosPath() {
 		}

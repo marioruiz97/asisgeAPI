@@ -16,13 +16,20 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+import com.asisge.apirest.model.entity.audit.AuditModel;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "plan_de_trabajo")
-public @Data class PlanDeTrabajo implements Serializable {
-
-	// TODO implementar dto 
+@NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode(callSuper = false)
+public @Data class PlanDeTrabajo extends AuditModel<String> implements Serializable {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -43,6 +50,7 @@ public @Data class PlanDeTrabajo implements Serializable {
 	private Proyecto proyecto;
 
 	@OneToMany(orphanRemoval = true, mappedBy = "planDeTrabajo")
+	@JsonManagedReference
 	private List<EtapaPDT> etapas;
 
 	@OneToOne

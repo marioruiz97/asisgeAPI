@@ -10,15 +10,19 @@ import javax.persistence.Table;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
+import com.asisge.apirest.model.entity.audit.AuditModel;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "estado_proyecto")
 @NoArgsConstructor
 @AllArgsConstructor
-public @Data class EstadoProyecto implements Serializable {
+@EqualsAndHashCode(callSuper=false)
+public @Data class EstadoProyecto extends AuditModel<String> implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

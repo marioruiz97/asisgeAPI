@@ -27,3 +27,18 @@ INSERT INTO usuario_cliente(id_usuario, id_cliente) VALUES (2, 1);
 INSERT INTO usuario_cliente(id_usuario, id_cliente) VALUES (3, 2);
 INSERT INTO usuario_cliente(id_usuario, id_cliente) VALUES (4, 3);
 INSERT INTO usuario_cliente(id_usuario, id_cliente) VALUES (4, 4);
+
+
+INSERT INTO proyecto( descripcion_general, fecha_cierre_proyecto, nombre_proyecto, id_cliente, estado_proyecto_id) VALUES ( 'Proyecto de prueba', '2020-04-01T14:30:00.000-0500', 'test project', 1, 1);
+INSERT INTO miembro_proyecto(rol_proyecto, id_proyecto, id_usuario) VALUES ('admin', 1, 1);
+INSERT INTO miembro_proyecto(rol_proyecto, id_proyecto, id_usuario) VALUES ('encargado cliente', 1, 2);
+INSERT INTO miembro_proyecto(rol_proyecto, id_proyecto, id_usuario) VALUES ('asesor', 1, 3);
+INSERT INTO miembro_proyecto(rol_proyecto, id_proyecto, id_usuario) VALUES ('reader', 1, 4);
+
+INSERT INTO plan_de_trabajo(duracion, fecha_fin_estimada, fecha_fin_real, fecha_inicio, horas_mes, objetivo_plan, etapa_actual, id_proyecto)	VALUES (10, '2021-03-30T00:00.000-0500', '2021-03-30T00:00.000-0500', '2020-04-01T00:00.000-0500', 12, 'objetivo', null, 1);
+INSERT INTO etapa_plan_trabajo(fecha_fin, fecha_inicio, nombre_etapa, id_plan_de_trabajo) VALUES ('2021-03-30T00:00.000-0500', '2020-04-03T00:00.000-0500', 'etapa inicial', 1);
+UPDATE plan_de_trabajo SET etapa_actual = 1 WHERE id_plan_de_trabajo = 1;
+
+INSERT INTO etapa_plan_trabajo(fecha_fin, fecha_inicio, nombre_etapa, id_plan_de_trabajo) VALUES ('2022-03-30T00:00.000-0500', '2020-12-01T00:00.000-0500', 'etapa 3', 1);
+INSERT INTO etapa_plan_trabajo(fecha_fin, fecha_inicio, nombre_etapa, id_plan_de_trabajo) VALUES ('2022-04-30T00:00.000-0500', '2022-04-01T00:00.000-0500', 'etapa 4', 1);
+INSERT INTO etapa_plan_trabajo(fecha_fin, fecha_inicio, nombre_etapa, id_plan_de_trabajo) VALUES ('2021-05-30T00:00.000-0500', '2020-04-03T00:00.000-0500', 'etapa 2', 1);

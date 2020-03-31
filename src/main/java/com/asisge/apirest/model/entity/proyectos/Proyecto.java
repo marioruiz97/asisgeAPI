@@ -8,6 +8,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
@@ -16,16 +17,25 @@ import javax.validation.constraints.FutureOrPresent;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
 
+import org.hibernate.annotations.Type;
 import org.springframework.lang.Nullable;
 
+import com.asisge.apirest.model.entity.audit.AuditModel;
 import com.asisge.apirest.model.entity.terceros.Cliente;
 import com.asisge.apirest.model.entity.terceros.MiembroProyecto;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "proyecto")
-public @Data class Proyecto implements Serializable {
+@NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode(callSuper = false)
+public @Data class Proyecto extends AuditModel<String> implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,6 +46,7 @@ public @Data class Proyecto implements Serializable {
 	private String nombreProyecto;
 
 	@Lob
+	@Type(type = "org.hibernate.type.TextType")
 	private String descripcionGeneral;
 
 	@FutureOrPresent
@@ -45,10 +56,12 @@ public @Data class Proyecto implements Serializable {
 	@ManyToOne(optional = false)
 	private EstadoProyecto estadoProyecto;
 
-	@OneToMany(mappedBy = "proyecto", orphanRemoval = true)
+	@JsonBackReference
+	@OneToMany(mappedBy = "proyecto")
 	private List<MiembroProyecto> miembrosProyecto;
 
 	@ManyToOne(optional = false)
+	@JoinColumn(name = "id_cliente")
 	private Cliente cliente;
 
 	@Override

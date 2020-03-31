@@ -11,15 +11,19 @@ import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
+import com.asisge.apirest.model.entity.audit.AuditModel;
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "usuario_cliente", uniqueConstraints = @UniqueConstraint(columnNames = {"id_usuario", "id_cliente"}))
+@Table(name = "usuario_cliente", uniqueConstraints = @UniqueConstraint(columnNames = { "id_usuario", "id_cliente" }))
 @NoArgsConstructor
 @AllArgsConstructor
-public @Data class UsuarioCliente implements Serializable {
+@EqualsAndHashCode(callSuper = false)
+public @Data class UsuarioCliente extends AuditModel<String> implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

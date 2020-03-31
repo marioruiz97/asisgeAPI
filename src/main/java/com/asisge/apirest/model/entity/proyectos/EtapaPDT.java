@@ -14,17 +14,27 @@ import javax.validation.constraints.FutureOrPresent;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+import com.asisge.apirest.model.entity.audit.AuditModel;
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "etapa_plan_trabajo")
-public @Data class EtapaPDT implements Serializable {
+@NoArgsConstructor
+@AllArgsConstructor
+@EqualsAndHashCode(callSuper=false)
+public @Data class EtapaPDT extends AuditModel<String> implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long idEtapaPDT;
 
 	@ManyToOne(optional = false)
+	@JsonBackReference
 	@JoinColumn(name = "id_plan_de_trabajo", nullable = false)
 	private PlanDeTrabajo planDeTrabajo;
 
@@ -39,7 +49,8 @@ public @Data class EtapaPDT implements Serializable {
 
 	@Override
 	public String toString() {
-		return "Etapa plan [id: " + idEtapaPDT + ", nombre etapa: " + nombreEtapa + ", fecha inicio: " + fechaInicio + "]";
+		return "Etapa plan [id: " + idEtapaPDT + ", nombre etapa: " + nombreEtapa + ", fecha inicio: " + fechaInicio
+				+ "]";
 	}
 
 	/**

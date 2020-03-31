@@ -8,11 +8,15 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
+import com.asisge.apirest.model.entity.audit.AuditModel;
+
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 @Entity
 @Table(name = "perfil")
-public @Data class Perfil implements Serializable {
+@EqualsAndHashCode(callSuper = false)
+public @Data class Perfil extends AuditModel<String> implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

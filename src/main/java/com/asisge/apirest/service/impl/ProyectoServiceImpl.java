@@ -11,8 +11,12 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.asisge.apirest.config.utils.Messages;
+import com.asisge.apirest.model.dto.proyectos.ProyectoDto;
 import com.asisge.apirest.model.entity.proyectos.EstadoProyecto;
+import com.asisge.apirest.model.entity.proyectos.Proyecto;
+import com.asisge.apirest.model.entity.terceros.Cliente;
 import com.asisge.apirest.repository.IEstadoProyectoDao;
+import com.asisge.apirest.repository.IProyectoDao;
 import com.asisge.apirest.service.IEstadoProyectoService;
 import com.asisge.apirest.service.IProyectoService;
 
@@ -21,6 +25,9 @@ public class ProyectoServiceImpl implements IProyectoService, IEstadoProyectoSer
 
 	@Autowired
 	private IEstadoProyectoDao estadoProyectoDao;
+
+	@Autowired
+	private IProyectoDao repository;
 
 	private boolean validEstadoAnterior(Long idAnterior) {
 		boolean result = false;
@@ -61,6 +68,37 @@ public class ProyectoServiceImpl implements IProyectoService, IEstadoProyectoSer
 	@Transactional(readOnly = true)
 	public List<EstadoProyecto> findNextEstados(Long estadoActual) {
 		return estadoProyectoDao.findByIdEstadoAnterior(estadoActual);
+	}
+
+	@Override
+	public Proyecto saveProyecto(Proyecto proyecto) {
+		return repository.save(proyecto);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public List<Proyecto> findAllProyectos() {
+		return repository.findAll();
+	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public Proyecto findProyecto(Long id) {
+		return repository.findById(id).orElse(null);
+	}
+
+	@Override
+	public void deleteProyecto(Long id) {
+		repository.deleteById(id);
+	}
+
+	@Override
+	public Proyecto buildEntity(ProyectoDto dto) {
+		Cliente cliente = new Cliente(dto.getClienteProyecto());
+		EstadoProyecto estado = new EstadoProyecto();
+		estado.setId(dto.getEstadoProyecto());
+		return new Proyecto(null, dto.getNombreProyecto(), dto.getDescripcionGeneral(), dto.getFechaCierreProyecto(),
+				estado, null, cliente);
 	}
 
 }
