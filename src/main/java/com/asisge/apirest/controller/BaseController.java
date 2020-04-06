@@ -49,7 +49,7 @@ public abstract class BaseController {
 		try {
 			email = model.getAttribute("email").toString();
 		} catch (Exception e) {
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Usuario en sesión inválido", e);
+			// throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Usuario en sesión inválido", e);
 		}
 		return email;
 	}

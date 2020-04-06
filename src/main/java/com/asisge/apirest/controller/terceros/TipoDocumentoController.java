@@ -52,7 +52,7 @@ public class TipoDocumentoController extends BaseController {
 	@PostMapping(MaestrosPath.TIPO_DOCUMENTOS)
 	public ResponseEntity<ApiResponse> create(@RequestBody ModelMap model) {
 		TipoDocumento newTipo = new TipoDocumento();
-		newTipo.setNombreTipoDocumento(model.get("nombre").toString());
+		newTipo.setNombreTipoDocumento(model.get("nombreTipoDocumento").toString());
 		newTipo = repository.save(newTipo);
 		String descripcion = String.format(RESULT_CREATED, newTipo.toString(), newTipo.getId());
 		auditManager.saveAudit(getEmail(model), ACTION_CREATE, descripcion);
@@ -66,7 +66,7 @@ public class TipoDocumentoController extends BaseController {
 			return respondNotFound(id.toString());
 		}
 		tipo.setId(id);
-		tipo.setNombreTipoDocumento(model.get("nombre").toString());
+		tipo.setNombreTipoDocumento(model.get("nombreTipoDocumento").toString());
 		tipo = repository.save(tipo);
 		String descripcion = String.format(RESULT_UPDATED, tipo.toString(), tipo.getId());
 		auditManager.saveAudit(getEmail(model), ACTION_UPDATE, descripcion);

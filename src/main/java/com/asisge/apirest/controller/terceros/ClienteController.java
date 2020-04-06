@@ -1,5 +1,6 @@
 package com.asisge.apirest.controller.terceros;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -61,7 +62,7 @@ public class ClienteController extends BaseController {
 			return validateDto(result);
 		}
 		Cliente newCliente = service.buildEntity(dto);
-		if (!dto.getContactos().isEmpty()) {
+		if (dto.getContactos() != null && !dto.getContactos().isEmpty()) {
 			List<ContactoCliente> contactos = dto.getContactos().stream()
 					.map(con -> new ContactoCliente(null, con.getNombre(), con.getTelefono(), con.getCorreo()))
 					.collect(Collectors.toList());
@@ -85,8 +86,10 @@ public class ClienteController extends BaseController {
 		Cliente cliente = service.buildEntity(dto);
 		cliente.setIdCliente(id);
 		cliente.setContactos(service.findContactosByCliente(id));
-		if (!dto.getContactos().isEmpty()) {
+		if (dto.getContactos() != null && !dto.getContactos().isEmpty()) {
 			service.setContactos(dto.getContactos(), cliente.getContactos());
+		} else {
+			service.setContactos(new ArrayList<ContactoDto>(), cliente.getContactos());
 		}
 		// se ejecutan acciones en base de datos
 		cliente = service.saveCliente(cliente);
@@ -109,6 +112,11 @@ public class ClienteController extends BaseController {
 		}
 	}
 
+	/**
+	 * @unused los metodos de contactos no se estan usando. los metodos de aqui hacia abajo
+	 * @param id
+	 * @return
+	 */
 	@GetMapping(TercerosPath.CONTACTOS)
 	public ResponseEntity<ApiResponse> findAllContactos(@PathVariable(ID_CLIENTE) Long id) {
 		List<ContactoCliente> contactos = service.findContactosByCliente(id);

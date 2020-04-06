@@ -113,8 +113,7 @@ public class AsesoresClientesController extends BaseController {
 	}
 	
 	@DeleteMapping(TercerosPath.ASESORES)
-	public ResponseEntity<ApiResponse> delete(@RequestParam("usuario")Long idUsuario,
-			@RequestParam("cliente")Long idCliente) {
+	public ResponseEntity<ApiResponse> delete(@RequestParam("usuario")Long idUsuario, @RequestParam("cliente")Long idCliente) {
 		if(idUsuario == null || idCliente == null) {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.getString("message.error.delete.user-client"));
 		}

@@ -29,7 +29,7 @@ public final class Paths {
 		public static final String CLIENTES = "clientes";
 		public static final String CLIENTE_ID = "clientes/{idCliente}";
 		public static final String CONTACTOS = CLIENTE_ID + "/contactos";
-		public static final String CONTACTO_ID = CONTACTOS + "/{id}";
+		public static final String CONTACTO_ID = "contactos/{id}";
 		public static final String CAMBIO_ESTADO = "estado-usuario/{idUsuario}";
 		public static final String ASESORES = "usuarios/clientes";
 

@@ -58,7 +58,7 @@ public class UsuarioController extends BaseController {
 		}
 		Usuario newUsuario = service.buildEntity(dto);
 		newUsuario = service.saveUsuario(newUsuario);
-		String descripcion = String.format(RESULT_CREATED, newUsuario.toString(), newUsuario.getId());
+		String descripcion = String.format(RESULT_CREATED, newUsuario.toString(), newUsuario.getIdUsuario());
 		auditManager.saveAudit("correo@correo.com", ACTION_CREATE, descripcion);
 		return new ResponseEntity<>(buildSuccess(descripcion, newUsuario, ""), HttpStatus.CREATED);
 	}
@@ -71,7 +71,7 @@ public class UsuarioController extends BaseController {
 			return respondNotFound(id.toString());
 		}
 		Usuario usuario = service.buildEntity(dto);
-		usuario.setId(id);
+		usuario.setIdUsuario(id);
 		usuario = service.saveUsuario(usuario);
 		String descripcion = String.format(RESULT_UPDATED, usuario.toString(), id);
 		auditManager.saveAudit("correo@correo.com", ACTION_UPDATE, descripcion);

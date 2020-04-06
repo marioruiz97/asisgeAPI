@@ -33,7 +33,7 @@ public @Data class Usuario extends AuditModel<String> implements Serializable {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	Long id;
+	Long idUsuario;
 
 	@NotBlank
 	@Size(max = 20)
@@ -69,7 +69,7 @@ public @Data class Usuario extends AuditModel<String> implements Serializable {
 	private TipoDocumento tipoDocumento;
 
 	public Usuario(Long id) {
-		this.id = id;
+		this.idUsuario = id;
 	}
 
 	@Override

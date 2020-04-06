@@ -36,7 +36,7 @@ public @Data class AuditModel<U> {
 	private Date lastModifiedDate;
 
 	@PrePersist
-	public void setCreatedDate(Date createdDate) {
+	public void setCreatedDate() {
 		this.createdDate = new Date();
 	}
 

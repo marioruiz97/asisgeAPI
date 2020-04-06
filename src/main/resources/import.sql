@@ -1,5 +1,7 @@
 INSERT INTO tipo_documento(nombre_tipo_documento) VALUES ('Cédula de Ciudadanía');
 INSERT INTO tipo_documento(nombre_tipo_documento) VALUES ('NIT');
+INSERT INTO tipo_documento(nombre_tipo_documento) VALUES ('Libreta Militar');
+INSERT INTO tipo_documento(nombre_tipo_documento) VALUES ('Cédula de Extranjería');
 
 INSERT INTO estado_proyecto(descripcion, id_estado_anterior, nombre_estado) VALUES ( 'Estado de inicio de todo proyecto', null, 'Creado');
 INSERT INTO estado_proyecto(descripcion, id_estado_anterior, nombre_estado) VALUES ( 'Estado siguiente al inicio del proyecto', 1, 'A punto de iniciar');
@@ -27,6 +29,17 @@ INSERT INTO usuario_cliente(id_usuario, id_cliente) VALUES (2, 1);
 INSERT INTO usuario_cliente(id_usuario, id_cliente) VALUES (3, 2);
 INSERT INTO usuario_cliente(id_usuario, id_cliente) VALUES (4, 3);
 INSERT INTO usuario_cliente(id_usuario, id_cliente) VALUES (4, 4);
+
+insert into contacto_cliente (correo, nombre, telefono, cliente_asociado) values ('marioarb@hotmail.com', 'Mario ruiz', '3015465076', 1);
+insert into contacto_cliente (correo, nombre, telefono, cliente_asociado) values ('carito@hotmail.com', 'carito ruiz', '30463086421', 1);
+insert into contacto_cliente (correo, nombre, telefono, cliente_asociado) values ('juandita@hotmail.com', 'juan ruiz', '30463047374', 1);
+insert into contacto_cliente (correo, nombre, telefono, cliente_asociado) values ('glorita@hotmail.com', 'Glori bedoya', '3046304123', 1);
+
+insert into contacto_cliente (correo, nombre, telefono, cliente_asociado) values ('marito@hotmail.com', 'mario alberto', '3047654123', 2);
+insert into contacto_cliente (correo, nombre, telefono, cliente_asociado) values ('sarita@hotmail.com', 'sarita laverde', '987654321', 2);
+insert into contacto_cliente (correo, nombre, telefono, cliente_asociado) values ('rosalbita@hotmail.com', 'rosalba bedoya', '3046354321', 2);
+
+insert into contacto_cliente (correo, nombre, telefono, cliente_asociado) values ('juenaskfa@hotmail.com', 'john jaire', '3046123456', 3);
 
 
 INSERT INTO proyecto( descripcion_general, fecha_cierre_proyecto, nombre_proyecto, id_cliente, estado_proyecto_id) VALUES ( 'Proyecto de prueba', '2020-04-01T14:30:00.000-0500', 'test project', 1, 1);
