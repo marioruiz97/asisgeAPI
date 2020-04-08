@@ -3,23 +3,24 @@ INSERT INTO tipo_documento(nombre_tipo_documento) VALUES ('NIT');
 INSERT INTO tipo_documento(nombre_tipo_documento) VALUES ('Libreta Militar');
 INSERT INTO tipo_documento(nombre_tipo_documento) VALUES ('Cédula de Extranjería');
 
-INSERT INTO estado_proyecto(descripcion, id_estado_anterior, nombre_estado) VALUES ( 'Estado de inicio de todo proyecto', null, 'Creado');
-INSERT INTO estado_proyecto(descripcion, id_estado_anterior, nombre_estado) VALUES ( 'Estado siguiente al inicio del proyecto', 1, 'A punto de iniciar');
-INSERT INTO estado_proyecto(descripcion, id_estado_anterior, nombre_estado) VALUES ( 'Estado a punto de inicio del proyecto, siguiente a creado', 2, 'Iniciado');
-INSERT INTO estado_proyecto(descripcion, id_estado_anterior, nombre_estado) VALUES ( 'Estado de prueba, siguiente al inicio del proyecto', 3, 'Prueba');
-INSERT INTO estado_proyecto(descripcion, id_estado_anterior, nombre_estado) VALUES ( 'Estado de un proyecto cuando es pospuesto', 1, 'Pospuesto');
-
 INSERT INTO cliente(identificacion, nombre_comercial, razon_social, id_tipo_documento) VALUES ( '900876765', 'Asisge', 'Asistencia Gerencial Estrategica SAS', 2);
-INSERT INTO usuario(apellido1, apellido2, contrasena, correo, estado, identificacion, nombre, telefono, id_tipo_documento) VALUES ('Ruiz', 'Bedoya', '123456', 'marioarb.97@gmail.com', true, '1017251545', 'Mario Andres', '3015465076', 1);
+INSERT INTO usuario(apellido1, apellido2, contrasena, correo, estado, identificacion, nombre, telefono, id_tipo_documento) VALUES ('Ruiz', 'Bedoya', '$2a$10$EO8w3WphXwTeirPxN7qdB.wd2CDr1/MbbP6.oBU.zAj8MdOdUu6/O', 'marioarb.97@gmail.com', true, '1017251545', 'Mario Andres', '3015465076', 1);
 
 INSERT INTO cliente(identificacion, nombre_comercial, razon_social, id_tipo_documento) VALUES ( '900876761', 'Dian', 'Direccion de impuestos SAS', 2);
-INSERT INTO usuario(apellido1, apellido2, contrasena, correo, estado, identificacion, nombre, telefono, id_tipo_documento) VALUES ('Ruiz', 'Bedoya', '123456', 'carito.93@gmail.com', true, '1017214122', 'Carito', '3046307654', 1);
+INSERT INTO usuario(apellido1, apellido2, contrasena, correo, estado, identificacion, nombre, telefono, id_tipo_documento) VALUES ('Ruiz', 'Bedoya', '$2a$10$EO8w3WphXwTeirPxN7qdB.wd2CDr1/MbbP6.oBU.zAj8MdOdUu6/O', 'carito.93@gmail.com', true, '1017214122', 'Carito', '3046307654', 1);
 
 INSERT INTO cliente(identificacion, nombre_comercial, razon_social, id_tipo_documento) VALUES ( '900876762', 'S4DS', 'solutions for dealers SAS', 2);
-INSERT INTO usuario(apellido1, apellido2, contrasena, correo, estado, identificacion, nombre, telefono, id_tipo_documento) VALUES ('Bedoya', 'Jaramillo', '123456', 'gloriae.61@gmail.com', true, '43032118', 'Gloria', '3007855211', 1);
+INSERT INTO usuario(apellido1, apellido2, contrasena, correo, estado, identificacion, nombre, telefono, id_tipo_documento) VALUES ('Bedoya', 'Jaramillo', '$2a$10$EO8w3WphXwTeirPxN7qdB.wd2CDr1/MbbP6.oBU.zAj8MdOdUu6/O', 'gloriae.61@gmail.com', true, '43032118', 'Gloria', '3007855211', 1);
 
 INSERT INTO cliente(identificacion, nombre_comercial, razon_social, id_tipo_documento) VALUES ( '900876763', 'Joyeria inter', 'Joyeria intercontinental dali SAS', 2);
-INSERT INTO usuario(apellido1, apellido2, contrasena, correo, estado, identificacion, nombre, telefono, id_tipo_documento) VALUES ('Ruiz', 'Giraldo', '123456', 'jotica.65@gmail.com', true, '71665023', 'Juan Mario', '3006521212', 1);
+INSERT INTO usuario(apellido1, apellido2, contrasena, correo, estado, identificacion, nombre, telefono, id_tipo_documento) VALUES ('Ruiz', 'Giraldo', '$2a$10$EO8w3WphXwTeirPxN7qdB.wd2CDr1/MbbP6.oBU.zAj8MdOdUu6/O', 'jotica.65@gmail.com', true, '71665023', 'Juan Mario', '3006521212', 1);
+
+INSERT INTO roles(nombre_role) VALUES ('ROLE_ADMIN');
+INSERT INTO roles(nombre_role) VALUES ('ROLE_ASESOR');
+
+INSERT INTO usuario_roles(usuario_id, role_id) VALUES (1,1);
+INSERT INTO usuario_roles(usuario_id, role_id) VALUES (1,2);
+
 
 INSERT INTO usuario_cliente(id_usuario, id_cliente) VALUES (1, 1);
 INSERT INTO usuario_cliente(id_usuario, id_cliente) VALUES (1, 2);
@@ -40,6 +41,13 @@ insert into contacto_cliente (correo, nombre, telefono, cliente_asociado) values
 insert into contacto_cliente (correo, nombre, telefono, cliente_asociado) values ('rosalbita@hotmail.com', 'rosalba bedoya', '3046354321', 2);
 
 insert into contacto_cliente (correo, nombre, telefono, cliente_asociado) values ('juenaskfa@hotmail.com', 'john jaire', '3046123456', 3);
+
+
+INSERT INTO estado_proyecto(descripcion, id_estado_anterior, nombre_estado) VALUES ( 'Estado de inicio de todo proyecto', null, 'Creado');
+INSERT INTO estado_proyecto(descripcion, id_estado_anterior, nombre_estado) VALUES ( 'Estado siguiente al inicio del proyecto', 1, 'A punto de iniciar');
+INSERT INTO estado_proyecto(descripcion, id_estado_anterior, nombre_estado) VALUES ( 'Estado a punto de inicio del proyecto, siguiente a creado', 2, 'Iniciado');
+INSERT INTO estado_proyecto(descripcion, id_estado_anterior, nombre_estado) VALUES ( 'Estado de prueba, siguiente al inicio del proyecto', 3, 'Prueba');
+INSERT INTO estado_proyecto(descripcion, id_estado_anterior, nombre_estado) VALUES ( 'Estado de un proyecto cuando es pospuesto', 1, 'Pospuesto');
 
 
 INSERT INTO proyecto( descripcion_general, fecha_cierre_proyecto, nombre_proyecto, id_cliente, estado_proyecto_id) VALUES ( 'Proyecto de prueba', '2020-04-01T14:30:00.000-0500', 'test project', 1, 1);
