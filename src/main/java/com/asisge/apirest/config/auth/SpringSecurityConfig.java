@@ -32,7 +32,7 @@ public class SpringSecurityConfig extends WebSecurityConfigurerAdapter {
 		auth.userDetailsService(this.userService).passwordEncoder(passwordEncoder());
 	}
 
-	// TODO quitar este metodo e implemntar la clase authentication manager
+
 	@Bean("authenticationManager")
 	@Override
 	protected AuthenticationManager authenticationManager() throws Exception {
