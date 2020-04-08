@@ -12,6 +12,7 @@ import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
 
 import com.asisge.apirest.model.entity.audit.AuditModel;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -31,6 +32,7 @@ public @Data class UsuarioCliente extends AuditModel<String> implements Serializ
 
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "id_usuario")
+	@JsonManagedReference
 	private Usuario usuario;
 
 	@ManyToOne(optional = false)

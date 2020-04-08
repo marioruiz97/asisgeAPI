@@ -10,6 +10,7 @@ import com.asisge.apirest.model.dto.terceros.UsuarioDto;
 import com.asisge.apirest.model.entity.terceros.TipoDocumento;
 import com.asisge.apirest.model.entity.terceros.Usuario;
 import com.asisge.apirest.repository.IUsuarioDao;
+import com.asisge.apirest.service.IAsesorService;
 import com.asisge.apirest.service.IUsuarioService;
 
 @Service
@@ -17,6 +18,9 @@ public class UsuarioServiceImpl implements IUsuarioService {
 
 	@Autowired
 	private IUsuarioDao repository;
+	
+	@Autowired
+	private IAsesorService asesorService;
 
 	@Override
 	public Usuario saveUsuario(Usuario usuario) {
@@ -37,6 +41,7 @@ public class UsuarioServiceImpl implements IUsuarioService {
 
 	@Override
 	public void deleteUsuario(Long id) {
+		asesorService.deleteByUsuario(id);
 		repository.deleteById(id);
 	}
 

@@ -16,6 +16,7 @@ import com.asisge.apirest.model.entity.terceros.ContactoCliente;
 import com.asisge.apirest.model.entity.terceros.TipoDocumento;
 import com.asisge.apirest.repository.IClienteDao;
 import com.asisge.apirest.repository.IContactoClienteDao;
+import com.asisge.apirest.service.IAsesorService;
 import com.asisge.apirest.service.IClienteService;
 
 @Service
@@ -23,6 +24,9 @@ public class ClienteServiceImpl implements IClienteService {
 
 	@Autowired
 	private IClienteDao repository;
+	
+	@Autowired
+	private IAsesorService asesorService;
 
 	@Autowired
 	private IContactoClienteDao contactoDao;
@@ -46,6 +50,7 @@ public class ClienteServiceImpl implements IClienteService {
 
 	@Override
 	public void deleteCliente(Long id) {
+		asesorService.deleteByCliente(id);
 		repository.deleteById(id);
 	}
 

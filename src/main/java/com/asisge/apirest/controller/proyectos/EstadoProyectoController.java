@@ -90,7 +90,7 @@ public class EstadoProyectoController extends BaseController {
 	}
 
 	private static EstadoProyecto buildEstado(ModelMap model) {
-		final String estadoAnterior = "estadoAnterior";
+		final String estadoAnterior = "idEstadoAnterior";
 		String nombreEstado = model.getAttribute("nombreEstado").toString();
 		String descripcion = model.getAttribute("descripcion").toString();
 		Long idEstadoAnterior;

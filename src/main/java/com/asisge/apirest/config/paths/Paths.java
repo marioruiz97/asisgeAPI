@@ -32,6 +32,7 @@ public final class Paths {
 		public static final String CONTACTO_ID = "contactos/{id}";
 		public static final String CAMBIO_ESTADO = "estado-usuario/{idUsuario}";
 		public static final String ASESORES = "usuarios/clientes";
+		public static final String CLIENTE_ASESOR = "clientes/usuarios/{idCliente}";
 
 		private TercerosPath() {
 		}

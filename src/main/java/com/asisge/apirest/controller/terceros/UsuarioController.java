@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
 
 import com.asisge.apirest.config.paths.Paths.TercerosPath;
 import com.asisge.apirest.config.response.ApiResponse;
@@ -87,8 +86,9 @@ public class UsuarioController extends BaseController {
 			auditManager.saveAudit(email, ACTION_DELETE, descripcion);
 			return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
 		} catch (Exception e) {
-			String message = String.format(Messages.getString("message.error.delete.record"), "Usuario", id.toString());
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, message, e);
+			return cambioEstadoUsuario(id, false);
+			// String message = String.format(Messages.getString("message.error.delete.record"), "Usuario", id.toString())
+			// throw new ResponseStatusException(HttpStatus.BAD_REQUEST, message, e)
 		}
 	}
 

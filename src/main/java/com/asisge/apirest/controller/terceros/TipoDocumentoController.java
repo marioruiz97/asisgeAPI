@@ -27,13 +27,15 @@ import com.asisge.apirest.config.utils.Messages;
 
 @RestController
 public class TipoDocumentoController extends BaseController {
+	
+	private static final String NOMBRE_TIPO = "nombreTipoDocumento";
 
 	@Autowired
 	private ITipoDocumentoDao repository;
 
 	@GetMapping(MaestrosPath.TIPO_DOCUMENTOS)
 	public ResponseEntity<ApiResponse> findAll() {
-		List<TipoDocumento> tipos = repository.findAll(Sort.by(Direction.ASC, "nombreTipoDocumento"));
+		List<TipoDocumento> tipos = repository.findAll(Sort.by(Direction.ASC, NOMBRE_TIPO));
 		if (tipos.isEmpty()) {
 			return respondNotFound(null);
 		}
@@ -52,7 +54,7 @@ public class TipoDocumentoController extends BaseController {
 	@PostMapping(MaestrosPath.TIPO_DOCUMENTOS)
 	public ResponseEntity<ApiResponse> create(@RequestBody ModelMap model) {
 		TipoDocumento newTipo = new TipoDocumento();
-		newTipo.setNombreTipoDocumento(model.get("nombreTipoDocumento").toString());
+		newTipo.setNombreTipoDocumento(model.get(NOMBRE_TIPO).toString());
 		newTipo = repository.save(newTipo);
 		String descripcion = String.format(RESULT_CREATED, newTipo.toString(), newTipo.getId());
 		auditManager.saveAudit(getEmail(model), ACTION_CREATE, descripcion);
@@ -66,7 +68,7 @@ public class TipoDocumentoController extends BaseController {
 			return respondNotFound(id.toString());
 		}
 		tipo.setId(id);
-		tipo.setNombreTipoDocumento(model.get("nombreTipoDocumento").toString());
+		tipo.setNombreTipoDocumento(model.get(NOMBRE_TIPO).toString());
 		tipo = repository.save(tipo);
 		String descripcion = String.format(RESULT_UPDATED, tipo.toString(), tipo.getId());
 		auditManager.saveAudit(getEmail(model), ACTION_UPDATE, descripcion);
