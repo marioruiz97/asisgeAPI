@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -59,7 +58,7 @@ public class EstadoProyectoController extends BaseController {
 		EstadoProyecto newEstado = buildEstado(model);
 		newEstado = service.saveEstado(newEstado);
 		String descripcion = String.format(RESULT_CREATED, newEstado.toString(), newEstado.getId());
-		auditManager.saveAudit(getEmail(model), ACTION_CREATE, descripcion);
+		auditManager.saveAudit(newEstado.getCreatedBy(), ACTION_CREATE, descripcion);
 		return new ResponseEntity<>(buildSuccess(descripcion, newEstado, ""), HttpStatus.CREATED);
 	}
 
@@ -68,18 +67,18 @@ public class EstadoProyectoController extends BaseController {
 		EstadoProyecto estado = buildEstado(model);
 		estado.setId(id);
 		estado = service.saveEstado(estado);
-		String descripcion = String.format(RESULT_CREATED, estado.toString(), estado.getId());
-		auditManager.saveAudit(getEmail(model), ACTION_CREATE, descripcion);
+		String descripcion = String.format(RESULT_UPDATED, estado.toString(), estado.getId());
+		auditManager.saveAudit(estado.getLastModifiedBy(), ACTION_UPDATE, descripcion);
 		return new ResponseEntity<>(buildSuccess(descripcion, estado, ""), HttpStatus.CREATED);
 	}
 
 	@DeleteMapping(MaestrosPath.ESTADO_PROYECTO_ID)
-	public ResponseEntity<ApiResponse> delete(@PathVariable("idEstado") Long id, @RequestParam String email) {
+	public ResponseEntity<ApiResponse> delete(@PathVariable("idEstado") Long id) {
 		try {
 			service.deleteEstado(id);
 			ApiResponse response = buildDeleted("Estado de Proyecto", id.toString());
 			String descripcion = response.getMessage();
-			auditManager.saveAudit(email, ACTION_DELETE, descripcion);
+			auditManager.saveAudit(ACTION_DELETE, descripcion);
 			return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
 		} catch (Exception e) {
 			String message = String.format(Messages.getString("message.error.delete.record"), 

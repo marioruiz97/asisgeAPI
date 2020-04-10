@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -57,7 +56,7 @@ public class TipoDocumentoController extends BaseController {
 		newTipo.setNombreTipoDocumento(model.get(NOMBRE_TIPO).toString());
 		newTipo = repository.save(newTipo);
 		String descripcion = String.format(RESULT_CREATED, newTipo.toString(), newTipo.getId());
-		auditManager.saveAudit(getEmail(model), ACTION_CREATE, descripcion);
+		auditManager.saveAudit(newTipo.getCreatedBy(), ACTION_CREATE, descripcion);
 		return new ResponseEntity<>(buildSuccess(descripcion, newTipo, ""), HttpStatus.CREATED);
 	}
 
@@ -71,17 +70,17 @@ public class TipoDocumentoController extends BaseController {
 		tipo.setNombreTipoDocumento(model.get(NOMBRE_TIPO).toString());
 		tipo = repository.save(tipo);
 		String descripcion = String.format(RESULT_UPDATED, tipo.toString(), tipo.getId());
-		auditManager.saveAudit(getEmail(model), ACTION_UPDATE, descripcion);
+		auditManager.saveAudit(tipo.getLastModifiedBy(), ACTION_UPDATE, descripcion);
 		return new ResponseEntity<>(buildSuccess(descripcion, tipo, ""), HttpStatus.CREATED);
 	}
 
 	@DeleteMapping(MaestrosPath.TIPO_DOCUMENTO_ID)
-	public ResponseEntity<ApiResponse> delete(@PathVariable("idTipo") Long id, @RequestParam String email) {
+	public ResponseEntity<ApiResponse> delete(@PathVariable("idTipo") Long id) {
 		try {			 
 			repository.deleteById(id);
 			ApiResponse response = buildDeleted("tipo de documento", id.toString());
 			String descripcion = response.getMessage();
-			auditManager.saveAudit(email, ACTION_DELETE, descripcion);
+			auditManager.saveAudit(ACTION_DELETE, descripcion);
 			return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
 		} catch (Exception e) {
 			String message = String.format(Messages.getString("message.error.delete.record"), "tipo de documento", id.toString());

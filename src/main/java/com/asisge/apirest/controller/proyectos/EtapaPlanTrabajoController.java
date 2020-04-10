@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -56,9 +55,9 @@ public class EtapaPlanTrabajoController extends BaseController {
 			return validateDto(result);
 		EtapaPDT etapa = service.buildEtapaEntity(dto);
 		etapa = service.saveEtapa(etapa);
-		return new ResponseEntity<>(
-				buildSuccess(RESULT_CREATED, etapa, etapa.toString(), etapa.getIdEtapaPDT().toString()),
-				HttpStatus.CREATED);
+		String descripcion = String.format(RESULT_CREATED, etapa.toString(), etapa.getIdEtapaPDT());
+		auditManager.saveAudit(etapa.getCreatedBy(), ACTION_CREATE, descripcion);
+		return new ResponseEntity<>(buildSuccess(descripcion, etapa, ""), HttpStatus.CREATED);
 	}
 
 	@PatchMapping(ProyectosPath.ETAPA_PLAN_ID)
@@ -72,18 +71,18 @@ public class EtapaPlanTrabajoController extends BaseController {
 		EtapaPDT etapa = service.buildEtapaEntity(dto);
 		etapa.setIdEtapaPDT(idEtapa);
 		etapa = service.saveEtapa(etapa);
-		return new ResponseEntity<>(
-				buildSuccess(RESULT_UPDATED, etapa, etapa.toString(), etapa.getIdEtapaPDT().toString()),
-				HttpStatus.CREATED);
+		String descripcion = String.format(RESULT_UPDATED, etapa.toString(), etapa.getIdEtapaPDT());
+		auditManager.saveAudit(etapa.getLastModifiedBy(), ACTION_UPDATE, descripcion);
+		return new ResponseEntity<>(buildSuccess(descripcion, etapa, ""), HttpStatus.CREATED);
 	}
 
 	@DeleteMapping(ProyectosPath.ETAPA_PLAN_ID)
-	public ResponseEntity<ApiResponse> delete(@PathVariable(ID_ETAPA) Long id, @RequestParam String email) {
+	public ResponseEntity<ApiResponse> delete(@PathVariable(ID_ETAPA) Long id) {
 		try {
 			service.deleteEtapa(id);
 			ApiResponse response = buildDeleted("Etapa Plan De trabajo", id.toString());
 			String descripcion = response.getMessage();
-			auditManager.saveAudit(email, ACTION_DELETE, descripcion);
+			auditManager.saveAudit(ACTION_DELETE, descripcion);
 			return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
 		} catch (Exception e) {
 			String message = String.format(Messages.getString("message.error.delete.record"), "Etapa Plan",

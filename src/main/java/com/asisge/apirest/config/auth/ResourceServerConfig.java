@@ -21,11 +21,11 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 	@Override
 	public void configure(HttpSecurity http) throws Exception {
 		http.authorizeRequests()
-			.antMatchers("/audit").permitAll()
+			.antMatchers("/auth/**").permitAll()
 			.anyRequest().authenticated()
-			.and().cors().configurationSource(corsConfigurationSource());
-		// .and().httpBasic()
-		// .and().csrf().disable()
+			.and().cors().configurationSource(corsConfigurationSource())
+			.and().httpBasic()
+			.and().csrf().disable();
 	}
 
 	@Bean
@@ -36,7 +36,7 @@ public class ResourceServerConfig extends ResourceServerConfigurerAdapter {
 		config.setAllowCredentials(true);
 		config.addAllowedOrigin("*");
 		config.addAllowedHeader("*");
-		config.setAllowedHeaders(Arrays.asList("Content-Type", "Authorization"));
+		// config.setAllowedHeaders(Arrays.asList("Content-Type", "Authorization"))
 		config.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
 
 		source.registerCorsConfiguration("/**", config);

@@ -19,15 +19,15 @@ import com.asisge.apirest.service.IUsuarioService;
 @Component
 public class TokenInfo implements TokenEnhancer {
 
-	static final String EMAIL_KEY = "email";
-	static final String NAME_KEY = "name";
-	static final String ENABLED_KEY = "enabled";
-	static final String VALIDATED_KEY = "validated";
-	static final String USER_ID_KEY = "userId";
-	static final String USER_NAME_KEY = "user_name";
+	static final String EMAIL_KEY = "usuario_email";		
+	static final String ENABLED_KEY = "usuario_enabled";
+	static final String VALIDATED_KEY = "usuario_validated";
+	static final String USER_ID_KEY = "usuario_id";
+	static final String USER_NAME_KEY = "usuario_name";
+	static final String ROLES_KEY = "usuario_roles";
+	
 	static final String CLIENT_ID_KEY = "client_id";
-	// private static final String PICTURE_URL = "picture_url"
-	private static final String ROLES_KEY = "roles";
+	// private static final String PICTURE_URL = "picture_url"	
 
 	@Autowired
 	private IUsuarioService userService;
@@ -43,8 +43,9 @@ public class TokenInfo implements TokenEnhancer {
 		}
 
 		info.put(EMAIL_KEY, user.getCorreo());
-		info.put(NAME_KEY, user.getNombre());
+		info.put(USER_NAME_KEY, user.getNombre());
 		info.put(ENABLED_KEY, user.getEstado());
+		info.put(USER_ID_KEY, user.getIdUsuario());
 		info.put(ROLES_KEY, authentication.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()));
 		info.put("auth", authentication.getName());
 		

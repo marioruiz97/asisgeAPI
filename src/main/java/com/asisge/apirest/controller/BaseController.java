@@ -9,15 +9,14 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
 import org.springframework.stereotype.Component;
-import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.asisge.apirest.config.response.ApiError;
 import com.asisge.apirest.config.response.ApiResponse;
 import com.asisge.apirest.config.response.ApiSuccess;
-import com.asisge.apirest.config.utils.AuditManager;
 import com.asisge.apirest.config.utils.Messages;
+import com.asisge.apirest.service.IAuditManager;
 
 @Component
 public abstract class BaseController {
@@ -30,7 +29,7 @@ public abstract class BaseController {
 	public static final String ACTION_DELETE = Messages.getString("message.action.delete");
 
 	@Autowired
-	public AuditManager auditManager;
+	public IAuditManager auditManager;
 
 	public static Long convertToLong(String toLong, String field, boolean isNulleable) {
 		if (isNulleable && (toLong == null || toLong.equals(""))) {
@@ -42,16 +41,6 @@ public abstract class BaseController {
 			String errorMessage = String.format(Messages.getString("message.error.number-exception"), field, toLong);
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, errorMessage);
 		}
-	}
-
-	public static String getEmail(ModelMap model) {
-		String email = "";
-		try {
-			email = model.getAttribute("email").toString();
-		} catch (Exception e) {
-			// throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Usuario en sesión inválido", e);
-		}
-		return email;
 	}
 
 	public ResponseEntity<ApiResponse> validateDto(BindingResult result) {

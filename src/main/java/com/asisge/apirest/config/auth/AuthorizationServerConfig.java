@@ -38,6 +38,7 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 
 	@Override
 	public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
+		// TODO separar esto en un archivo dataSource
 		clients.inMemory().withClient("AsisgeApp").secret(passwordEncoder.encode("clave123"))
 			.scopes("read", "write")
 			.authorizedGrantTypes("password", "refresh_token")

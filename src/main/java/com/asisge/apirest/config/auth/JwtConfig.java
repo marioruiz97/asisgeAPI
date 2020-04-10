@@ -1,6 +1,7 @@
 package com.asisge.apirest.config.auth;
 
 public class JwtConfig {
+	// TODO separar estas claves en un archivo aparte para no dejar las llaves expuestas
 
 	public static final String LLAVE_SECRETA = "-----BEGIN RSA PRIVATE KEY-----\r\n"
 			+ "MIIEowIBAAKCAQEAtRrrD2fGygDoEoSmkriisjshFpXDEIA6JRILStp3maSKvw64\r\n"

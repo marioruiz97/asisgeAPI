@@ -20,7 +20,7 @@ public class ApiResponse {
 	public void setMessage(String message) {
 		this.message = message;
 	}
-	
+
 	public void formatMessage(String... args) {
 		if (this.message != null && !this.message.isEmpty())
 			this.message = String.format(this.message, args);

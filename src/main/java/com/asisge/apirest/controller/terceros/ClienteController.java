@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -70,7 +69,7 @@ public class ClienteController extends BaseController {
 		}
 		newCliente = service.saveCliente(newCliente);
 		String descripcion = String.format(RESULT_CREATED, newCliente.toString(), newCliente.getIdCliente());
-		auditManager.saveAudit("correo@correo.com", ACTION_CREATE, descripcion);
+		auditManager.saveAudit(newCliente.getCreatedBy(), ACTION_CREATE, descripcion);
 		return new ResponseEntity<>(buildSuccess(descripcion, newCliente, ""), HttpStatus.CREATED);
 	}
 
@@ -94,17 +93,17 @@ public class ClienteController extends BaseController {
 		// se ejecutan acciones en base de datos
 		cliente = service.saveCliente(cliente);
 		String descripcion = String.format(RESULT_UPDATED, cliente.toString(), id);
-		auditManager.saveAudit("correo@correo.com", ACTION_UPDATE, descripcion);
+		auditManager.saveAudit(cliente.getLastModifiedBy(), ACTION_UPDATE, descripcion);
 		return new ResponseEntity<>(buildSuccess(descripcion, cliente, ""), HttpStatus.CREATED);
 	}
 
 	@DeleteMapping(TercerosPath.CLIENTE_ID)
-	public ResponseEntity<ApiResponse> delete(@PathVariable(ID_CLIENTE) Long id, @RequestParam String email) {
+	public ResponseEntity<ApiResponse> delete(@PathVariable(ID_CLIENTE) Long id) {
 		try {
 			service.deleteCliente(id);
 			ApiResponse response = buildDeleted("Cliente", id.toString());
 			String descripcion = response.getMessage();
-			auditManager.saveAudit(email, ACTION_DELETE, descripcion);
+			auditManager.saveAudit(ACTION_DELETE, descripcion);
 			return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
 		} catch (Exception e) {
 			String message = String.format(Messages.getString("message.error.delete.record"), "Cliente", id.toString());
@@ -122,7 +121,6 @@ public class ClienteController extends BaseController {
 		List<ContactoCliente> contactos = service.findContactosByCliente(id);
 		if (contactos.isEmpty())
 			return respondNotFound(id.toString());
-
 		return new ResponseEntity<>(buildOk(contactos), HttpStatus.OK);
 	}
 
@@ -137,7 +135,7 @@ public class ClienteController extends BaseController {
 		service.setContactos(contactos, cliente.getContactos());
 		cliente = service.saveCliente(cliente);
 		String descripcion = String.format(Messages.getString("message.result.set-contacts"), cliente.toString(), id);
-		auditManager.saveAudit("correo@correo.com", ACTION_UPDATE, descripcion);
+		auditManager.saveAudit(cliente.getLastModifiedBy(), ACTION_UPDATE, descripcion);
 		return new ResponseEntity<>(buildSuccess(descripcion, cliente.getContactos(), ""), HttpStatus.ACCEPTED);
 	}
 
