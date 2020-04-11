@@ -1,7 +1,6 @@
 package com.asisge.apirest.model.dto.terceros;
 
 import java.io.Serializable;
-import java.util.List;
 
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
@@ -9,15 +8,13 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
-import com.asisge.apirest.model.entity.terceros.Role;
-
 import lombok.Data;
 
-public @Data class UsuarioDto implements Serializable {
+@Data
+public class CuentaDto implements Serializable {
 
-	@NotBlank
-	@Size(max = 20)
-	private String identificacion;
+	@NotNull
+	private Long idUsuario;
 
 	@NotBlank
 	@Size(max = 80)
@@ -39,21 +36,9 @@ public @Data class UsuarioDto implements Serializable {
 	@Size(max = 75)
 	private String correo;
 
-	@NotBlank	
-	private String contrasena;
-	private String matchContrasena;
-
-	@NotNull
-	private Boolean estado;
-
-	@NotNull
-	private Long tipoDocumento;
-	
-	private List<Role> roles;
-
 	/**
 	 * 
 	 */
-	private static final long serialVersionUID = -1L;
+	private static final long serialVersionUID = 1L;
 
 }

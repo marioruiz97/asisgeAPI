@@ -17,9 +17,14 @@ INSERT INTO usuario(apellido1, apellido2, contrasena, correo, estado, identifica
 
 INSERT INTO roles(nombre_role) VALUES ('ROLE_ADMIN');
 INSERT INTO roles(nombre_role) VALUES ('ROLE_ASESOR');
+INSERT INTO roles(nombre_role) VALUES ('ROLE_CLIENTE');
 
 INSERT INTO usuario_roles(usuario_id, role_id) VALUES (1,1);
 INSERT INTO usuario_roles(usuario_id, role_id) VALUES (1,2);
+
+INSERT INTO usuario_roles(usuario_id, role_id) VALUES (2,3);
+INSERT INTO usuario_roles(usuario_id, role_id) VALUES (3,2);
+INSERT INTO usuario_roles(usuario_id, role_id) VALUES (4,2);
 
 
 INSERT INTO usuario_cliente(id_usuario, id_cliente) VALUES (1, 1);

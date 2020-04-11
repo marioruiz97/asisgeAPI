@@ -4,6 +4,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
+import javax.annotation.PostConstruct;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -11,6 +13,7 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -29,6 +32,14 @@ public class UsuarioServiceImpl implements IUsuarioService, UserDetailsService {
 
 	@Autowired
 	private IAsesorService asesorService;
+	
+	private BCryptPasswordEncoder encoder;
+	
+	@PostConstruct
+	private void setEncoder() {
+		encoder = new BCryptPasswordEncoder();
+	}
+	
 
 	@Override
 	public Usuario saveUsuario(Usuario usuario) {
@@ -61,16 +72,24 @@ public class UsuarioServiceImpl implements IUsuarioService, UserDetailsService {
 
 	@Override
 	public Usuario buildEntity(UsuarioDto dto) {
-		TipoDocumento documento = new TipoDocumento();
+		TipoDocumento documento = new TipoDocumento();		
 		documento.setId(dto.getTipoDocumento());
+		String password = dto.getContrasena().length() < 15 ? encoder.encode(dto.getContrasena()) : dto.getContrasena();
 		return new Usuario(null, dto.getIdentificacion(), dto.getNombre(), dto.getApellido1(), dto.getApellido2(),
-				dto.getTelefono(), dto.getCorreo(), dto.getContrasena(), dto.getEstado(), documento, dto.getRoles());
+				dto.getTelefono(), dto.getCorreo(), password, dto.getEstado(), documento, dto.getRoles());
 	}
 
 	@Override
 	public Usuario changeEstadoUsuario(Long idUsuario, Boolean estado) {
 		repository.updateEstadoUsuario(idUsuario, estado);
 		return repository.findById(idUsuario).orElse(null);
+	}
+	
+
+	@Override
+	public void changeContrasena(Usuario u) {
+		u.setContrasena(encoder.encode(u.getContrasena()));
+		repository.changeContrasenaUsuario(u.getIdUsuario(), u.getContrasena());
 	}
 
 	/**

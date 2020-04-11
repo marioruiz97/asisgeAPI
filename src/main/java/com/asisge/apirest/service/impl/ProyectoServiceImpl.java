@@ -94,7 +94,7 @@ public class ProyectoServiceImpl implements IProyectoService, IEstadoProyectoSer
 
 	@Override
 	public Proyecto buildEntity(ProyectoDto dto) {
-		Cliente cliente = new Cliente(dto.getClienteProyecto());
+		Cliente cliente = new Cliente(dto.getCliente());
 		EstadoProyecto estado = new EstadoProyecto();
 		estado.setId(dto.getEstadoProyecto());
 		return new Proyecto(null, dto.getNombreProyecto(), dto.getDescripcionGeneral(), dto.getFechaCierreProyecto(),

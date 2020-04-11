@@ -21,5 +21,7 @@ public interface IUsuarioService {
 	Usuario buildEntity(UsuarioDto dto);
 
 	Usuario changeEstadoUsuario(Long idUsuario, Boolean estado);
+	
+	void changeContrasena(Usuario usuario);
 
 }

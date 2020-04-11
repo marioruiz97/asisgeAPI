@@ -3,7 +3,6 @@ package com.asisge.apirest.model.entity.terceros;
 import java.io.Serializable;
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -75,7 +74,7 @@ public @Data class Usuario extends AuditModel<String> implements Serializable {
 	@JoinColumn(name = "id_tipo_documento", nullable = false)
 	private TipoDocumento tipoDocumento;
 	
-	@ManyToMany(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(joinColumns = @JoinColumn(name = "usuario_id"),
 	inverseJoinColumns = @JoinColumn(name = "role_id"),
 	uniqueConstraints = {@UniqueConstraint(columnNames = {"usuario_id", "role_id"}) }
