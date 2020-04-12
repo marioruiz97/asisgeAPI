@@ -57,7 +57,7 @@ public class ProyectoController extends BaseController {
 		Proyecto newProject = service.buildEntity(dto);
 		newProject = service.saveProyecto(newProject);
 		String descripcion = String.format(RESULT_CREATED, newProject.toString(), newProject.getIdProyecto());
-		auditManager.saveAudit("correo@correo.com", ACTION_CREATE, descripcion);
+		auditManager.saveAudit(newProject.getCreatedBy(), ACTION_CREATE, descripcion);
 		return new ResponseEntity<>(buildSuccess(descripcion, newProject, ""), HttpStatus.CREATED);
 	}
 
@@ -72,7 +72,7 @@ public class ProyectoController extends BaseController {
 		project.setIdProyecto(id);
 		project = service.saveProyecto(project);
 		String descripcion = String.format(RESULT_UPDATED, project.toString(), id);
-		auditManager.saveAudit("correo@correo.com", ACTION_UPDATE, descripcion);
+		auditManager.saveAudit(project.getLastModifiedBy(), ACTION_UPDATE, descripcion);
 		return new ResponseEntity<>(buildSuccess(descripcion, project, ""), HttpStatus.CREATED);
 	}
 
@@ -81,7 +81,7 @@ public class ProyectoController extends BaseController {
 		try {
 			service.deleteProyecto(id);
 			ApiResponse response = buildDeleted("Proyecto", id.toString());
-			// TODO agregar auditoria de que se eliminó proyecto
+			auditManager.saveAudit(ACTION_DELETE, response.getMessage());
 			return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
 		} catch (Exception e) {
 			String message = String.format(Messages.getString("message.error.delete.record"), "Proyecto",

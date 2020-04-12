@@ -45,9 +45,9 @@ public class MiembrosController extends BaseController {
 	}
 
 	@GetMapping(ProyectosPath.PROYECTO_MIEMBROS)
-	public ResponseEntity<ApiResponse> findMiembros(@PathVariable(ID_PROYECTO) Long id, @RequestParam Optional<Boolean> rol) {
+	public ResponseEntity<ApiResponse> findMiembros(@PathVariable(ID_PROYECTO) Long id, @RequestParam Optional<Boolean> withRol) {
 		List<?> listado;
-		if (rol.orElse(false)) {
+		if (withRol.orElse(false)) {
 			listado = service.findMiembrosProyecto(id).stream().map(member -> {
 				member.setProyecto(null);
 				return member;

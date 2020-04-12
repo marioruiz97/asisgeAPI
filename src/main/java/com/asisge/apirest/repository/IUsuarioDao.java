@@ -1,5 +1,7 @@
 package com.asisge.apirest.repository;
 
+import java.util.Optional;
+
 import javax.transaction.Transactional;
 
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -15,4 +17,11 @@ public interface IUsuarioDao extends JpaRepository<Usuario, Long> {
 	@Modifying(flushAutomatically = true)
 	@Query("UPDATE Usuario u SET u.estado = :estado WHERE u.id = :id")
 	void updateEstadoUsuario(@Param("id") Long id, @Param("estado") Boolean estado);
+	
+	@Transactional
+	@Modifying(flushAutomatically = true)
+	@Query("UPDATE Usuario u SET u.contrasena = :contrasena WHERE u.id = :id")
+	void changeContrasenaUsuario(@Param("id") Long id, @Param("contrasena") String contrasena);
+	
+	Optional<Usuario> findByCorreo(String correo);
 }

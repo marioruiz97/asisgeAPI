@@ -7,6 +7,7 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -33,6 +34,7 @@ public class UsuarioController extends BaseController {
 	@Autowired
 	private IUsuarioService service;
 
+	@Secured("ROLE_ADMIN")
 	@GetMapping(TercerosPath.USUARIOS)
 	public ResponseEntity<ApiResponse> findAll() {
 		List<Usuario> usuarios = service.findAllUsuarios();
@@ -58,7 +60,7 @@ public class UsuarioController extends BaseController {
 		Usuario newUsuario = service.buildEntity(dto);
 		newUsuario = service.saveUsuario(newUsuario);
 		String descripcion = String.format(RESULT_CREATED, newUsuario.toString(), newUsuario.getIdUsuario());
-		auditManager.saveAudit("correo@correo.com", ACTION_CREATE, descripcion);
+		auditManager.saveAudit(newUsuario.getCreatedBy(), ACTION_CREATE, descripcion);
 		return new ResponseEntity<>(buildSuccess(descripcion, newUsuario, ""), HttpStatus.CREATED);
 	}
 
@@ -73,17 +75,17 @@ public class UsuarioController extends BaseController {
 		usuario.setIdUsuario(id);
 		usuario = service.saveUsuario(usuario);
 		String descripcion = String.format(RESULT_UPDATED, usuario.toString(), id);
-		auditManager.saveAudit("correo@correo.com", ACTION_UPDATE, descripcion);
+		auditManager.saveAudit(usuario.getLastModifiedBy(), ACTION_UPDATE, descripcion);
 		return new ResponseEntity<>(buildSuccess(descripcion, usuario, ""), HttpStatus.CREATED);
 	}
 
 	@DeleteMapping(TercerosPath.USUARIO_ID)
-	public ResponseEntity<ApiResponse> delete(@PathVariable("idUsuario") Long id, @RequestParam String email) {
+	public ResponseEntity<ApiResponse> delete(@PathVariable("idUsuario") Long id) {
 		try {
 			service.deleteUsuario(id);
 			ApiResponse response = buildDeleted("Usuario", id.toString());
 			String descripcion = response.getMessage();
-			auditManager.saveAudit(email, ACTION_DELETE, descripcion);
+			auditManager.saveAudit(ACTION_DELETE, descripcion);
 			return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
 		} catch (Exception e) {
 			return cambioEstadoUsuario(id, false);
@@ -113,7 +115,7 @@ public class UsuarioController extends BaseController {
 				// mensaje si se desactiva
 				mensaje = Messages.getString("massage.result.changestate.deactivate");
 			}
-			auditManager.saveAudit("prueba@correo.com", CHANGE_STATUS, String.format(mensaje, usuario.toString()));
+			auditManager.saveAudit(CHANGE_STATUS, String.format(mensaje, usuario.toString()));
 		}
 		return new ResponseEntity<>(buildSuccess(mensaje, usuario, usuario.toString()), HttpStatus.ACCEPTED);
 	}

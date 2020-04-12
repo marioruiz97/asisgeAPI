@@ -126,6 +126,7 @@ public class AsesoresClientesController extends BaseController {
 		}).collect(Collectors.toList());
 		newList.forEach(uc -> service.saveUsuarioCliente(uc));
 		String message = newList.isEmpty() ? Messages.getString("message.result.delte-user-clients") : Messages.getString("message.result.multiple-client");
+		auditManager.saveAudit(ACTION_UPDATE, message);
 		return new ResponseEntity<>(buildSuccess(message, newList, ""), HttpStatus.CREATED);
 	}
 	
@@ -138,6 +139,7 @@ public class AsesoresClientesController extends BaseController {
 		}).collect(Collectors.toList());
 		newList.forEach(uc -> service.saveUsuarioCliente(uc));
 		String message = Messages.getString("message.result.updated-client-user");
+		auditManager.saveAudit(ACTION_UPDATE, message);
 		return new ResponseEntity<>(buildSuccess(message, newList, ""), HttpStatus.CREATED);
 	}
 

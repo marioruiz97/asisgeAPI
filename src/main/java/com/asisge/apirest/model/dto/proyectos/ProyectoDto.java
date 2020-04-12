@@ -28,7 +28,7 @@ public @Data class ProyectoDto implements Serializable {
 	Long estadoProyecto;
 
 	@NotNull
-	Long clienteProyecto;
+	Long cliente;
 
 	/**
 	 * 

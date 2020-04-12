@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
@@ -56,9 +55,9 @@ public class PlanTrabajoController extends BaseController {
 			return validateDto(result);
 		PlanDeTrabajo newPlan = service.buildPlanEntity(dto);
 		newPlan = service.savePlan(newPlan);
-		return new ResponseEntity<>(
-				buildSuccess(RESULT_CREATED, newPlan, newPlan.toString(), newPlan.getIdPlanDeTrabajo().toString()),
-				HttpStatus.CREATED);
+		String descripcion = String.format(RESULT_CREATED, newPlan.toString(), newPlan.getIdPlanDeTrabajo());
+		auditManager.saveAudit(newPlan.getCreatedBy(), ACTION_CREATE, descripcion);
+		return new ResponseEntity<>(buildSuccess(descripcion, newPlan, ""), HttpStatus.CREATED);
 	}
 
 	@PatchMapping(ProyectosPath.PLAN_TRABAJO_ID)
@@ -75,18 +74,18 @@ public class PlanTrabajoController extends BaseController {
 		plan.setIdPlanDeTrabajo(id);
 		plan.setEtapas(old.getEtapas());
 		plan = service.savePlan(plan);
-		return new ResponseEntity<>(
-				buildSuccess(RESULT_UPDATED, plan, plan.toString(), plan.getIdPlanDeTrabajo().toString()),
-				HttpStatus.CREATED);
+		String descripcion = String.format(RESULT_UPDATED, plan.toString(), plan.getIdPlanDeTrabajo());
+		auditManager.saveAudit(plan.getLastModifiedBy(), ACTION_UPDATE, descripcion);
+		return new ResponseEntity<>(buildSuccess(descripcion, plan, ""), HttpStatus.CREATED);
 	}
 
 	@DeleteMapping(ProyectosPath.PLAN_TRABAJO_ID)
-	public ResponseEntity<ApiResponse> delete(@PathVariable(ID_PLAN) Long id, @RequestParam String email) {
+	public ResponseEntity<ApiResponse> delete(@PathVariable(ID_PLAN) Long id) {
 		try {
 			service.deletePlan(id);
 			ApiResponse response = buildDeleted("Plan De trabajo", id.toString());
 			String descripcion = response.getMessage();
-			auditManager.saveAudit(email, ACTION_DELETE, descripcion);
+			auditManager.saveAudit(ACTION_DELETE, descripcion);
 			return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
 		} catch (Exception e) {
 			String message = String.format(Messages.getString("message.error.delete.record"), "Plan de trabajo",

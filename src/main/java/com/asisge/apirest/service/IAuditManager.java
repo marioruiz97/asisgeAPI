@@ -7,6 +7,7 @@ import com.asisge.apirest.model.entity.audit.Auditoria;
 public interface IAuditManager {
 
 	void saveAudit(String email, String accion, String descripcion);
+	void saveAudit(String accion, String descripcion);
 
 	List<Auditoria> getAudits();
 }
