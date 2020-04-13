@@ -16,6 +16,20 @@ package com.asisge.apirest.config.paths;
  * @author Mario Ruiz
  */
 public final class Paths {
+	
+	/**
+	 * Rutas para: Autenticación - Recuperar clave
+	 * 
+	 * @author Mario Ruiz
+	 */
+	public static final class AuthPath {
+		public static final String ME = "me";
+		public static final String ME_EMAIL = "me/{email}";
+		public static final String CAMBIO_CONTRASENA = "cambio-contrasena/{usuario}";
+		public static final String RECUPERAR = ""; // TODO falta esta funcionalidad
+		
+		private AuthPath() {}
+	}
 
 	/**
 	 * Rutas para: - Clientes - Usuarios

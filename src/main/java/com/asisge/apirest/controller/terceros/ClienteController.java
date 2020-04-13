@@ -11,6 +11,7 @@ import org.hibernate.validator.constraints.UniqueElements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,7 +20,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
 
 import com.asisge.apirest.config.paths.Paths.TercerosPath;
 import com.asisge.apirest.config.response.ApiResponse;
@@ -54,7 +54,7 @@ public class ClienteController extends BaseController {
 		if (request.isUserInRole("ROLE_ADMIN")) {
 			clientes = service.findAllClientes();
 		} else {
-			Usuario u = userService.findUsuarioByCorreo(getCurrentEmail()).orElse(null);
+			Usuario u = userService.findUsuarioByCorreo(getCurrentEmail());
 			clientes = userClientService.findClientesById(u != null ? u.getIdUsuario() : 0);
 		}
 		if (clientes.isEmpty())
@@ -71,6 +71,7 @@ public class ClienteController extends BaseController {
 		return new ResponseEntity<>(buildOk(cliente), HttpStatus.OK);
 	}
 
+	@Secured({"ROLE_ADMIN", "ROLE_ASESOR"})
 	@PostMapping(TercerosPath.CLIENTES)
 	public ResponseEntity<ApiResponse> create(@Valid @RequestBody ClienteDto dto, BindingResult result) {
 		if (result.hasErrors()) {
@@ -89,6 +90,7 @@ public class ClienteController extends BaseController {
 		return new ResponseEntity<>(buildSuccess(descripcion, newCliente, ""), HttpStatus.CREATED);
 	}
 
+	@Secured({"ROLE_ADMIN", "ROLE_ASESOR"})
 	@PatchMapping(TercerosPath.CLIENTE_ID)
 	public ResponseEntity<ApiResponse> update(@Valid @RequestBody ClienteDto dto, BindingResult result,
 			@PathVariable(ID_CLIENTE) Long id) {
@@ -113,18 +115,14 @@ public class ClienteController extends BaseController {
 		return new ResponseEntity<>(buildSuccess(descripcion, cliente, ""), HttpStatus.CREATED);
 	}
 
+	@Secured({"ROLE_ADMIN", "ROLE_ASESOR"})
 	@DeleteMapping(TercerosPath.CLIENTE_ID)
 	public ResponseEntity<ApiResponse> delete(@PathVariable(ID_CLIENTE) Long id) {
-		try {
 			service.deleteCliente(id);
 			ApiResponse response = buildDeleted("Cliente", id.toString());
 			String descripcion = response.getMessage();
 			auditManager.saveAudit(ACTION_DELETE, descripcion);
-			return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
-		} catch (Exception e) {
-			String message = String.format(Messages.getString("message.error.delete.record"), "Cliente", id.toString());
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, message, e);
-		}
+			return new ResponseEntity<>(response, HttpStatus.ACCEPTED);		
 	}
 
 	/**

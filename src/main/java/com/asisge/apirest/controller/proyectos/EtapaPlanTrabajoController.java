@@ -7,6 +7,7 @@ import javax.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,11 +16,9 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
 
 import com.asisge.apirest.config.paths.Paths.ProyectosPath;
 import com.asisge.apirest.config.response.ApiResponse;
-import com.asisge.apirest.config.utils.Messages;
 import com.asisge.apirest.controller.BaseController;
 import com.asisge.apirest.model.dto.proyectos.EtapaDto;
 import com.asisge.apirest.model.entity.proyectos.EtapaPDT;
@@ -49,6 +48,7 @@ public class EtapaPlanTrabajoController extends BaseController {
 		return new ResponseEntity<>(buildOk(etapa), HttpStatus.OK);
 	}
 
+	@Secured({"ROLE_ADMIN", "ROLE_ASESOR"})
 	@PostMapping(ProyectosPath.ETAPA_PLAN)
 	public ResponseEntity<ApiResponse> create(@Valid @RequestBody EtapaDto dto, BindingResult result) {
 		if (result.hasErrors())
@@ -60,6 +60,7 @@ public class EtapaPlanTrabajoController extends BaseController {
 		return new ResponseEntity<>(buildSuccess(descripcion, etapa, ""), HttpStatus.CREATED);
 	}
 
+	@Secured({"ROLE_ADMIN", "ROLE_ASESOR"})
 	@PatchMapping(ProyectosPath.ETAPA_PLAN_ID)
 	public ResponseEntity<ApiResponse> update(@Valid @RequestBody EtapaDto dto, BindingResult result,
 			@PathVariable(ID_ETAPA) Long idEtapa) {
@@ -76,19 +77,14 @@ public class EtapaPlanTrabajoController extends BaseController {
 		return new ResponseEntity<>(buildSuccess(descripcion, etapa, ""), HttpStatus.CREATED);
 	}
 
+	@Secured({"ROLE_ADMIN", "ROLE_ASESOR"})
 	@DeleteMapping(ProyectosPath.ETAPA_PLAN_ID)
-	public ResponseEntity<ApiResponse> delete(@PathVariable(ID_ETAPA) Long id) {
-		try {
+	public ResponseEntity<ApiResponse> delete(@PathVariable(ID_ETAPA) Long id) {		
 			service.deleteEtapa(id);
 			ApiResponse response = buildDeleted("Etapa Plan De trabajo", id.toString());
 			String descripcion = response.getMessage();
 			auditManager.saveAudit(ACTION_DELETE, descripcion);
-			return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
-		} catch (Exception e) {
-			String message = String.format(Messages.getString("message.error.delete.record"), "Etapa Plan",
-					id.toString());
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, message, e);
-		}
+			return new ResponseEntity<>(response, HttpStatus.ACCEPTED);		
 	}
 
 }

@@ -98,7 +98,7 @@ public class ProyectoServiceImpl implements IProyectoService, IEstadoProyectoSer
 		EstadoProyecto estado = new EstadoProyecto();
 		estado.setId(dto.getEstadoProyecto());
 		return new Proyecto(null, dto.getNombreProyecto(), dto.getDescripcionGeneral(), dto.getFechaCierreProyecto(),
-				estado, null, cliente);
+				estado, dto.getMiembros(), cliente);
 	}
 
 }

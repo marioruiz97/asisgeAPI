@@ -60,6 +60,7 @@ public class ApiRestExceptionHandler extends ResponseEntityExceptionHandler {
 		return handleExceptionInternal(ex, error, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
 	}
 
+	// TODO verificar si se debe eliminar este handler
 	@ExceptionHandler(value = {NullPointerException.class })
 	protected ResponseEntity<Object> handleGeneralExceptions(RuntimeException ex, WebRequest request) {
 		ApiError error = new ApiError();

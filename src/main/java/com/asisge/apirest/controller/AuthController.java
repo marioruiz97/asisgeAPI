@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+import com.asisge.apirest.config.paths.Paths.AuthPath;
 import com.asisge.apirest.config.response.ApiResponse;
 import com.asisge.apirest.config.utils.Messages;
 import com.asisge.apirest.model.dto.terceros.CuentaDto;
@@ -23,22 +24,22 @@ import com.asisge.apirest.model.entity.terceros.Usuario;
 import com.asisge.apirest.service.IUsuarioService;
 
 @RestController
-@RequestMapping("/auth")
+@RequestMapping("/auth/")
 public class AuthController extends BaseController {
 
 	@Autowired
 	private IUsuarioService service;
 
-	@GetMapping("/me/{email}")
+	@GetMapping(AuthPath.ME_EMAIL)
 	public ResponseEntity<ApiResponse> findById(@PathVariable("email") String email) {
-		Usuario usuario = service.findUsuarioByCorreo(email).orElse(null);
+		Usuario usuario = service.findUsuarioByCorreo(email);
 		if (usuario == null) {
 			throw new ResponseStatusException(HttpStatus.FORBIDDEN);
 		}
 		return new ResponseEntity<>(buildOk(usuario), HttpStatus.OK);
 	}
 
-	@PostMapping("/me")
+	@PostMapping(AuthPath.ME)
 	public ResponseEntity<ApiResponse> saveMyInfo(@Valid @RequestBody CuentaDto dto, BindingResult result) {
 		if (result.hasErrors()) {
 			return validateDto(result);
@@ -55,7 +56,7 @@ public class AuthController extends BaseController {
 		return new ResponseEntity<>(buildSuccess(descripcion, user, ""), HttpStatus.CREATED);
 	}
 
-	@PostMapping("/cambio-contrasena/{usuario}")
+	@PostMapping(AuthPath.CAMBIO_CONTRASENA)
 	public ResponseEntity<ApiResponse> changePassword(@RequestBody ModelMap model, @NotNull @PathVariable("usuario") Long id) {
 		try {
 			Usuario user = service.findUsuarioById(id);

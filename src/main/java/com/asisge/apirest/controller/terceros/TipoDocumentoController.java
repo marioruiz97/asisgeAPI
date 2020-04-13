@@ -7,6 +7,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -50,6 +51,7 @@ public class TipoDocumentoController extends BaseController {
 		return new ResponseEntity<>(buildOk(tipoDocumento), HttpStatus.OK);
 	}
 
+	@Secured({"ROLE_ADMIN"})
 	@PostMapping(MaestrosPath.TIPO_DOCUMENTOS)
 	public ResponseEntity<ApiResponse> create(@RequestBody ModelMap model) {
 		TipoDocumento newTipo = new TipoDocumento();
@@ -60,6 +62,7 @@ public class TipoDocumentoController extends BaseController {
 		return new ResponseEntity<>(buildSuccess(descripcion, newTipo, ""), HttpStatus.CREATED);
 	}
 
+	@Secured({"ROLE_ADMIN"})
 	@PatchMapping(MaestrosPath.TIPO_DOCUMENTO_ID)
 	public ResponseEntity<ApiResponse> update(@RequestBody ModelMap model, @PathVariable("idTipo") Long id) {
 		TipoDocumento tipo = repository.findById(id).orElse(null);
@@ -74,6 +77,7 @@ public class TipoDocumentoController extends BaseController {
 		return new ResponseEntity<>(buildSuccess(descripcion, tipo, ""), HttpStatus.CREATED);
 	}
 
+	@Secured({"ROLE_ADMIN"})
 	@DeleteMapping(MaestrosPath.TIPO_DOCUMENTO_ID)
 	public ResponseEntity<ApiResponse> delete(@PathVariable("idTipo") Long id) {
 		try {			 

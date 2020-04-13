@@ -51,6 +51,7 @@ public class UsuarioController extends BaseController {
 		return new ResponseEntity<>(buildOk(usuario), HttpStatus.OK);
 	}
 
+	@Secured({"ROLE_ADMIN", "ROLE_ASESOR"})
 	@PostMapping(TercerosPath.USUARIOS)
 	public ResponseEntity<ApiResponse> create(@Valid @RequestBody UsuarioDto dto, BindingResult result) {
 		if (result.hasErrors()) {
@@ -63,36 +64,36 @@ public class UsuarioController extends BaseController {
 		return new ResponseEntity<>(buildSuccess(descripcion, newUsuario, ""), HttpStatus.CREATED);
 	}
 
+	@Secured("ROLE_ADMIN")
 	@PatchMapping(TercerosPath.USUARIO_ID)
 	public ResponseEntity<ApiResponse> update(@Valid @RequestBody UsuarioDto dto, BindingResult result, @PathVariable("idUsuario") Long id) {
 		if (result.hasErrors()) {
 			return validateDto(result);
-		} else if (service.findUsuarioById(id) == null) {
+		}
+		Usuario old = service.findUsuarioById(id);
+		if (old == null) {
 			return respondNotFound(id.toString());
 		}
 		Usuario usuario = service.buildEntity(dto);
 		usuario.setIdUsuario(id);
+		usuario.setVerificado(old.getVerificado());
 		usuario = service.saveUsuario(usuario);
 		String descripcion = String.format(RESULT_UPDATED, usuario.toString(), id);
 		auditManager.saveAudit(usuario.getLastModifiedBy(), ACTION_UPDATE, descripcion);
 		return new ResponseEntity<>(buildSuccess(descripcion, usuario, ""), HttpStatus.CREATED);
 	}
 
+	@Secured("ROLE_ADMIN")
 	@DeleteMapping(TercerosPath.USUARIO_ID)
-	public ResponseEntity<ApiResponse> delete(@PathVariable("idUsuario") Long id) {
-		try {
+	public ResponseEntity<ApiResponse> delete(@PathVariable("idUsuario") Long id) {		
 			service.deleteUsuario(id);
 			ApiResponse response = buildDeleted("Usuario", id.toString());
 			String descripcion = response.getMessage();
 			auditManager.saveAudit(ACTION_DELETE, descripcion);
-			return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
-		} catch (Exception e) {
-			return cambioEstadoUsuario(id, false);
-			// String message = String.format(Messages.getString("message.error.delete.record"), "Usuario", id.toString())
-			// throw new ResponseStatusException(HttpStatus.BAD_REQUEST, message, e)
-		}
+			return new ResponseEntity<>(response, HttpStatus.ACCEPTED);		
 	}
 
+	@Secured({"ROLE_ADMIN", "ROLE_ASESOR"})
 	@GetMapping(TercerosPath.CAMBIO_ESTADO)
 	public ResponseEntity<ApiResponse> cambioEstadoUsuario(@PathVariable("idUsuario") Long id, @RequestParam @Valid Boolean estado) {
 		Usuario usuario = service.findUsuarioById(id);

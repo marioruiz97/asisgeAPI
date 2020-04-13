@@ -78,9 +78,7 @@ public class MiembrosServiceImpl implements IMiembrosService {
 
 	@Override
 	public void deleteMiembro(Long idProyecto, Long idUsuario) {
-		int result = repository.deleteMiembro(idProyecto, idUsuario);
-		if (result != 1)
-			throw new RuntimeException();
+		repository.deleteMiembro(idProyecto, idUsuario);		
 	}
 
 	@Override

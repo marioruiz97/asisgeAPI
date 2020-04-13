@@ -1,7 +1,6 @@
 package com.asisge.apirest.service.impl;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import javax.annotation.PostConstruct;
@@ -60,8 +59,8 @@ public class UsuarioServiceImpl implements IUsuarioService, UserDetailsService {
 	
 	@Override
 	@Transactional(readOnly = true)
-	public Optional<Usuario> findUsuarioByCorreo(String correo) {
-		return repository.findByCorreo(correo);		
+	public Usuario findUsuarioByCorreo(String correo) {
+		return repository.findByCorreo(correo).orElse(null);		
 	}
 
 	@Override
@@ -74,9 +73,10 @@ public class UsuarioServiceImpl implements IUsuarioService, UserDetailsService {
 	public Usuario buildEntity(UsuarioDto dto) {
 		TipoDocumento documento = new TipoDocumento();		
 		documento.setId(dto.getTipoDocumento());
+		boolean verificado = false;
 		String password = dto.getContrasena().length() < 15 ? encoder.encode(dto.getContrasena()) : dto.getContrasena();
 		return new Usuario(null, dto.getIdentificacion(), dto.getNombre(), dto.getApellido1(), dto.getApellido2(),
-				dto.getTelefono(), dto.getCorreo(), password, dto.getEstado(), documento, dto.getRoles());
+				dto.getTelefono(), dto.getCorreo(), password, dto.getEstado(), verificado, documento, dto.getRoles());
 	}
 
 	@Override
@@ -96,7 +96,6 @@ public class UsuarioServiceImpl implements IUsuarioService, UserDetailsService {
 	 * implementacion de UserDetailService de Sring Security, se puede abstraer en
 	 * otra clase despues
 	 */
-
 	@Override
 	@Transactional(readOnly = true)
 	public UserDetails loadUserByUsername(String username) {
@@ -109,7 +108,7 @@ public class UsuarioServiceImpl implements IUsuarioService, UserDetailsService {
 		List<GrantedAuthority> authorities = usuario.getRoles().stream()
 				.map(rol-> new SimpleGrantedAuthority(rol.getNombreRole()))
 				.collect(Collectors.toList());
-		return new User(username, usuario.getContrasena(), usuario.getEstado(), true, true, true, authorities);
+		return new User(username, usuario.getContrasena(), usuario.getEstado(), true, true, usuario.getVerificado(), authorities);
 	}
 
 	

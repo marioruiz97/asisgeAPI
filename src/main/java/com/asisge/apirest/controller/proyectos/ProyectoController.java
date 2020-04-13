@@ -21,7 +21,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.asisge.apirest.config.paths.Paths.ProyectosPath;
 import com.asisge.apirest.config.response.ApiResponse;
-import com.asisge.apirest.config.utils.Messages;
 import com.asisge.apirest.controller.BaseController;
 import com.asisge.apirest.model.dto.proyectos.ProyectoDto;
 import com.asisge.apirest.model.entity.proyectos.Proyecto;
@@ -79,6 +78,7 @@ public class ProyectoController extends BaseController {
 		return new ResponseEntity<>(buildSuccess(descripcion, newProject, ""), HttpStatus.CREATED);
 	}
 
+	// TODO verificar si no hay que quitar este metodo
 	@Secured({"ROLE_ADMIN", "ROLE_ASESOR"})
 	@PatchMapping(ProyectosPath.PROYECTO_ID)
 	public ResponseEntity<ApiResponse> update(@Valid @RequestBody ProyectoDto dto, BindingResult result, @PathVariable(ID_PROYECTO) Long id) {
@@ -97,17 +97,11 @@ public class ProyectoController extends BaseController {
 
 	@Secured({"ROLE_ADMIN"})
 	@DeleteMapping(ProyectosPath.PROYECTO_ID)
-	public ResponseEntity<ApiResponse> delete(@PathVariable(ID_PROYECTO) Long id) {
-		try {
+	public ResponseEntity<ApiResponse> delete(@PathVariable(ID_PROYECTO) Long id) {		
 			service.deleteProyecto(id);
 			ApiResponse response = buildDeleted("Proyecto", id.toString());
 			auditManager.saveAudit(ACTION_DELETE, response.getMessage());
 			return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
-		} catch (Exception e) {
-			String message = String.format(Messages.getString("message.error.delete.record"), "Proyecto",
-					id.toString());
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, message, e);
-		}
 	}
 
 }
