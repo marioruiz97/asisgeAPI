@@ -43,7 +43,7 @@ public class TokenInfo implements TokenEnhancer {
 		}
 
 		info.put(EMAIL_KEY, user.getCorreo());
-		info.put(USER_NAME_KEY, user.getNombre());
+		info.put(USER_NAME_KEY, user.getNombre().concat(" ").concat(user.getApellido1()));
 		info.put(ENABLED_KEY, user.getEstado());
 		info.put(USER_ID_KEY, user.getIdUsuario());
 		info.put(ROLES_KEY, authentication.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()));

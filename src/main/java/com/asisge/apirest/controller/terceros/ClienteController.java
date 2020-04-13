@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.hibernate.validator.constraints.UniqueElements;
@@ -28,7 +29,10 @@ import com.asisge.apirest.model.dto.terceros.ClienteDto;
 import com.asisge.apirest.model.dto.terceros.ContactoDto;
 import com.asisge.apirest.model.entity.terceros.Cliente;
 import com.asisge.apirest.model.entity.terceros.ContactoCliente;
+import com.asisge.apirest.model.entity.terceros.Usuario;
+import com.asisge.apirest.service.IAsesorService;
 import com.asisge.apirest.service.IClienteService;
+import com.asisge.apirest.service.IUsuarioService;
 
 @RestController
 public class ClienteController extends BaseController {
@@ -38,9 +42,21 @@ public class ClienteController extends BaseController {
 	@Autowired
 	private IClienteService service;
 
+	@Autowired
+	private IAsesorService userClientService;
+
+	@Autowired
+	private IUsuarioService userService;
+
 	@GetMapping(TercerosPath.CLIENTES)
-	public ResponseEntity<ApiResponse> findAll() {
-		List<Cliente> clientes = service.findAllClientes();
+	public ResponseEntity<ApiResponse> findAll(HttpServletRequest request) {
+		List<Cliente> clientes;
+		if (request.isUserInRole("ROLE_ADMIN")) {
+			clientes = service.findAllClientes();
+		} else {
+			Usuario u = userService.findUsuarioByCorreo(getCurrentEmail()).orElse(null);
+			clientes = userClientService.findClientesById(u != null ? u.getIdUsuario() : 0);
+		}
 		if (clientes.isEmpty())
 			return respondNotFound(null);
 		return new ResponseEntity<>(buildOk(clientes), HttpStatus.OK);
@@ -112,7 +128,8 @@ public class ClienteController extends BaseController {
 	}
 
 	/**
-	 * @unused los metodos de contactos no se estan usando. los metodos de aqui hacia abajo
+	 * @unused los metodos de contactos no se estan usando. los metodos de aqui
+	 *         hacia abajo
 	 * @param id
 	 * @return
 	 */

@@ -48,6 +48,12 @@ public class MiembrosServiceImpl implements IMiembrosService {
 	public List<Proyecto> findProyectosByUsuario(Long idUsuario) {
 		return repository.findProyectosUsuario(idUsuario);
 	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public List<Proyecto> findProyectosByEmail(String email) {
+		return repository.findProyectosByEmail(email);
+	}
 
 	@Override
 	@Transactional(readOnly = true)
@@ -76,5 +82,12 @@ public class MiembrosServiceImpl implements IMiembrosService {
 		if (result != 1)
 			throw new RuntimeException();
 	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public boolean existsMiembroInProyecto(Long idProyecto, String email) {		
+		return repository.existsEmailInProyecto(idProyecto, email) > 0;
+	}
+	
 
 }

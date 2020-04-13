@@ -33,8 +33,7 @@ public class UsuarioController extends BaseController {
 
 	@Autowired
 	private IUsuarioService service;
-
-	@Secured("ROLE_ADMIN")
+	
 	@GetMapping(TercerosPath.USUARIOS)
 	public ResponseEntity<ApiResponse> findAll() {
 		List<Usuario> usuarios = service.findAllUsuarios();

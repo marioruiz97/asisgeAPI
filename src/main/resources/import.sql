@@ -55,7 +55,7 @@ INSERT INTO estado_proyecto(descripcion, id_estado_anterior, nombre_estado) VALU
 INSERT INTO estado_proyecto(descripcion, id_estado_anterior, nombre_estado) VALUES ( 'Estado de un proyecto cuando es pospuesto', 1, 'Pospuesto');
 
 
-INSERT INTO proyecto( descripcion_general, fecha_cierre_proyecto, nombre_proyecto, id_cliente, estado_proyecto_id) VALUES ( 'Proyecto de prueba', '2020-04-01T14:30:00.000-0500', 'test project', 1, 1);
+INSERT INTO proyecto( descripcion_general, fecha_cierre_proyecto, nombre_proyecto, id_cliente, estado_proyecto_id, created_date) VALUES ( 'Proyecto de prueba', '2020-04-01T14:30:00.000-0500', 'test project', 1, 1, '2020-01-01T14:30:00.000-0500');
 INSERT INTO miembro_proyecto(rol_proyecto, id_proyecto, id_usuario) VALUES ('admin', 1, 1);
 INSERT INTO miembro_proyecto(rol_proyecto, id_proyecto, id_usuario) VALUES ('encargado cliente', 1, 2);
 INSERT INTO miembro_proyecto(rol_proyecto, id_proyecto, id_usuario) VALUES ('asesor', 1, 3);
