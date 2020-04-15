@@ -4,16 +4,16 @@ INSERT INTO tipo_documento(nombre_tipo_documento) VALUES ('Libreta Militar');
 INSERT INTO tipo_documento(nombre_tipo_documento) VALUES ('Cédula de Extranjería');
 
 INSERT INTO cliente(identificacion, nombre_comercial, razon_social, id_tipo_documento) VALUES ( '900876765', 'Asisge', 'Asistencia Gerencial Estrategica SAS', 2);
-INSERT INTO usuario(apellido1, apellido2, contrasena, correo, estado, identificacion, nombre, telefono, id_tipo_documento) VALUES ('Ruiz', 'Bedoya', '$2a$10$EO8w3WphXwTeirPxN7qdB.wd2CDr1/MbbP6.oBU.zAj8MdOdUu6/O', 'marioarb.97@gmail.com', true, '1017251545', 'Mario Andres', '3015465076', 1);
+INSERT INTO usuario(apellido1, apellido2, contrasena, correo, estado, identificacion, nombre, telefono, id_tipo_documento, verificado) VALUES ('Ruiz', 'Bedoya', '$2a$10$EO8w3WphXwTeirPxN7qdB.wd2CDr1/MbbP6.oBU.zAj8MdOdUu6/O', 'marioarb.97@gmail.com', true, '1017251545', 'Mario Andres', '3015465076', 1, true);
 
 INSERT INTO cliente(identificacion, nombre_comercial, razon_social, id_tipo_documento) VALUES ( '900876761', 'Dian', 'Direccion de impuestos SAS', 2);
-INSERT INTO usuario(apellido1, apellido2, contrasena, correo, estado, identificacion, nombre, telefono, id_tipo_documento) VALUES ('Ruiz', 'Bedoya', '$2a$10$EO8w3WphXwTeirPxN7qdB.wd2CDr1/MbbP6.oBU.zAj8MdOdUu6/O', 'carito.93@gmail.com', true, '1017214122', 'Carito', '3046307654', 1);
+INSERT INTO usuario(apellido1, apellido2, contrasena, correo, estado, identificacion, nombre, telefono, id_tipo_documento, verificado) VALUES ('Ruiz', 'Bedoya', '$2a$10$EO8w3WphXwTeirPxN7qdB.wd2CDr1/MbbP6.oBU.zAj8MdOdUu6/O', 'carito.93@gmail.com', true, '1017214122', 'Carito', '3046307654', 1, true);
 
 INSERT INTO cliente(identificacion, nombre_comercial, razon_social, id_tipo_documento) VALUES ( '900876762', 'S4DS', 'solutions for dealers SAS', 2);
-INSERT INTO usuario(apellido1, apellido2, contrasena, correo, estado, identificacion, nombre, telefono, id_tipo_documento) VALUES ('Bedoya', 'Jaramillo', '$2a$10$EO8w3WphXwTeirPxN7qdB.wd2CDr1/MbbP6.oBU.zAj8MdOdUu6/O', 'gloriae.61@gmail.com', true, '43032118', 'Gloria', '3007855211', 1);
+INSERT INTO usuario(apellido1, apellido2, contrasena, correo, estado, identificacion, nombre, telefono, id_tipo_documento, verificado) VALUES ('Bedoya', 'Jaramillo', '$2a$10$EO8w3WphXwTeirPxN7qdB.wd2CDr1/MbbP6.oBU.zAj8MdOdUu6/O', 'gloriae.61@gmail.com', true, '43032118', 'Gloria', '3007855211', 1, true);
 
 INSERT INTO cliente(identificacion, nombre_comercial, razon_social, id_tipo_documento) VALUES ( '900876763', 'Joyeria inter', 'Joyeria intercontinental dali SAS', 2);
-INSERT INTO usuario(apellido1, apellido2, contrasena, correo, estado, identificacion, nombre, telefono, id_tipo_documento) VALUES ('Ruiz', 'Giraldo', '$2a$10$EO8w3WphXwTeirPxN7qdB.wd2CDr1/MbbP6.oBU.zAj8MdOdUu6/O', 'jotica.65@gmail.com', true, '71665023', 'Juan Mario', '3006521212', 1);
+INSERT INTO usuario(apellido1, apellido2, contrasena, correo, estado, identificacion, nombre, telefono, id_tipo_documento, verificado) VALUES ('Ruiz', 'Giraldo', '$2a$10$EO8w3WphXwTeirPxN7qdB.wd2CDr1/MbbP6.oBU.zAj8MdOdUu6/O', 'jotica.65@gmail.com', true, '71665023', 'Juan Mario', '3006521212', 1, true);
 
 INSERT INTO roles(nombre_role) VALUES ('ROLE_ADMIN');
 INSERT INTO roles(nombre_role) VALUES ('ROLE_ASESOR');

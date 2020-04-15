@@ -30,6 +30,7 @@ import com.asisge.apirest.model.dto.terceros.ContactoDto;
 import com.asisge.apirest.model.entity.terceros.Cliente;
 import com.asisge.apirest.model.entity.terceros.ContactoCliente;
 import com.asisge.apirest.model.entity.terceros.Usuario;
+import com.asisge.apirest.model.entity.terceros.UsuarioCliente;
 import com.asisge.apirest.service.IAsesorService;
 import com.asisge.apirest.service.IClienteService;
 import com.asisge.apirest.service.IUsuarioService;
@@ -85,6 +86,7 @@ public class ClienteController extends BaseController {
 			newCliente.setContactos(contactos);
 		}
 		newCliente = service.saveCliente(newCliente);
+		agregarAsesor(newCliente);
 		String descripcion = String.format(RESULT_CREATED, newCliente.toString(), newCliente.getIdCliente());
 		auditManager.saveAudit(newCliente.getCreatedBy(), ACTION_CREATE, descripcion);
 		return new ResponseEntity<>(buildSuccess(descripcion, newCliente, ""), HttpStatus.CREATED);
@@ -123,6 +125,14 @@ public class ClienteController extends BaseController {
 			String descripcion = response.getMessage();
 			auditManager.saveAudit(ACTION_DELETE, descripcion);
 			return new ResponseEntity<>(response, HttpStatus.ACCEPTED);		
+	}
+	
+	private void agregarAsesor(Cliente cliente) {
+		Usuario usuario = userService.findUsuarioByCorreo(getCurrentEmail());
+		UsuarioCliente asesor = new UsuarioCliente();
+		asesor.setCliente(cliente);
+		asesor.setUsuario(usuario);
+		userClientService.saveUsuarioCliente(asesor);
 	}
 
 	/**

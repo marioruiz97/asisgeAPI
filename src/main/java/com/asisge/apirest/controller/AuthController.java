@@ -30,9 +30,9 @@ public class AuthController extends BaseController {
 	@Autowired
 	private IUsuarioService service;
 
-	@GetMapping(AuthPath.ME_EMAIL)
-	public ResponseEntity<ApiResponse> findById(@PathVariable("email") String email) {
-		Usuario usuario = service.findUsuarioByCorreo(email);
+	@GetMapping(AuthPath.ME)
+	public ResponseEntity<ApiResponse> findById() {
+		Usuario usuario = service.findUsuarioByCorreo(getCurrentEmail());
 		if (usuario == null) {
 			throw new ResponseStatusException(HttpStatus.FORBIDDEN);
 		}
