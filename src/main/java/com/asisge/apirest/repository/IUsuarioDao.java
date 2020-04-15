@@ -23,5 +23,5 @@ public interface IUsuarioDao extends JpaRepository<Usuario, Long> {
 	@Query("UPDATE Usuario u SET u.contrasena = :contrasena WHERE u.id = :id")
 	void changeContrasenaUsuario(@Param("id") Long id, @Param("contrasena") String contrasena);
 	
-	Optional<Usuario> findByCorreo(String correo);
+	Optional<Usuario> findByCorreoIgnoreCase(String correo);
 }

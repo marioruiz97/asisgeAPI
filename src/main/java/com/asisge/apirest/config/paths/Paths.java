@@ -26,7 +26,8 @@ public final class Paths {
 		public static final String ME = "me";
 		public static final String ME_EMAIL = "me/{email}";
 		public static final String CAMBIO_CONTRASENA = "cambio-contrasena/{usuario}";
-		public static final String RECUPERAR = ""; // TODO falta esta funcionalidad
+		public static final String RECUPERAR = "cuenta/recuperar";
+		public static final String CONFIRMAR = "cuenta/confirmar";
 		
 		private AuthPath() {}
 	}

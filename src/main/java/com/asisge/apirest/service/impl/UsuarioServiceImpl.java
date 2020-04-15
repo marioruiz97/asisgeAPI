@@ -1,5 +1,7 @@
 package com.asisge.apirest.service.impl;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -17,9 +19,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import com.asisge.apirest.model.dto.terceros.UsuarioDto;
+import com.asisge.apirest.model.entity.audit.VerificationToken;
 import com.asisge.apirest.model.entity.terceros.TipoDocumento;
 import com.asisge.apirest.model.entity.terceros.Usuario;
 import com.asisge.apirest.repository.IUsuarioDao;
+import com.asisge.apirest.repository.IVerificationTokenDao;
 import com.asisge.apirest.service.IAsesorService;
 import com.asisge.apirest.service.IUsuarioService;
 
@@ -31,6 +35,9 @@ public class UsuarioServiceImpl implements IUsuarioService, UserDetailsService {
 
 	@Autowired
 	private IAsesorService asesorService;
+	
+	@Autowired
+	private IVerificationTokenDao tokenDao;
 	
 	private BCryptPasswordEncoder encoder;
 	
@@ -60,7 +67,7 @@ public class UsuarioServiceImpl implements IUsuarioService, UserDetailsService {
 	@Override
 	@Transactional(readOnly = true)
 	public Usuario findUsuarioByCorreo(String correo) {
-		return repository.findByCorreo(correo).orElse(null);		
+		return repository.findByCorreoIgnoreCase(correo).orElse(null);		
 	}
 
 	@Override
@@ -76,7 +83,7 @@ public class UsuarioServiceImpl implements IUsuarioService, UserDetailsService {
 		boolean verificado = false;
 		String password = dto.getContrasena().length() < 15 ? encoder.encode(dto.getContrasena()) : dto.getContrasena();
 		return new Usuario(null, dto.getIdentificacion(), dto.getNombre(), dto.getApellido1(), dto.getApellido2(),
-				dto.getTelefono(), dto.getCorreo(), password, dto.getEstado(), verificado, documento, dto.getRoles());
+				dto.getTelefono(), dto.getCorreo().toLowerCase(), password, dto.getEstado(), verificado, documento, dto.getRoles());
 	}
 
 	@Override
@@ -91,6 +98,29 @@ public class UsuarioServiceImpl implements IUsuarioService, UserDetailsService {
 		u.setContrasena(encoder.encode(u.getContrasena()));
 		repository.changeContrasenaUsuario(u.getIdUsuario(), u.getContrasena());
 	}
+	
+	@Override
+	public VerificationToken createVerificationToken(Usuario usuario) {		
+		return tokenDao.save(new VerificationToken(usuario));
+	}
+	
+	@Override
+	public VerificationToken validVerificationToken(Usuario usuario) {
+		VerificationToken token = tokenDao.findByUsuario(usuario).orElse(null);
+		final Calendar cal = Calendar.getInstance();
+		cal.add(Calendar.DATE, -1);		
+		Date yesterday = cal.getTime();
+		if(token != null && yesterday.compareTo(token.getCreatedDate()) < 0) {
+			tokenDao.deleteById(token.getTokenId());
+		}
+		return createVerificationToken(usuario);
+	}
+
+
+	@Override
+	public VerificationToken getVerificationToken(String token) {
+		return tokenDao.findByToken(token).orElse(null);
+	}
 
 	/**
 	 * implementacion de UserDetailService de Sring Security, se puede abstraer en
@@ -99,7 +129,7 @@ public class UsuarioServiceImpl implements IUsuarioService, UserDetailsService {
 	@Override
 	@Transactional(readOnly = true)
 	public UserDetails loadUserByUsername(String username) {
-		Usuario usuario = repository.findByCorreo(username).orElse(null);
+		Usuario usuario = repository.findByCorreoIgnoreCase(username).orElse(null);
 
 		if (usuario == null) {
 			throw new UsernameNotFoundException("No se ha encontrado el usuario en base de datos");

@@ -1,5 +1,7 @@
 package com.asisge.apirest.controller;
 
+import java.util.Map;
+
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
@@ -18,9 +20,12 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.asisge.apirest.config.paths.Paths.AuthPath;
 import com.asisge.apirest.config.response.ApiResponse;
+import com.asisge.apirest.config.response.ApiSuccess;
 import com.asisge.apirest.config.utils.Messages;
 import com.asisge.apirest.model.dto.terceros.CuentaDto;
+import com.asisge.apirest.model.entity.audit.VerificationToken;
 import com.asisge.apirest.model.entity.terceros.Usuario;
+import com.asisge.apirest.service.IEmailSenderService;
 import com.asisge.apirest.service.IUsuarioService;
 
 @RestController
@@ -29,6 +34,9 @@ public class AuthController extends BaseController {
 
 	@Autowired
 	private IUsuarioService service;
+	
+	@Autowired
+	private IEmailSenderService emailService;
 
 	@GetMapping(AuthPath.ME)
 	public ResponseEntity<ApiResponse> findById() {
@@ -57,7 +65,8 @@ public class AuthController extends BaseController {
 	}
 
 	@PostMapping(AuthPath.CAMBIO_CONTRASENA)
-	public ResponseEntity<ApiResponse> changePassword(@RequestBody ModelMap model, @NotNull @PathVariable("usuario") Long id) {
+	public ResponseEntity<ApiResponse> changePassword(@RequestBody ModelMap model,
+			@NotNull @PathVariable("usuario") Long id) {
 		try {
 			Usuario user = service.findUsuarioById(id);
 			user.setContrasena(model.getAttribute("password").toString());
@@ -70,6 +79,25 @@ public class AuthController extends BaseController {
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, message, e);
 		}
 
+	}
+	
+	@PostMapping(AuthPath.RECUPERAR)
+	public ResponseEntity<ApiResponse> recuperarContrasena(@RequestBody Map<String, Object> model){
+		try {
+			String email = model.get("correo").toString();
+			Usuario usuario = service.findUsuarioByCorreo(email);
+			if(usuario == null) {
+				throw new NullPointerException();
+			}
+			VerificationToken token = service.validVerificationToken(usuario);			
+			emailService.sendRecoveryPassword(token);
+			ApiSuccess success = new ApiSuccess();
+			success.setMessage(Messages.getString("message.result.recovery-sent"));
+			return new ResponseEntity<>(success, HttpStatus.ACCEPTED);
+		} catch (Exception e) {			
+			String message = Messages.getString("message.error.recovery");			
+			return new ResponseEntity<>(buildFail(message), HttpStatus.BAD_REQUEST);
+		}		
 	}
 
 }

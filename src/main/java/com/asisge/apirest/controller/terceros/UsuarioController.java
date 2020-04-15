@@ -2,6 +2,7 @@ package com.asisge.apirest.controller.terceros;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -23,7 +24,9 @@ import com.asisge.apirest.config.response.ApiResponse;
 import com.asisge.apirest.config.utils.Messages;
 import com.asisge.apirest.controller.BaseController;
 import com.asisge.apirest.model.dto.terceros.UsuarioDto;
+import com.asisge.apirest.model.entity.audit.VerificationToken;
 import com.asisge.apirest.model.entity.terceros.Usuario;
+import com.asisge.apirest.service.IEmailSenderService;
 import com.asisge.apirest.service.IUsuarioService;
 
 @RestController
@@ -33,6 +36,9 @@ public class UsuarioController extends BaseController {
 
 	@Autowired
 	private IUsuarioService service;
+	
+	@Autowired
+	private IEmailSenderService emailService;
 	
 	@GetMapping(TercerosPath.USUARIOS)
 	public ResponseEntity<ApiResponse> findAll() {
@@ -53,12 +59,16 @@ public class UsuarioController extends BaseController {
 
 	@Secured({"ROLE_ADMIN", "ROLE_ASESOR"})
 	@PostMapping(TercerosPath.USUARIOS)
-	public ResponseEntity<ApiResponse> create(@Valid @RequestBody UsuarioDto dto, BindingResult result) {
+	public ResponseEntity<ApiResponse> create
+		(HttpServletRequest request, @Valid @RequestBody UsuarioDto dto, BindingResult result) 
+	{
 		if (result.hasErrors()) {
 			return validateDto(result);
 		}
 		Usuario newUsuario = service.buildEntity(dto);
 		newUsuario = service.saveUsuario(newUsuario);
+		VerificationToken token = service.createVerificationToken(newUsuario);
+		emailService.sendConfirmationEmail(token);
 		String descripcion = String.format(RESULT_CREATED, newUsuario.toString(), newUsuario.getIdUsuario());
 		auditManager.saveAudit(newUsuario.getCreatedBy(), ACTION_CREATE, descripcion);
 		return new ResponseEntity<>(buildSuccess(descripcion, newUsuario, ""), HttpStatus.CREATED);

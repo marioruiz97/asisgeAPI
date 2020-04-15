@@ -6,12 +6,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.asisge.apirest.config.response.ApiResponse;
+import com.asisge.apirest.config.response.ApiSuccess;
+import com.asisge.apirest.config.utils.Messages;
 import com.asisge.apirest.model.entity.audit.Auditoria;
+import com.asisge.apirest.repository.IVerificationTokenDao;
 import com.asisge.apirest.service.IAuditManager;
 
 @RestController
@@ -20,6 +24,9 @@ public class AuditoriaController extends BaseController {
 
 	@Autowired
 	private IAuditManager managerService;
+
+	@Autowired
+	private IVerificationTokenDao tokenDao;
 
 	@GetMapping
 	@Secured("ROLE_ADMIN")
@@ -37,5 +44,19 @@ public class AuditoriaController extends BaseController {
 			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
 		}
 		return new ResponseEntity<>(response, HttpStatus.OK);
+	}
+
+	@DeleteMapping("/delete-tokens")
+	@Secured("ROLE_ADMIN")
+	public ResponseEntity<ApiResponse> deleteTokens() {
+		if (getCurrentEmail() != null) {
+			tokenDao.deleteAll();
+			String descripcion = Messages.getString("message.result.token-flushed");
+			auditManager.saveAudit("Eliminar Tokens", descripcion);
+			ApiSuccess success = new ApiSuccess();
+			success.setMessage(descripcion);
+			return new ResponseEntity<>(success, HttpStatus.ACCEPTED);
+		}
+		return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 	}
 }
