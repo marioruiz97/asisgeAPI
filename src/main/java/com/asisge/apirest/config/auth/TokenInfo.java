@@ -36,18 +36,17 @@ public class TokenInfo implements TokenEnhancer {
 	public OAuth2AccessToken enhance(OAuth2AccessToken accessToken, OAuth2Authentication authentication) {
 
 		Map<String, Object> info = new HashMap<>();
-		Usuario user = userService.findUsuarioByCorreo(authentication.getName()).orElse(null);
+		Usuario user = userService.findUsuarioByCorreo(authentication.getName());
 		
 		if(user==null) {
 			throw new UsernameNotFoundException("No se ha encontrado el usuario en base de datos");
 		}
 
 		info.put(EMAIL_KEY, user.getCorreo());
-		info.put(USER_NAME_KEY, user.getNombre());
+		info.put(USER_NAME_KEY, user.getNombre().concat(" ").concat(user.getApellido1()));
 		info.put(ENABLED_KEY, user.getEstado());
 		info.put(USER_ID_KEY, user.getIdUsuario());
-		info.put(ROLES_KEY, authentication.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()));
-		info.put("auth", authentication.getName());
+		info.put(ROLES_KEY, authentication.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()));		
 		
 		((DefaultOAuth2AccessToken) accessToken).setAdditionalInformation(info);
 		return accessToken;

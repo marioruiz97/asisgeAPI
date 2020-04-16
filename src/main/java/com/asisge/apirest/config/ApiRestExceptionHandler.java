@@ -12,6 +12,7 @@ import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.mail.MailException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.context.request.WebRequest;
@@ -60,12 +61,21 @@ public class ApiRestExceptionHandler extends ResponseEntityExceptionHandler {
 		return handleExceptionInternal(ex, error, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
 	}
 
+	// TODO verificar si se debe eliminar este handler
 	@ExceptionHandler(value = {NullPointerException.class })
 	protected ResponseEntity<Object> handleGeneralExceptions(RuntimeException ex, WebRequest request) {
 		ApiError error = new ApiError();
 		error.setMessage(Messages.getString("message.error.number-or-null"));
 		error.setErrors(Arrays.asList(ex.getLocalizedMessage()));
 		return handleExceptionInternal(ex, error, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
+	}
+	
+	@ExceptionHandler(value = {MailException.class})
+	protected ResponseEntity<Object> handleMailExceptions(MailException exception, WebRequest request){
+		ApiError error = new ApiError();
+		error.setMessage(exception.getLocalizedMessage());
+		error.setErrors(Arrays.asList(exception.getMostSpecificCause().getLocalizedMessage()));
+		return handleExceptionInternal(exception, error, new HttpHeaders(), HttpStatus.NOT_ACCEPTABLE, request);
 	}
 
 }

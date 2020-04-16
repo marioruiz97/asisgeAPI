@@ -5,6 +5,7 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -53,6 +54,7 @@ public class EstadoProyectoController extends BaseController {
 		return new ResponseEntity<>(buildOk(estados), HttpStatus.OK);
 	}
 
+	@Secured("ROLE_ADMIN")
 	@PostMapping(MaestrosPath.ESTADO_PROYECTO)
 	public ResponseEntity<ApiResponse> create(@RequestBody ModelMap model) {
 		EstadoProyecto newEstado = buildEstado(model);
@@ -62,6 +64,7 @@ public class EstadoProyectoController extends BaseController {
 		return new ResponseEntity<>(buildSuccess(descripcion, newEstado, ""), HttpStatus.CREATED);
 	}
 
+	@Secured("ROLE_ADMIN")
 	@PatchMapping(MaestrosPath.ESTADO_PROYECTO_ID)
 	public ResponseEntity<ApiResponse> update(@RequestBody ModelMap model, @PathVariable("idEstado") Long id) {
 		EstadoProyecto estado = buildEstado(model);
@@ -72,6 +75,7 @@ public class EstadoProyectoController extends BaseController {
 		return new ResponseEntity<>(buildSuccess(descripcion, estado, ""), HttpStatus.CREATED);
 	}
 
+	@Secured("ROLE_ADMIN")
 	@DeleteMapping(MaestrosPath.ESTADO_PROYECTO_ID)
 	public ResponseEntity<ApiResponse> delete(@PathVariable("idEstado") Long id) {
 		try {

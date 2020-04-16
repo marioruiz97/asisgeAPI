@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.lang.Nullable;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.server.ResponseStatusException;
@@ -108,4 +109,14 @@ public abstract class BaseController {
 		error.setMessage(result);
 		return error;
 	}
+	
+	public static boolean isAuthenticated( ) {
+		return SecurityContextHolder.getContext().getAuthentication().isAuthenticated();
+	}	
+	
+	public static String getCurrentEmail() {
+		return SecurityContextHolder.getContext().getAuthentication().getName();
+	}
+	
+	
 }

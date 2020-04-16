@@ -39,7 +39,8 @@ public @Data class UsuarioDto implements Serializable {
 	@Size(max = 75)
 	private String correo;
 
-	@NotBlank	
+	@NotBlank
+	@Size(min = 6)
 	private String contrasena;
 	private String matchContrasena;
 

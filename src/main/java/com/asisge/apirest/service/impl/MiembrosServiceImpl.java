@@ -48,6 +48,12 @@ public class MiembrosServiceImpl implements IMiembrosService {
 	public List<Proyecto> findProyectosByUsuario(Long idUsuario) {
 		return repository.findProyectosUsuario(idUsuario);
 	}
+	
+	@Override
+	@Transactional(readOnly = true)
+	public List<Proyecto> findProyectosByEmail(String email) {
+		return repository.findProyectosByEmail(email);
+	}
 
 	@Override
 	@Transactional(readOnly = true)
@@ -72,9 +78,14 @@ public class MiembrosServiceImpl implements IMiembrosService {
 
 	@Override
 	public void deleteMiembro(Long idProyecto, Long idUsuario) {
-		int result = repository.deleteMiembro(idProyecto, idUsuario);
-		if (result != 1)
-			throw new RuntimeException();
+		repository.deleteMiembro(idProyecto, idUsuario);		
 	}
+
+	@Override
+	@Transactional(readOnly = true)
+	public boolean existsMiembroInProyecto(Long idProyecto, String email) {		
+		return repository.existsEmailInProyecto(idProyecto, email) > 0;
+	}
+	
 
 }

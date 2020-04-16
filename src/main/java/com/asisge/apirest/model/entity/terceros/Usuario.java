@@ -69,6 +69,9 @@ public @Data class Usuario extends AuditModel<String> implements Serializable {
 
 	@NotNull
 	private Boolean estado;
+	
+	@NotNull 
+	private Boolean verificado;
 
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "id_tipo_documento", nullable = false)
@@ -77,8 +80,7 @@ public @Data class Usuario extends AuditModel<String> implements Serializable {
 	@ManyToMany(fetch = FetchType.LAZY)
 	@JoinTable(joinColumns = @JoinColumn(name = "usuario_id"),
 	inverseJoinColumns = @JoinColumn(name = "role_id"),
-	uniqueConstraints = {@UniqueConstraint(columnNames = {"usuario_id", "role_id"}) }
-	)
+	uniqueConstraints = {@UniqueConstraint(columnNames = {"usuario_id", "role_id"}) })
 	private List<Role> roles;
 
 	

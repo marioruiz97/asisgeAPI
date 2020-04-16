@@ -4,12 +4,14 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.hibernate.validator.constraints.UniqueElements;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -18,7 +20,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
 
 import com.asisge.apirest.config.paths.Paths.TercerosPath;
 import com.asisge.apirest.config.response.ApiResponse;
@@ -28,7 +29,11 @@ import com.asisge.apirest.model.dto.terceros.ClienteDto;
 import com.asisge.apirest.model.dto.terceros.ContactoDto;
 import com.asisge.apirest.model.entity.terceros.Cliente;
 import com.asisge.apirest.model.entity.terceros.ContactoCliente;
+import com.asisge.apirest.model.entity.terceros.Usuario;
+import com.asisge.apirest.model.entity.terceros.UsuarioCliente;
+import com.asisge.apirest.service.IAsesorService;
 import com.asisge.apirest.service.IClienteService;
+import com.asisge.apirest.service.IUsuarioService;
 
 @RestController
 public class ClienteController extends BaseController {
@@ -38,9 +43,21 @@ public class ClienteController extends BaseController {
 	@Autowired
 	private IClienteService service;
 
+	@Autowired
+	private IAsesorService userClientService;
+
+	@Autowired
+	private IUsuarioService userService;
+
 	@GetMapping(TercerosPath.CLIENTES)
-	public ResponseEntity<ApiResponse> findAll() {
-		List<Cliente> clientes = service.findAllClientes();
+	public ResponseEntity<ApiResponse> findAll(HttpServletRequest request) {
+		List<Cliente> clientes;
+		if (request.isUserInRole("ROLE_ADMIN")) {
+			clientes = service.findAllClientes();
+		} else {
+			Usuario u = userService.findUsuarioByCorreo(getCurrentEmail());
+			clientes = userClientService.findClientesById(u != null ? u.getIdUsuario() : 0);
+		}
 		if (clientes.isEmpty())
 			return respondNotFound(null);
 		return new ResponseEntity<>(buildOk(clientes), HttpStatus.OK);
@@ -55,6 +72,7 @@ public class ClienteController extends BaseController {
 		return new ResponseEntity<>(buildOk(cliente), HttpStatus.OK);
 	}
 
+	@Secured({"ROLE_ADMIN", "ROLE_ASESOR"})
 	@PostMapping(TercerosPath.CLIENTES)
 	public ResponseEntity<ApiResponse> create(@Valid @RequestBody ClienteDto dto, BindingResult result) {
 		if (result.hasErrors()) {
@@ -68,11 +86,13 @@ public class ClienteController extends BaseController {
 			newCliente.setContactos(contactos);
 		}
 		newCliente = service.saveCliente(newCliente);
+		agregarAsesor(newCliente);
 		String descripcion = String.format(RESULT_CREATED, newCliente.toString(), newCliente.getIdCliente());
 		auditManager.saveAudit(newCliente.getCreatedBy(), ACTION_CREATE, descripcion);
 		return new ResponseEntity<>(buildSuccess(descripcion, newCliente, ""), HttpStatus.CREATED);
 	}
 
+	@Secured({"ROLE_ADMIN", "ROLE_ASESOR"})
 	@PatchMapping(TercerosPath.CLIENTE_ID)
 	public ResponseEntity<ApiResponse> update(@Valid @RequestBody ClienteDto dto, BindingResult result,
 			@PathVariable(ID_CLIENTE) Long id) {
@@ -97,22 +117,27 @@ public class ClienteController extends BaseController {
 		return new ResponseEntity<>(buildSuccess(descripcion, cliente, ""), HttpStatus.CREATED);
 	}
 
+	@Secured({"ROLE_ADMIN", "ROLE_ASESOR"})
 	@DeleteMapping(TercerosPath.CLIENTE_ID)
 	public ResponseEntity<ApiResponse> delete(@PathVariable(ID_CLIENTE) Long id) {
-		try {
 			service.deleteCliente(id);
 			ApiResponse response = buildDeleted("Cliente", id.toString());
 			String descripcion = response.getMessage();
 			auditManager.saveAudit(ACTION_DELETE, descripcion);
-			return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
-		} catch (Exception e) {
-			String message = String.format(Messages.getString("message.error.delete.record"), "Cliente", id.toString());
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, message, e);
-		}
+			return new ResponseEntity<>(response, HttpStatus.ACCEPTED);		
+	}
+	
+	private void agregarAsesor(Cliente cliente) {
+		Usuario usuario = userService.findUsuarioByCorreo(getCurrentEmail());
+		UsuarioCliente asesor = new UsuarioCliente();
+		asesor.setCliente(cliente);
+		asesor.setUsuario(usuario);
+		userClientService.saveUsuarioCliente(asesor);
 	}
 
 	/**
-	 * @unused los metodos de contactos no se estan usando. los metodos de aqui hacia abajo
+	 * @unused los metodos de contactos no se estan usando. los metodos de aqui
+	 *         hacia abajo
 	 * @param id
 	 * @return
 	 */

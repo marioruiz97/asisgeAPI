@@ -16,10 +16,14 @@ public interface IMiembrosService {
 	List<MiembroProyecto> findAllMiembros();
 
 	List<Proyecto> findProyectosByUsuario(Long idUsuario);
+	
+	List<Proyecto> findProyectosByEmail(String email);
 
 	List<Usuario> findUsuariosByProyecto(Long idProyecto);
 
 	List<MiembroProyecto> findMiembrosProyecto(Long idProyecto);
+	
+	boolean existsMiembroInProyecto(Long idProyecto, String email);
 
 	void deleteMiembro(Long idProyecto, Long idUsuario);
 
