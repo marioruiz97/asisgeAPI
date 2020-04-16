@@ -24,7 +24,7 @@ public class EmailSenderServiceImpl implements IEmailSenderService {
 		mailMessage.setFrom("Servicio Asisge <testAsisgeFirebase@gmail.com>");
 		
 		StringBuilder content = new StringBuilder("Para confirmar tu cuenta, por favor haz click en el siguiente enlace : ");
-		content.append("http://localhost:8080/api/v1/").append(AuthPath.CONFIRMAR).append("?token=").append(verify.getToken());
+		content.append("https://test-bd-elenchos.herokuapp.com/api/v1/").append(AuthPath.CONFIRMAR).append("?token=").append(verify.getToken());
 		content.append("\r\n Si no has hecho ningún proceso de registro, por favor ignora este correo");
 		mailMessage.setText(content.toString());
 		sendEmail(mailMessage);
@@ -38,7 +38,7 @@ public class EmailSenderServiceImpl implements IEmailSenderService {
 		mailMessage.setFrom("Servicio Asisge <testAsisgeFirebase@gmail.com>");
 		
 		StringBuilder content = new StringBuilder("Para recuperar tu contraseña, por favor haz click en el siguiente enlace : ");
-		content.append("http://localhost:8080/api/v1/").append(AuthPath.RECUPERAR).append("?token=").append(token.getToken());
+		content.append("https://test-bd-elenchos.herokuapp.com/api/v1/").append(AuthPath.RECUPERAR).append("?token=").append(token.getToken());
 		content.append("\r\n Si no has hecho ningún proceso de recuperación, por favor ignora este correo");
 		mailMessage.setText(content.toString());
 		sendEmail(mailMessage);
