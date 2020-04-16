@@ -53,7 +53,7 @@ public class WebViewsController {
 			if(usuario == null) {
 				throw new NullPointerException();
 			}
-			VerificationToken token = service.createVerificationToken(usuario);
+			VerificationToken token = service.validVerificationToken(usuario);
 			emailService.sendConfirmationEmail(token);
 			return "confirmacion-enviada";
 		} catch (Exception ex) {
