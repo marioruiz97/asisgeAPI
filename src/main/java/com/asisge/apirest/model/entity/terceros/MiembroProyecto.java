@@ -14,7 +14,6 @@ import javax.validation.constraints.NotBlank;
 
 import com.asisge.apirest.model.entity.audit.AuditModel;
 import com.asisge.apirest.model.entity.proyectos.Proyecto;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -37,8 +36,7 @@ public @Data class MiembroProyecto extends AuditModel<String> implements Seriali
 	private Usuario usuario;
 
 	@ManyToOne(optional = false)
-	@JoinColumn(name = "id_proyecto")
-	@JsonManagedReference
+	@JoinColumn(name = "id_proyecto")	
 	private Proyecto proyecto;
 
 	@NotBlank

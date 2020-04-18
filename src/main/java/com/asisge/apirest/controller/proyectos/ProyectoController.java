@@ -24,8 +24,10 @@ import com.asisge.apirest.config.response.ApiResponse;
 import com.asisge.apirest.controller.BaseController;
 import com.asisge.apirest.model.dto.proyectos.ProyectoDto;
 import com.asisge.apirest.model.entity.proyectos.Proyecto;
+import com.asisge.apirest.model.entity.terceros.MiembroProyecto;
 import com.asisge.apirest.service.IMiembrosService;
 import com.asisge.apirest.service.IProyectoService;
+import com.asisge.apirest.service.IUsuarioService;
 
 @RestController
 public class ProyectoController extends BaseController {
@@ -37,6 +39,9 @@ public class ProyectoController extends BaseController {
 	
 	@Autowired
 	private IMiembrosService miembroService;
+	
+	@Autowired
+	private IUsuarioService userService;
 
 	@GetMapping(ProyectosPath.PROYECTOS)
 	public ResponseEntity<ApiResponse> findAll(HttpServletRequest request) {
@@ -73,6 +78,8 @@ public class ProyectoController extends BaseController {
 		}
 		Proyecto newProject = service.buildEntity(dto);
 		newProject = service.saveProyecto(newProject);
+		MiembroProyecto miembro = new MiembroProyecto(null, userService.findUsuarioByCorreo(getCurrentEmail()), newProject, "Líder");
+		miembroService.saveMiembro(miembro);		
 		String descripcion = String.format(RESULT_CREATED, newProject.toString(), newProject.getIdProyecto());
 		auditManager.saveAudit(newProject.getCreatedBy(), ACTION_CREATE, descripcion);
 		return new ResponseEntity<>(buildSuccess(descripcion, newProject, ""), HttpStatus.CREATED);

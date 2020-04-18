@@ -12,6 +12,8 @@ import com.asisge.apirest.service.IEmailSenderService;
 
 @Service
 public class EmailSenderServiceImpl implements IEmailSenderService {
+	
+	private static final String API_ENDPOINT = "http://localhost.com:8080/api/v1/";
 
 	@Autowired
 	private JavaMailSender mailSender;
@@ -24,7 +26,7 @@ public class EmailSenderServiceImpl implements IEmailSenderService {
 		mailMessage.setFrom("Servicio Asisge <testAsisgeFirebase@gmail.com>");
 		
 		StringBuilder content = new StringBuilder("Para confirmar tu cuenta, por favor haz click en el siguiente enlace : ");
-		content.append("https://test-bd-elenchos.herokuapp.com/api/v1/").append(AuthPath.CONFIRMAR).append("?token=").append(verify.getToken());
+		content.append(API_ENDPOINT).append(AuthPath.CONFIRMAR).append("?token=").append(verify.getToken());
 		content.append("\r\n Si no has hecho ningún proceso de registro, por favor ignora este correo");
 		mailMessage.setText(content.toString());
 		sendEmail(mailMessage);
@@ -38,7 +40,7 @@ public class EmailSenderServiceImpl implements IEmailSenderService {
 		mailMessage.setFrom("Servicio Asisge <testAsisgeFirebase@gmail.com>");
 		
 		StringBuilder content = new StringBuilder("Para recuperar tu contraseña, por favor haz click en el siguiente enlace : ");
-		content.append("https://test-bd-elenchos.herokuapp.com/api/v1/").append(AuthPath.RECUPERAR).append("?token=").append(token.getToken());
+		content.append(API_ENDPOINT).append(AuthPath.RECUPERAR).append("?token=").append(token.getToken());
 		content.append("\r\n Si no has hecho ningún proceso de recuperación, por favor ignora este correo");
 		mailMessage.setText(content.toString());
 		sendEmail(mailMessage);
