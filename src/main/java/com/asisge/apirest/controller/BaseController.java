@@ -44,6 +44,11 @@ public abstract class BaseController {
 		}
 	}
 
+	/**
+	 * Método usado cuando hay errores en el binding result, retorna un bad_request con los errores existentes
+	 * @param result
+	 * @return
+	 */
 	public ResponseEntity<ApiResponse> validateDto(BindingResult result) {
 		List<String> errores = result.getFieldErrors().stream().map(err -> {
 			String field = StringUtils.join(StringUtils.splitByCharacterTypeCamelCase(err.getField()), ' ') + ": ";
