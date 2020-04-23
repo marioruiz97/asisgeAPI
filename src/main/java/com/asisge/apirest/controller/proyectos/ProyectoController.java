@@ -28,6 +28,7 @@ import com.asisge.apirest.model.dto.proyectos.ProyectoDto;
 import com.asisge.apirest.model.entity.actividades.ColorNotificacion;
 import com.asisge.apirest.model.entity.proyectos.Proyecto;
 import com.asisge.apirest.model.entity.terceros.MiembroProyecto;
+import com.asisge.apirest.service.IEstadoProyectoService;
 import com.asisge.apirest.service.IMiembrosService;
 import com.asisge.apirest.service.INotificacionService;
 import com.asisge.apirest.service.IProyectoService;
@@ -49,6 +50,9 @@ public class ProyectoController extends BaseController {
 	
 	@Autowired
 	private INotificacionService notificacionService;
+	
+	@Autowired
+	private IEstadoProyectoService estadosService;
 
 	@GetMapping(ProyectosPath.PROYECTOS)
 	public ResponseEntity<ApiResponse> findAll(HttpServletRequest request) {
@@ -74,6 +78,7 @@ public class ProyectoController extends BaseController {
 			dashboard = service.loadDashboard(id);
 			dashboard.setMiembros(miembroService.findMiembrosProyecto(id));
 			dashboard.setNotificaciones(notificacionService.findByProyecto(dashboard.getProyecto()));
+			dashboard.setLineaEstados(estadosService.findEstadosLine(dashboard.getEstadoActual()));
 		}
 		if (dashboard == null)
 			return respondNotFound(id.toString());

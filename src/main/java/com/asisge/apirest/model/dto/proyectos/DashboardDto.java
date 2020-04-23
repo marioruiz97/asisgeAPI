@@ -23,6 +23,7 @@ public @Data class DashboardDto implements Serializable {
 	private Proyecto proyecto;
 	private EstadoProyecto estadoActual;
 	private List<Notificacion> notificaciones;
+	private List<EstadoProyectoLineDto> lineaEstados;
 
 	/**
 	 * 

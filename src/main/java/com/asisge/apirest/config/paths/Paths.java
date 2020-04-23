@@ -79,6 +79,7 @@ public final class Paths {
 		public static final String ESTADO_PROYECTO = "estado-proyecto";
 		public static final String ESTADO_PROYECTO_ID = "estado-proyecto/{idEstado}";
 		public static final String POSIBLES_ESTADOS = ESTADO_PROYECTO_ID + "/estados-siguientes";
+		public static final String ESTADOS_LINE = "dashboard/estados-line/{actual}";
 
 		private MaestrosPath() {
 		}

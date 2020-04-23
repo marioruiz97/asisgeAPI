@@ -35,6 +35,8 @@ public @Data class EstadoProyecto extends AuditModel<String> implements Serializ
 	private String descripcion;
 	
 	private Long idEstadoAnterior;
+	
+	private Boolean requerido;
 
 	/**
 	 * 

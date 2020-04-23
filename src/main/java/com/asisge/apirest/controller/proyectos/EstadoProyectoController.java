@@ -20,6 +20,7 @@ import com.asisge.apirest.config.paths.Paths.MaestrosPath;
 import com.asisge.apirest.config.response.ApiResponse;
 import com.asisge.apirest.config.utils.Messages;
 import com.asisge.apirest.controller.BaseController;
+import com.asisge.apirest.model.dto.proyectos.EstadoProyectoLineDto;
 import com.asisge.apirest.model.entity.proyectos.EstadoProyecto;
 import com.asisge.apirest.service.IEstadoProyectoService;
 
@@ -52,6 +53,15 @@ public class EstadoProyectoController extends BaseController {
 		if(estados.isEmpty())
 			return respondNotFound(null);
 		return new ResponseEntity<>(buildOk(estados), HttpStatus.OK);
+	}
+	
+	@GetMapping(MaestrosPath.ESTADOS_LINE)
+	public ResponseEntity<ApiResponse> findEstadosLine(@PathVariable("actual") Long estadoActual){
+		EstadoProyecto actual = service.findEstadoById(estadoActual);
+		if(actual == null)
+			throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+		List<EstadoProyectoLineDto> line = service.findEstadosLine(actual);
+		return new ResponseEntity<>(buildOk(line), HttpStatus.OK);
 	}
 
 	@Secured("ROLE_ADMIN")
@@ -96,13 +106,14 @@ public class EstadoProyectoController extends BaseController {
 		final String estadoAnterior = "idEstadoAnterior";
 		String nombreEstado = model.getAttribute("nombreEstado").toString();
 		String descripcion = model.getAttribute("descripcion").toString();
+		String requerido = model.getAttribute("requerido").toString();
 		Long idEstadoAnterior;
 		try {
 			idEstadoAnterior = convertToLong(model.getAttribute(estadoAnterior).toString(), estadoAnterior, Boolean.FALSE);
 		} catch (NullPointerException e) {
 			idEstadoAnterior = null;
 		}
-		return new EstadoProyecto(null, nombreEstado, descripcion, idEstadoAnterior);
+		return new EstadoProyecto(null, nombreEstado, descripcion, idEstadoAnterior, Boolean.valueOf(requerido));
 	}
 
 }
