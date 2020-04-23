@@ -44,8 +44,10 @@ public abstract class BaseController {
 		}
 	}
 
+	
 	/**
-	 * Método usado cuando hay errores en el binding result, retorna un bad_request con los errores existentes
+	 * Método usado cuando hay errores en el binding result, retorna un bad_request
+	 * con los errores existentes	 
 	 * @param result
 	 * @return
 	 */
@@ -59,6 +61,7 @@ public abstract class BaseController {
 		return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
 	}
 
+	
 	/**
 	 * método usado para retornar respuestas de tipo 404
 	 * 
@@ -114,14 +117,13 @@ public abstract class BaseController {
 		error.setMessage(result);
 		return error;
 	}
-	
-	public static boolean isAuthenticated( ) {
+
+	public static boolean isAuthenticated() {
 		return SecurityContextHolder.getContext().getAuthentication().isAuthenticated();
-	}	
-	
+	}
+
 	public static String getCurrentEmail() {
 		return SecurityContextHolder.getContext().getAuthentication().getName();
 	}
-	
-	
+
 }

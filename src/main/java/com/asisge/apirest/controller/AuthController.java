@@ -39,7 +39,7 @@ public class AuthController extends BaseController {
 	private IEmailSenderService emailService;
 
 	@GetMapping(AuthPath.ME)
-	public ResponseEntity<ApiResponse> findById() {
+	public ResponseEntity<ApiResponse> findMyInfo() {
 		Usuario usuario = service.findUsuarioByCorreo(getCurrentEmail());
 		if (usuario == null) {
 			throw new ResponseStatusException(HttpStatus.FORBIDDEN);

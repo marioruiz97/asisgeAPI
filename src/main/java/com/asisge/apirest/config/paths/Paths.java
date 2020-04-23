@@ -93,10 +93,14 @@ public final class Paths {
 	 *
 	 */
 	public static final class ProyectosPath {
-		public static final String PROYECTOS = "proyectos";
+		// TODO al terminar proyecto, verificar estas rutas
+		public static final String PROYECTOS = "proyectos";		
 		public static final String PROYECTO_ID = "proyectos/{idProyecto}";
+		public static final String DASHBOARD = "dashboard/{id}";
 		public static final String PROYECTO_MIEMBROS = "proyectos/{idProyecto}/miembros";
-		public static final String MIEMBRO_PROYECTOS = "usuarios/{idUsuario}/mis-proyectos";
+		public static final String MIEMBRO_PROYECTOS = "usuarios/{idUsuario}/mis-proyectos";	
+		
+		
 		public static final String PLANES_TRABAJO = "planes"; // TODO verificar si dejar ruta asi o con  proyectos/{idProyecto}/planes
 		public static final String PLAN_TRABAJO_ID = PLANES_TRABAJO + "/{idPlan}";
 		public static final String ETAPA_PLAN = "planes/{idPlan}/etapas";
@@ -104,6 +108,22 @@ public final class Paths {
 
 		private ProyectosPath() {
 		}
+	}
+	
+	/**
+	 * Rutas para notificaciones
+	 * 
+	 * @author Mario Ruiz
+	 *
+	 */
+	public static final class NotificacionesPath {
+		public static final String NOTIFICACIONES = "notificaciones";
+		// public static final String NOTIFICACIONES_PROYECTO = "notificaciones/{idProyecto}"
+		public static final String NOTIFICACIONES_ID = "notificaciones/{id}";
+
+		private NotificacionesPath() {
+		}
+
 	}
 
 	private Paths() {

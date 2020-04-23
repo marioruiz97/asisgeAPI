@@ -46,13 +46,14 @@ public class WebViewsController {
 	}
 
 	@PostMapping(AuthPath.CONFIRMAR)
-	public String tryAgain(@RequestParam Map<String, Object> model, HttpServletRequest request) {
+	public String tryAgain(@RequestParam Map<String, Object> modelMap, HttpServletRequest request, Model model) {
 		try {
-			String email = model.get("email").toString();
+			String email = modelMap.get("email").toString();
 			Usuario usuario = service.findUsuarioByCorreo(email);
 			if(usuario == null) {
 				throw new NullPointerException();
 			}
+			model.addAttribute("correo", email);
 			VerificationToken token = service.validVerificationToken(usuario);
 			emailService.sendConfirmationEmail(token);
 			return "confirmacion-enviada";

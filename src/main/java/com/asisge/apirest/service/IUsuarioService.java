@@ -25,8 +25,8 @@ public interface IUsuarioService {
 	void changeContrasena(Usuario usuario);
 
 	VerificationToken createVerificationToken(Usuario usuario);
-	
+
 	VerificationToken getVerificationToken(String token);
-	
+
 	VerificationToken validVerificationToken(Usuario usuario);
 }

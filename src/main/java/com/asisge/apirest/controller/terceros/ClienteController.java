@@ -141,6 +141,7 @@ public class ClienteController extends BaseController {
 	 * @param id
 	 * @return
 	 */
+	@Deprecated
 	@GetMapping(TercerosPath.CONTACTOS)
 	public ResponseEntity<ApiResponse> findAllContactos(@PathVariable(ID_CLIENTE) Long id) {
 		List<ContactoCliente> contactos = service.findContactosByCliente(id);
@@ -149,6 +150,7 @@ public class ClienteController extends BaseController {
 		return new ResponseEntity<>(buildOk(contactos), HttpStatus.OK);
 	}
 
+	@Deprecated
 	@PatchMapping(TercerosPath.CONTACTOS)
 	public ResponseEntity<ApiResponse> setContactos(@Valid @RequestBody @UniqueElements List<ContactoDto> contactos,
 			BindingResult result, @PathVariable(ID_CLIENTE) Long id) {
@@ -164,6 +166,7 @@ public class ClienteController extends BaseController {
 		return new ResponseEntity<>(buildSuccess(descripcion, cliente.getContactos(), ""), HttpStatus.ACCEPTED);
 	}
 
+	@Deprecated
 	@PatchMapping(TercerosPath.CONTACTO_ID)
 	public ResponseEntity<ApiResponse> updateContacto(@Valid @RequestBody ContactoDto dto, BindingResult result,
 			@PathVariable("id") Long id) {

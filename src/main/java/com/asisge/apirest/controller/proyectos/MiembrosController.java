@@ -65,6 +65,17 @@ public class MiembrosController extends BaseController {
 		return respondRequest(proyectos);
 	}
 
+	@PatchMapping(ProyectosPath.PROYECTO_MIEMBROS)
+	public ResponseEntity<ApiResponse> saveMiembros(@Valid @RequestBody List<MiembroDto> dtoList, BindingResult result) {
+		if (result.hasErrors())
+			return validateDto(result);
+		List<MiembroProyecto> listado = service.saveAll(dtoList);
+		return new ResponseEntity<>(buildSuccess(RESULT_CREATED, listado, "Listado de miembros", "de proyecto: " + dtoList.get(0).getProyecto()), HttpStatus.CREATED);
+	}
+
+	
+	
+	@Deprecated
 	@PostMapping(ProyectosPath.PROYECTO_MIEMBROS)
 	public ResponseEntity<ApiResponse> saveMiembro(@Valid @RequestBody MiembroDto dto, BindingResult result, @PathVariable(ID_PROYECTO) Long idProyecto) {
 		if (result.hasErrors()) {
@@ -73,17 +84,12 @@ public class MiembrosController extends BaseController {
 		dto.setProyecto(idProyecto);
 		MiembroProyecto miembro = service.buildEntity(dto);
 		miembro = service.saveMiembro(miembro);
-		return new ResponseEntity<>(buildSuccess(RESULT_CREATED, miembro, "Miembro proyecto", miembro.getIdMiembroProyecto().toString()), HttpStatus.CREATED);
-	}
-	
-	@PatchMapping(ProyectosPath.PROYECTO_MIEMBROS)
-	public ResponseEntity<ApiResponse> saveMiembros(@Valid @RequestBody List<MiembroDto> dtoList, BindingResult result){
-		if(result.hasErrors())
-			return validateDto(result);
-		List<MiembroProyecto> listado = service.saveAll(dtoList);
-		return new ResponseEntity<>(buildSuccess(RESULT_CREATED, listado, "Listado de miembros", "de proyecto: "+dtoList.get(0).getProyecto()),HttpStatus.CREATED);
+		return new ResponseEntity<>(
+				buildSuccess(RESULT_CREATED, miembro, "Miembro proyecto", miembro.getIdMiembroProyecto().toString()),
+				HttpStatus.CREATED);
 	}
 
+	@Deprecated
 	@DeleteMapping(ProyectosPath.PROYECTO_MIEMBROS)
 	public ResponseEntity<ApiResponse> delete(@PathVariable(ID_PROYECTO) Long proyecto, @RequestParam @NotNull Long usuario) {
 		try {
@@ -91,7 +97,8 @@ public class MiembrosController extends BaseController {
 			ApiResponse response = buildDeleted("Miembro Proyecto", String.format("(proyecto: %s, usuario: %s)", proyecto, usuario));
 			return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
 		} catch (Exception e) {
-			String message = String.format(Messages.getString("message.error.delete.record"), "Miembro", String.format("(proyecto: %s, usuario: %s)", proyecto, usuario));
+			String message = String.format(Messages.getString("message.error.delete.record"), "Miembro",
+					String.format("(proyecto: %s, usuario: %s)", proyecto, usuario));
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, message, e);
 		}
 	}

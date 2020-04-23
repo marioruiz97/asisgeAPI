@@ -18,6 +18,7 @@ public interface IAsesorService {
 
 	UsuarioCliente findByClienteAndUsuario(Long idCliente, Long idUsuario);
 
+	@Deprecated
 	void deleteUsuarioCliente(Long id);
 	
 	void deleteByUsuario(Long idUsuario);

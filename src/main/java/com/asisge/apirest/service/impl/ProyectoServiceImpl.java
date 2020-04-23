@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.asisge.apirest.config.utils.Messages;
+import com.asisge.apirest.model.dto.proyectos.DashboardDto;
 import com.asisge.apirest.model.dto.proyectos.ProyectoDto;
 import com.asisge.apirest.model.entity.proyectos.EstadoProyecto;
 import com.asisge.apirest.model.entity.proyectos.Proyecto;
@@ -27,7 +28,7 @@ public class ProyectoServiceImpl implements IProyectoService, IEstadoProyectoSer
 	private IEstadoProyectoDao estadoProyectoDao;
 
 	@Autowired
-	private IProyectoDao repository;
+	private IProyectoDao repository;	
 
 	private boolean validEstadoAnterior(Long idAnterior) {
 		boolean result = false;
@@ -83,8 +84,10 @@ public class ProyectoServiceImpl implements IProyectoService, IEstadoProyectoSer
 
 	@Override
 	@Transactional(readOnly = true)
-	public Proyecto findProyecto(Long id) {
-		return repository.findById(id).orElse(null);
+	public DashboardDto loadDashboard(Long id) {
+		Proyecto proyecto = repository.findById(id).orElse(null);
+		Cliente cliente = proyecto.getCliente();
+		return new DashboardDto(id, cliente, null, proyecto, proyecto.getEstadoProyecto(), null);
 	}
 
 	@Override

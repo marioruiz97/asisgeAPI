@@ -13,18 +13,17 @@ public interface IMiembrosService {
 
 	List<MiembroProyecto> saveAll(List<MiembroDto> dtos);
 
-	List<MiembroProyecto> findAllMiembros();
-
 	List<Proyecto> findProyectosByUsuario(Long idUsuario);
-	
+
 	List<Proyecto> findProyectosByEmail(String email);
 
 	List<Usuario> findUsuariosByProyecto(Long idProyecto);
 
 	List<MiembroProyecto> findMiembrosProyecto(Long idProyecto);
-	
+
 	boolean existsMiembroInProyecto(Long idProyecto, String email);
 
+	@Deprecated
 	void deleteMiembro(Long idProyecto, Long idUsuario);
 
 	MiembroProyecto buildEntity(MiembroDto dto);

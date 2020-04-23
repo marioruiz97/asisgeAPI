@@ -21,11 +21,15 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.asisge.apirest.config.paths.Paths.ProyectosPath;
 import com.asisge.apirest.config.response.ApiResponse;
+import com.asisge.apirest.config.utils.Messages;
 import com.asisge.apirest.controller.BaseController;
+import com.asisge.apirest.model.dto.proyectos.DashboardDto;
 import com.asisge.apirest.model.dto.proyectos.ProyectoDto;
+import com.asisge.apirest.model.entity.actividades.ColorNotificacion;
 import com.asisge.apirest.model.entity.proyectos.Proyecto;
 import com.asisge.apirest.model.entity.terceros.MiembroProyecto;
 import com.asisge.apirest.service.IMiembrosService;
+import com.asisge.apirest.service.INotificacionService;
 import com.asisge.apirest.service.IProyectoService;
 import com.asisge.apirest.service.IUsuarioService;
 
@@ -36,41 +40,47 @@ public class ProyectoController extends BaseController {
 
 	@Autowired
 	private IProyectoService service;
-	
+
 	@Autowired
 	private IMiembrosService miembroService;
-	
+
 	@Autowired
 	private IUsuarioService userService;
+	
+	@Autowired
+	private INotificacionService notificacionService;
 
 	@GetMapping(ProyectosPath.PROYECTOS)
 	public ResponseEntity<ApiResponse> findAll(HttpServletRequest request) {
 		List<Proyecto> proyectos;
-		if(request.isUserInRole("ROLE_ADMIN")) {
+		if (request.isUserInRole("ROLE_ADMIN")) {
 			proyectos = service.findAllProyectos();
-		} else if(isAuthenticated()) {
+		} else if (isAuthenticated()) {
 			proyectos = miembroService.findProyectosByEmail(getCurrentEmail());
 		} else {
 			throw new ResponseStatusException(HttpStatus.FORBIDDEN);
-		}			
+		}
 		if (proyectos.isEmpty())
 			return respondNotFound(null);
 		return new ResponseEntity<>(buildOk(proyectos), HttpStatus.OK);
 	}
 
-	@GetMapping(ProyectosPath.PROYECTO_ID)
-	public ResponseEntity<ApiResponse> findById(HttpServletRequest request, @PathVariable(ID_PROYECTO) Long id) {
-		Proyecto proyecto = null;
+	
+	@GetMapping(ProyectosPath.DASHBOARD)
+	public ResponseEntity<ApiResponse> findDashboardById(HttpServletRequest request, @PathVariable("id") Long id) {
+		DashboardDto dashboard = null;
 		String email = getCurrentEmail();
-		if(request.isUserInRole("ROLE_ADMIN") || miembroService.existsMiembroInProyecto(id, email)) {
-			proyecto = service.findProyecto(id);
+		if (request.isUserInRole("ROLE_ADMIN") || miembroService.existsMiembroInProyecto(id, email)) {
+			dashboard = service.loadDashboard(id);
+			dashboard.setMiembros(miembroService.findMiembrosProyecto(id));
+			dashboard.setNotificaciones(notificacionService.findByProyecto(dashboard.getProyecto()));
 		}
-		if (proyecto == null)
+		if (dashboard == null)
 			return respondNotFound(id.toString());
-		return new ResponseEntity<>(buildOk(proyecto), HttpStatus.OK);
+		return new ResponseEntity<>(buildOk(dashboard), HttpStatus.OK);
 	}
 
-	@Secured({"ROLE_ADMIN", "ROLE_ASESOR"})
+	@Secured({ "ROLE_ADMIN", "ROLE_ASESOR" })
 	@PostMapping(ProyectosPath.PROYECTOS)
 	public ResponseEntity<ApiResponse> create(@Valid @RequestBody ProyectoDto dto, BindingResult result) {
 		if (result.hasErrors()) {
@@ -79,19 +89,37 @@ public class ProyectoController extends BaseController {
 		Proyecto newProject = service.buildEntity(dto);
 		newProject = service.saveProyecto(newProject);
 		MiembroProyecto miembro = new MiembroProyecto(null, userService.findUsuarioByCorreo(getCurrentEmail()), newProject, "Líder");
-		miembroService.saveMiembro(miembro);		
-		String descripcion = String.format(RESULT_CREATED, newProject.toString(), newProject.getIdProyecto());
+		miembroService.saveMiembro(miembro);
+		String descripcion = String.format(RESULT_CREATED, newProject.getNombreProyecto(), newProject.getIdProyecto());
 		auditManager.saveAudit(newProject.getCreatedBy(), ACTION_CREATE, descripcion);
+		notificacionService.notificar(newProject, descripcion, ColorNotificacion.SUCCESS);
+		String added = String.format(Messages.getString("notification.added.member"), getCurrentEmail(), newProject.getNombreProyecto());
+		notificacionService.notificarUsuario(newProject, miembro.getUsuario(), added, ColorNotificacion.PRIMARY, 5);
+		notificacionService.notificarAdmins(newProject.getNombreProyecto());
 		return new ResponseEntity<>(buildSuccess(descripcion, newProject, ""), HttpStatus.CREATED);
 	}
 
+	@Secured({ "ROLE_ADMIN" })
+	@DeleteMapping(ProyectosPath.PROYECTO_ID)
+	public ResponseEntity<ApiResponse> delete(@PathVariable(ID_PROYECTO) Long id) {
+		service.deleteProyecto(id);
+		ApiResponse response = buildDeleted("Proyecto", id.toString());
+		auditManager.saveAudit(ACTION_DELETE, response.getMessage());
+		return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
+	}
+
+	
+	
+	
 	// TODO verificar si no hay que quitar este metodo
-	@Secured({"ROLE_ADMIN", "ROLE_ASESOR"})
+	@Deprecated
+	@Secured({ "ROLE_ADMIN", "ROLE_ASESOR" })
 	@PatchMapping(ProyectosPath.PROYECTO_ID)
-	public ResponseEntity<ApiResponse> update(@Valid @RequestBody ProyectoDto dto, BindingResult result, @PathVariable(ID_PROYECTO) Long id) {
+	public ResponseEntity<ApiResponse> update(@Valid @RequestBody ProyectoDto dto, BindingResult result,
+			@PathVariable(ID_PROYECTO) Long id) {
 		if (result.hasErrors()) {
 			return validateDto(result);
-		} else if (service.findProyecto(id) == null) {
+		} else if (service.loadDashboard(id) == null) {
 			return respondNotFound(id.toString());
 		}
 		Proyecto project = service.buildEntity(dto);
@@ -101,14 +129,4 @@ public class ProyectoController extends BaseController {
 		auditManager.saveAudit(project.getLastModifiedBy(), ACTION_UPDATE, descripcion);
 		return new ResponseEntity<>(buildSuccess(descripcion, project, ""), HttpStatus.CREATED);
 	}
-
-	@Secured({"ROLE_ADMIN"})
-	@DeleteMapping(ProyectosPath.PROYECTO_ID)
-	public ResponseEntity<ApiResponse> delete(@PathVariable(ID_PROYECTO) Long id) {		
-			service.deleteProyecto(id);
-			ApiResponse response = buildDeleted("Proyecto", id.toString());
-			auditManager.saveAudit(ACTION_DELETE, response.getMessage());
-			return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
-	}
-
 }

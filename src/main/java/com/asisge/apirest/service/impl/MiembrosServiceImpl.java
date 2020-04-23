@@ -5,8 +5,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Sort;
-import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -37,11 +35,13 @@ public class MiembrosServiceImpl implements IMiembrosService {
 		return repository.saveAll(persist);
 	}
 
-	@Override
-	@Transactional(readOnly = true)
-	public List<MiembroProyecto> findAllMiembros() {
-		return repository.findAll(Sort.by(Direction.ASC, "proyecto", "usuario"));
-	}
+	/*
+	 * @Override
+	 * 
+	 * @Transactional(readOnly = true) public List<MiembroProyecto>
+	 * findAllMiembros() { return repository.findAll(Sort.by(Direction.ASC,
+	 * "proyecto", "usuario"))
+	 */
 
 	@Override
 	@Transactional(readOnly = true)
