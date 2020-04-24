@@ -20,7 +20,6 @@ import com.asisge.apirest.config.paths.Paths.MaestrosPath;
 import com.asisge.apirest.config.response.ApiResponse;
 import com.asisge.apirest.config.utils.Messages;
 import com.asisge.apirest.controller.BaseController;
-import com.asisge.apirest.model.dto.proyectos.EstadoProyectoLineDto;
 import com.asisge.apirest.model.entity.proyectos.EstadoProyecto;
 import com.asisge.apirest.service.IEstadoProyectoService;
 
@@ -55,15 +54,7 @@ public class EstadoProyectoController extends BaseController {
 		return new ResponseEntity<>(buildOk(estados), HttpStatus.OK);
 	}
 	
-	@GetMapping(MaestrosPath.ESTADOS_LINE)
-	public ResponseEntity<ApiResponse> findEstadosLine(@PathVariable("actual") Long estadoActual){
-		EstadoProyecto actual = service.findEstadoById(estadoActual);
-		if(actual == null)
-			throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-		List<EstadoProyectoLineDto> line = service.findEstadosLine(actual);
-		return new ResponseEntity<>(buildOk(line), HttpStatus.OK);
-	}
-
+	
 	@Secured("ROLE_ADMIN")
 	@PostMapping(MaestrosPath.ESTADO_PROYECTO)
 	public ResponseEntity<ApiResponse> create(@RequestBody ModelMap model) {
@@ -95,8 +86,7 @@ public class EstadoProyectoController extends BaseController {
 			auditManager.saveAudit(ACTION_DELETE, descripcion);
 			return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
 		} catch (Exception e) {
-			String message = String.format(Messages.getString("message.error.delete.record"), 
-					"Estado de Proyecto",
+			String message = String.format(Messages.getString("message.error.delete.record"), "Estado de Proyecto",
 					id.toString());
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, message, e);
 		}

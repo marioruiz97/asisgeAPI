@@ -5,8 +5,7 @@ package com.asisge.apirest.config.paths;
  * Use the following Conventions when naming URI's (paths):
  * <ul>
  * <li>Use nouns to represent resources</li>
- * <li>Consistency is the key (use / to indicate hierarchy and never end an uri
- * with /)</li>
+ * <li>Consistency is the key (use / to indicate hierarchy and never end an uri with /)</li>
  * <li>Use Hyphens (-) to improve readability, do not use Underscores (_)</li>
  * <li>Use always lower case characters</li>
  * <li>Use Query component to filter collections Ex: route?axy=lol&zab=1</li>
@@ -16,7 +15,7 @@ package com.asisge.apirest.config.paths;
  * @author Mario Ruiz
  */
 public final class Paths {
-	
+
 	/**
 	 * Rutas para: Autenticación - Recuperar clave
 	 * 
@@ -28,8 +27,9 @@ public final class Paths {
 		public static final String CAMBIO_CONTRASENA = "cambio-contrasena/{usuario}";
 		public static final String RECUPERAR = "cuenta/recuperar";
 		public static final String CONFIRMAR = "cuenta/confirmar";
-		
-		private AuthPath() {}
+
+		private AuthPath() {
+		}
 	}
 
 	/**
@@ -79,11 +79,9 @@ public final class Paths {
 		public static final String ESTADO_PROYECTO = "estado-proyecto";
 		public static final String ESTADO_PROYECTO_ID = "estado-proyecto/{idEstado}";
 		public static final String POSIBLES_ESTADOS = ESTADO_PROYECTO_ID + "/estados-siguientes";
-		public static final String ESTADOS_LINE = "dashboard/estados-line/{actual}";
 
 		private MaestrosPath() {
 		}
-
 	}
 
 	/**
@@ -95,14 +93,12 @@ public final class Paths {
 	 */
 	public static final class ProyectosPath {
 		// TODO al terminar proyecto, verificar estas rutas
-		public static final String PROYECTOS = "proyectos";		
+		public static final String PROYECTOS = "proyectos";
 		public static final String PROYECTO_ID = "proyectos/{idProyecto}";
 		public static final String DASHBOARD = "dashboard/{id}";
 		public static final String PROYECTO_MIEMBROS = "proyectos/{idProyecto}/miembros";
-		public static final String MIEMBRO_PROYECTOS = "usuarios/{idUsuario}/mis-proyectos";	
-		
-		
-		public static final String PLANES_TRABAJO = "planes"; // TODO verificar si dejar ruta asi o con  proyectos/{idProyecto}/planes
+		public static final String MIEMBRO_PROYECTOS = "usuarios/{idUsuario}/mis-proyectos";
+		public static final String PLANES_TRABAJO = "planes"; // TODO verificar si dejar ruta asi o con proyectos/{idProyecto}/planes
 		public static final String PLAN_TRABAJO_ID = PLANES_TRABAJO + "/{idPlan}";
 		public static final String ETAPA_PLAN = "planes/{idPlan}/etapas";
 		public static final String ETAPA_PLAN_ID = ETAPA_PLAN + "/{idEtapa}";
@@ -110,7 +106,7 @@ public final class Paths {
 		private ProyectosPath() {
 		}
 	}
-	
+
 	/**
 	 * Rutas para notificaciones
 	 * 
@@ -119,12 +115,10 @@ public final class Paths {
 	 */
 	public static final class NotificacionesPath {
 		public static final String NOTIFICACIONES = "notificaciones";
-		// public static final String NOTIFICACIONES_PROYECTO = "notificaciones/{idProyecto}"
 		public static final String NOTIFICACIONES_ID = "notificaciones/{id}";
 
 		private NotificacionesPath() {
 		}
-
 	}
 
 	private Paths() {

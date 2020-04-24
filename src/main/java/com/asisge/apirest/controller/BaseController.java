@@ -112,8 +112,7 @@ public abstract class BaseController {
 
 	public ApiError buildFail(String message) {
 		ApiError error = new ApiError();
-		String result = (message != null && !message.isEmpty()) ? message
-				: Messages.getString("message.result.generic-error");
+		String result = (message != null && !message.isEmpty()) ? message : Messages.getString("message.result.generic-error");
 		error.setMessage(result);
 		return error;
 	}

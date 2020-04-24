@@ -16,6 +16,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Entity
 @Table(name = "estado_proyecto")
@@ -32,10 +33,12 @@ public @Data class EstadoProyecto extends AuditModel<String> implements Serializ
 	@Size(max = 100)
 	private String nombreEstado;
 	
+	@ToString.Exclude
 	private String descripcion;
 	
 	private Long idEstadoAnterior;
 	
+	@ToString.Exclude
 	private Boolean requerido;
 
 	/**
