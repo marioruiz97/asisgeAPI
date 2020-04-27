@@ -53,7 +53,8 @@ public class EstadoProyectoController extends BaseController {
 			return respondNotFound(null);
 		return new ResponseEntity<>(buildOk(estados), HttpStatus.OK);
 	}
-
+	
+	
 	@Secured("ROLE_ADMIN")
 	@PostMapping(MaestrosPath.ESTADO_PROYECTO)
 	public ResponseEntity<ApiResponse> create(@RequestBody ModelMap model) {
@@ -85,8 +86,7 @@ public class EstadoProyectoController extends BaseController {
 			auditManager.saveAudit(ACTION_DELETE, descripcion);
 			return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
 		} catch (Exception e) {
-			String message = String.format(Messages.getString("message.error.delete.record"), 
-					"Estado de Proyecto",
+			String message = String.format(Messages.getString("message.error.delete.record"), "Estado de Proyecto",
 					id.toString());
 			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, message, e);
 		}
@@ -96,13 +96,14 @@ public class EstadoProyectoController extends BaseController {
 		final String estadoAnterior = "idEstadoAnterior";
 		String nombreEstado = model.getAttribute("nombreEstado").toString();
 		String descripcion = model.getAttribute("descripcion").toString();
+		String requerido = model.getAttribute("requerido").toString();
 		Long idEstadoAnterior;
 		try {
 			idEstadoAnterior = convertToLong(model.getAttribute(estadoAnterior).toString(), estadoAnterior, Boolean.FALSE);
 		} catch (NullPointerException e) {
 			idEstadoAnterior = null;
 		}
-		return new EstadoProyecto(null, nombreEstado, descripcion, idEstadoAnterior);
+		return new EstadoProyecto(null, nombreEstado, descripcion, idEstadoAnterior, Boolean.valueOf(requerido));
 	}
 
 }

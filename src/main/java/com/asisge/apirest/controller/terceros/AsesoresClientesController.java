@@ -39,24 +39,23 @@ public class AsesoresClientesController extends BaseController {
 	@Autowired
 	private IAsesorService service;
 
+	/**
+	 * funcionamiento var action 0 -> ningun parametro, se deben retornar todos los
+	 * objetos 1 -> llega un usuario pero no llega cliente, se retornan los clientes
+	 * de un usuario 2 -> llega un cliente pero no usuario, se retronan los asesores
+	 * del cliente 3 -> llega los dos, se retorna el objeto usuarioCliente
+	 * correspondiente (ya que usuario y clientes tienen sus claves unicas)
+	 */
 	@GetMapping(TercerosPath.ASESORES)
 	public ResponseEntity<ApiResponse> findFiltered(@RequestParam("usuario") Optional<Long> usuario, @RequestParam("cliente") Optional<Long> cliente) {
 		Long idUsuario = usuario.orElse(null);
 		Long idCliente = cliente.orElse(null);
-		List<?> listado;
-
-		/**
-		 * funcionamiento var action 0 -> ningun parametro, se deben retornar todos los
-		 * objetos 1 -> llega un usuario pero no llega cliente, se retornan los clientes
-		 * de un usuario 2 -> llega un cliente pero no usuario, se retronan los asesores
-		 * del cliente 3 -> llega los dos, se retorna el objeto usuarioCliente
-		 * correspondiente (ya que usuario y clientes tienen sus claves unicas)
-		 */
+		List<?> listado;		
+		
 		int action;
 		action = idUsuario != null ? 1 : 0;
 		action = idCliente != null ? 2 : action;
 		action = idUsuario != null && idCliente != null ? 3 : action;
-
 		switch (action) {
 		case 0:
 			listado = service.findAll();
@@ -80,13 +79,41 @@ public class AsesoresClientesController extends BaseController {
 		return new ResponseEntity<>(buildOk(listado), HttpStatus.OK);
 	}
 
+	@PatchMapping(TercerosPath.ASESORES + "/{usuario}")
+	public ResponseEntity<ApiResponse> setUsuariosClientes(@RequestBody List<ModelMap> dtos, @NotNull @PathVariable("usuario") Long idUsuario) {
+		service.deleteByUsuario(idUsuario);
+		List<UsuarioCliente> newList = dtos.stream().map(dto -> {
+			Long idCliente = Long.parseLong(dto.getAttribute("cliente").toString());
+			return new UsuarioCliente(null, new Usuario(idUsuario), new Cliente(idCliente));
+		}).collect(Collectors.toList());
+		newList.forEach(uc -> service.saveUsuarioCliente(uc));
+		String message = newList.isEmpty() ? Messages.getString("message.result.delte-user-clients") : Messages.getString("message.result.multiple-client");
+		auditManager.saveAudit(ACTION_UPDATE, message);
+		return new ResponseEntity<>(buildSuccess(message, newList, ""), HttpStatus.CREATED);
+	}
+
+	@PatchMapping(TercerosPath.CLIENTE_ASESOR)
+	public ResponseEntity<ApiResponse> setAsesores(@RequestBody List<ModelMap> dtos, @NotNull @PathVariable("idCliente") Long idCliente) {
+		service.deleteByCliente(idCliente);
+		List<UsuarioCliente> newList = dtos.stream().map(dto -> {
+			Long idUsuario = Long.parseLong(dto.getAttribute("usuario").toString());
+			return new UsuarioCliente(null, new Usuario(idUsuario), new Cliente(idCliente));
+		}).collect(Collectors.toList());
+		newList.forEach(uc -> service.saveUsuarioCliente(uc));
+		String message = Messages.getString("message.result.updated-client-user");
+		auditManager.saveAudit(ACTION_UPDATE, message);
+		return new ResponseEntity<>(buildSuccess(message, newList, ""), HttpStatus.CREATED);
+	}
+	
+	
+	
+	@Deprecated
 	@PostMapping(TercerosPath.ASESORES)
 	public ResponseEntity<ApiResponse> saveAsesor(@RequestBody ModelMap model) {
 		Long idUsuario = null;
 		Long idcliente = null;
 		String curValue = null;
 		List<String> errores = new ArrayList<>();
-
 		try {
 			curValue = model.getAttribute("idUsuario").toString();
 			idUsuario = Long.parseLong(curValue);
@@ -94,7 +121,6 @@ public class AsesoresClientesController extends BaseController {
 			String msg = String.format(Messages.getString("message.error.number-exception"), "idUsuario", curValue);
 			errores.add(msg);
 		}
-
 		try {
 			curValue = null;
 			curValue = model.getAttribute("idCliente").toString();
@@ -103,7 +129,6 @@ public class AsesoresClientesController extends BaseController {
 			String msg = String.format(Messages.getString("message.error.number-exception"), "idCliente", curValue);
 			errores.add(msg);
 		}
-
 		if (!errores.isEmpty()) {
 			// bloque ejecutado si hay errores
 			ApiError error = buildFail(Messages.getString("message.error.number-or-null"));
@@ -117,32 +142,7 @@ public class AsesoresClientesController extends BaseController {
 				usuarioCliente.toString(), usuarioCliente.getId().toString()), HttpStatus.ACCEPTED);
 	}
 
-	@PatchMapping(TercerosPath.ASESORES+"/{usuario}")
-	public ResponseEntity<ApiResponse> setUsuariosClientes(@RequestBody List<ModelMap> dtos, @NotNull @PathVariable("usuario") Long idUsuario) {
-		service.deleteByUsuario(idUsuario);
-		List<UsuarioCliente> newList = dtos.stream().map(dto -> {
-			Long idCliente = Long.parseLong(dto.getAttribute("cliente").toString());
-			return new UsuarioCliente(null, new Usuario(idUsuario), new Cliente(idCliente));
-		}).collect(Collectors.toList());
-		newList.forEach(uc -> service.saveUsuarioCliente(uc));
-		String message = newList.isEmpty() ? Messages.getString("message.result.delte-user-clients") : Messages.getString("message.result.multiple-client");
-		auditManager.saveAudit(ACTION_UPDATE, message);
-		return new ResponseEntity<>(buildSuccess(message, newList, ""), HttpStatus.CREATED);
-	}
-	
-	@PatchMapping(TercerosPath.CLIENTE_ASESOR)
-	public ResponseEntity<ApiResponse> setAsesores(@RequestBody List<ModelMap> dtos, @NotNull @PathVariable("idCliente") Long idCliente) {
-		service.deleteByCliente(idCliente);
-		List<UsuarioCliente> newList = dtos.stream().map(dto -> {
-			Long idUsuario = Long.parseLong(dto.getAttribute("usuario").toString());
-			return new UsuarioCliente(null, new Usuario(idUsuario), new Cliente(idCliente));
-		}).collect(Collectors.toList());
-		newList.forEach(uc -> service.saveUsuarioCliente(uc));
-		String message = Messages.getString("message.result.updated-client-user");
-		auditManager.saveAudit(ACTION_UPDATE, message);
-		return new ResponseEntity<>(buildSuccess(message, newList, ""), HttpStatus.CREATED);
-	}
-
+	@Deprecated
 	@DeleteMapping(TercerosPath.ASESORES)
 	public ResponseEntity<ApiResponse> delete(@RequestParam("usuario") Long idUsuario, @RequestParam("cliente") Long idCliente) {
 		if (idUsuario == null || idCliente == null) {

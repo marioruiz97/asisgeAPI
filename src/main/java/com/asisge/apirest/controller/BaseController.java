@@ -44,6 +44,13 @@ public abstract class BaseController {
 		}
 	}
 
+	
+	/**
+	 * Método usado cuando hay errores en el binding result, retorna un bad_request
+	 * con los errores existentes	 
+	 * @param result
+	 * @return
+	 */
 	public ResponseEntity<ApiResponse> validateDto(BindingResult result) {
 		List<String> errores = result.getFieldErrors().stream().map(err -> {
 			String field = StringUtils.join(StringUtils.splitByCharacterTypeCamelCase(err.getField()), ' ') + ": ";
@@ -54,6 +61,7 @@ public abstract class BaseController {
 		return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
 	}
 
+	
 	/**
 	 * método usado para retornar respuestas de tipo 404
 	 * 
@@ -104,19 +112,17 @@ public abstract class BaseController {
 
 	public ApiError buildFail(String message) {
 		ApiError error = new ApiError();
-		String result = (message != null && !message.isEmpty()) ? message
-				: Messages.getString("message.result.generic-error");
+		String result = (message != null && !message.isEmpty()) ? message : Messages.getString("message.result.generic-error");
 		error.setMessage(result);
 		return error;
 	}
-	
-	public static boolean isAuthenticated( ) {
+
+	public static boolean isAuthenticated() {
 		return SecurityContextHolder.getContext().getAuthentication().isAuthenticated();
-	}	
-	
+	}
+
 	public static String getCurrentEmail() {
 		return SecurityContextHolder.getContext().getAuthentication().getName();
 	}
-	
-	
+
 }

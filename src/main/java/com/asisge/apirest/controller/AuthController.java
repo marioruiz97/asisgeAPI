@@ -39,7 +39,7 @@ public class AuthController extends BaseController {
 	private IEmailSenderService emailService;
 
 	@GetMapping(AuthPath.ME)
-	public ResponseEntity<ApiResponse> findById() {
+	public ResponseEntity<ApiResponse> findMyInfo() {
 		Usuario usuario = service.findUsuarioByCorreo(getCurrentEmail());
 		if (usuario == null) {
 			throw new ResponseStatusException(HttpStatus.FORBIDDEN);
@@ -65,8 +65,7 @@ public class AuthController extends BaseController {
 	}
 
 	@PostMapping(AuthPath.CAMBIO_CONTRASENA)
-	public ResponseEntity<ApiResponse> changePassword(@RequestBody ModelMap model,
-			@NotNull @PathVariable("usuario") Long id) {
+	public ResponseEntity<ApiResponse> changePassword(@RequestBody ModelMap model, @NotNull @PathVariable("usuario") Long id) {
 		try {
 			Usuario user = service.findUsuarioById(id);
 			user.setContrasena(model.getAttribute("password").toString());

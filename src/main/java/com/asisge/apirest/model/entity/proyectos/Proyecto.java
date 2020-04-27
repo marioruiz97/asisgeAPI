@@ -2,7 +2,6 @@ package com.asisge.apirest.model.entity.proyectos;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -11,7 +10,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.FutureOrPresent;
 import javax.validation.constraints.NotBlank;
@@ -22,8 +20,6 @@ import org.springframework.lang.Nullable;
 
 import com.asisge.apirest.model.entity.audit.AuditModel;
 import com.asisge.apirest.model.entity.terceros.Cliente;
-import com.asisge.apirest.model.entity.terceros.MiembroProyecto;
-import com.fasterxml.jackson.annotation.JsonBackReference;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -54,11 +50,7 @@ public @Data class Proyecto extends AuditModel<String> implements Serializable {
 	private Date fechaCierreProyecto;
 
 	@ManyToOne(optional = false)
-	private EstadoProyecto estadoProyecto;
-
-	@JsonBackReference
-	@OneToMany(mappedBy = "proyecto")
-	private List<MiembroProyecto> miembrosProyecto;
+	private EstadoProyecto estadoProyecto;	
 
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "id_cliente")

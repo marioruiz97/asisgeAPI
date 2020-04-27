@@ -19,29 +19,25 @@ import com.asisge.apirest.service.IUsuarioService;
 @Component
 public class TokenInfo implements TokenEnhancer {
 
-	static final String EMAIL_KEY = "usuario_email";		
-	static final String ENABLED_KEY = "usuario_enabled";
-	static final String VALIDATED_KEY = "usuario_validated";
-	static final String USER_ID_KEY = "usuario_id";
-	static final String USER_NAME_KEY = "usuario_name";
-	static final String ROLES_KEY = "usuario_roles";
-	
-	static final String CLIENT_ID_KEY = "client_id";
-	// private static final String PICTURE_URL = "picture_url"	
+	private static final String EMAIL_KEY = "usuario_email";		
+	private static final String ENABLED_KEY = "usuario_enabled";			
+	private static final String USER_ID_KEY = "usuario_id";
+	private static final String USER_NAME_KEY = "usuario_name";
+	private static final String ROLES_KEY = "usuario_roles";		
+			static final String PICTURE_URL = "picture_url";
+			static final String VALIDATED_KEY = "usuario_validated";
 
 	@Autowired
 	private IUsuarioService userService;
 
+	
 	@Override
 	public OAuth2AccessToken enhance(OAuth2AccessToken accessToken, OAuth2Authentication authentication) {
-
 		Map<String, Object> info = new HashMap<>();
-		Usuario user = userService.findUsuarioByCorreo(authentication.getName());
-		
+		Usuario user = userService.findUsuarioByCorreo(authentication.getName());		
 		if(user==null) {
 			throw new UsernameNotFoundException("No se ha encontrado el usuario en base de datos");
 		}
-
 		info.put(EMAIL_KEY, user.getCorreo());
 		info.put(USER_NAME_KEY, user.getNombre().concat(" ").concat(user.getApellido1()));
 		info.put(ENABLED_KEY, user.getEstado());
