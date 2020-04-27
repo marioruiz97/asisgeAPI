@@ -9,6 +9,7 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.UniqueConstraint;
 import javax.validation.constraints.NotNull;
 
 import com.asisge.apirest.model.entity.terceros.Usuario;
@@ -18,7 +19,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "notificacion_usuario")
+@Table(name = "notificacion_usuario", uniqueConstraints = @UniqueConstraint(columnNames = { "id_notificacion", "id_usuario" }))
 @NoArgsConstructor
 @AllArgsConstructor
 public @Data class NotificacionUsuario implements Serializable {	

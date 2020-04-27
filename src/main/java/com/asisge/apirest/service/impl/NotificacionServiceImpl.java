@@ -73,7 +73,8 @@ public class NotificacionServiceImpl implements INotificacionService {
 			List<String> emails = userDao.findByRoles(role).stream()
 					.map(Usuario::getCorreo)
 					.collect(Collectors.toList());
-			emails.forEach(email -> emailService.sendNotification(email, subject, message));
+			// emails.forEach(email -> emailService.sendNotification(email, subject, message))
+			emailService.sendNotifications(emails.toArray(new String[0]), subject, message);
 		}
 	}
 

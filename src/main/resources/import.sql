@@ -6,9 +6,10 @@ INSERT INTO cliente(identificacion, nombre_comercial, razon_social, id_tipo_docu
 INSERT INTO cliente(identificacion, nombre_comercial, razon_social, id_tipo_documento) VALUES ( '900876762', 'S4DS', 'solutions for dealers SAS', 2);
 INSERT INTO cliente(identificacion, nombre_comercial, razon_social, id_tipo_documento) VALUES ( '900876763', 'Joyeria inter', 'Joyeria intercontinental dali SAS', 2);
 
-INSERT INTO usuario(apellido1, apellido2, contrasena, correo, estado, identificacion, nombre, telefono, id_tipo_documento, verificado) VALUES ('Ruiz', 'Bedoya', '$2a$10$EO8w3WphXwTeirPxN7qdB.wd2CDr1/MbbP6.oBU.zAj8MdOdUu6/O', 'marioarb.97@gmail.com', true, '1017251545', 'Mario Andres', '3015465076', 1, true);
+INSERT INTO usuario(apellido1, apellido2, contrasena, correo, estado, identificacion, nombre, telefono, id_tipo_documento, verificado) VALUES ('Ruiz', 'Bedoya', '$2a$10$uCaWScEcl62YpPGDpD.JnOlKfsYuAai4/.4pbAAawpdbMyD6wL.1.', 'marioarb.97@gmail.com', true, '1017251545', 'Mario Andres', '3015465076', 1, true);
 INSERT INTO usuario(apellido1, apellido2, contrasena, correo, estado, identificacion, nombre, telefono, id_tipo_documento, verificado) VALUES ('Ruiz', 'Bedoya', '$2a$10$EO8w3WphXwTeirPxN7qdB.wd2CDr1/MbbP6.oBU.zAj8MdOdUu6/O', 'carito.93@gmail.com', true, '1017214122', 'Carito', '3046307654', 1, true);
 INSERT INTO usuario(apellido1, apellido2, contrasena, correo, estado, identificacion, nombre, telefono, id_tipo_documento, verificado) VALUES ('Ruiz', 'Giraldo', '$2a$10$EO8w3WphXwTeirPxN7qdB.wd2CDr1/MbbP6.oBU.zAj8MdOdUu6/O', 'jotica.65@gmail.com', true, '71665023', 'Juan Mario', '3006521212', 1, true);
+INSERT INTO usuario(apellido1, apellido2, contrasena, correo, estado, identificacion, nombre, telefono, id_tipo_documento, verificado) VALUES ('Correa', 'Zapata', '$2a$10$uCaWScEcl62YpPGDpD.JnOlKfsYuAai4/.4pbAAawpdbMyD6wL.1.', 'juliana_correa23152@elpoli.edu.co', true, '1152708638', 'Juliana', '3015465076', 1, true);
 
 INSERT INTO roles(nombre_role) VALUES ('ROLE_ADMIN');
 INSERT INTO roles(nombre_role) VALUES ('ROLE_ASESOR');

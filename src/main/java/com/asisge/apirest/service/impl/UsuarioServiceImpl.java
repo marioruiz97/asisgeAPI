@@ -35,17 +35,16 @@ public class UsuarioServiceImpl implements IUsuarioService, UserDetailsService {
 
 	@Autowired
 	private IAsesorService asesorService;
-	
+
 	@Autowired
 	private IVerificationTokenDao tokenDao;
-	
+
 	private BCryptPasswordEncoder encoder;
-	
+
 	@PostConstruct
 	private void setEncoder() {
 		encoder = new BCryptPasswordEncoder();
 	}
-	
 
 	@Override
 	public Usuario saveUsuario(Usuario usuario) {
@@ -63,27 +62,31 @@ public class UsuarioServiceImpl implements IUsuarioService, UserDetailsService {
 	public Usuario findUsuarioById(Long id) {
 		return repository.findById(id).orElse(null);
 	}
-	
+
 	@Override
 	@Transactional(readOnly = true)
 	public Usuario findUsuarioByCorreo(String correo) {
-		return repository.findByCorreoIgnoreCase(correo).orElse(null);		
+		return repository.findByCorreoIgnoreCase(correo).orElse(null);
 	}
 
 	@Override
 	public void deleteUsuario(Long id) {
-		asesorService.deleteByUsuario(id);
-		repository.deleteById(id);
+		final Usuario delete = repository.findById(id).orElse(null);
+		if (delete != null) {
+			asesorService.deleteByUsuario(id);
+			tokenDao.deleteAll(tokenDao.findByUsuario(delete));			
+			repository.deleteById(id);
+		}
 	}
 
 	@Override
 	public Usuario buildEntity(UsuarioDto dto) {
-		TipoDocumento documento = new TipoDocumento();		
+		TipoDocumento documento = new TipoDocumento();
 		documento.setId(dto.getTipoDocumento());
 		boolean verificado = false;
 		String password = dto.getContrasena().length() < 15 ? encoder.encode(dto.getContrasena()) : dto.getContrasena();
-		return new Usuario(null, dto.getIdentificacion(), dto.getNombre(), dto.getApellido1(), dto.getApellido2(),
-				dto.getTelefono(), dto.getCorreo().toLowerCase(), password, dto.getEstado(), verificado, documento, dto.getRoles());
+		return new Usuario(null, dto.getIdentificacion(), dto.getNombre(), dto.getApellido1(), dto.getApellido2(), dto.getTelefono(), 
+				dto.getCorreo().toLowerCase(), password, dto.getEstado(), verificado, documento, dto.getRoles());
 	}
 
 	@Override
@@ -91,31 +94,29 @@ public class UsuarioServiceImpl implements IUsuarioService, UserDetailsService {
 		repository.updateEstadoUsuario(idUsuario, estado);
 		return repository.findById(idUsuario).orElse(null);
 	}
-	
 
 	@Override
 	public void changeContrasena(Usuario u) {
 		u.setContrasena(encoder.encode(u.getContrasena()));
 		repository.changeContrasenaUsuario(u.getIdUsuario(), u.getContrasena());
 	}
-	
+
 	@Override
-	public VerificationToken createVerificationToken(Usuario usuario) {		
+	public VerificationToken createVerificationToken(Usuario usuario) {
 		return tokenDao.save(new VerificationToken(usuario));
 	}
-	
+
 	@Override
 	public VerificationToken validVerificationToken(Usuario usuario) {
-		VerificationToken token = tokenDao.findByUsuario(usuario).orElse(null);
 		final Calendar cal = Calendar.getInstance();
-		cal.add(Calendar.DATE, -1);		
+		cal.add(Calendar.DATE, -1);
 		Date yesterday = cal.getTime();
-		if(token != null && yesterday.compareTo(token.getCreatedDate()) < 0) {
-			tokenDao.deleteById(token.getTokenId());
-		}
+		List<VerificationToken> tokens = tokenDao.findByUsuario(usuario).stream()
+				.filter(token -> yesterday.compareTo(token.getCreatedDate()) >= 0).collect(Collectors.toList());
+		if (!tokens.isEmpty())
+			tokenDao.deleteAll(tokens);
 		return createVerificationToken(usuario);
 	}
-
 
 	@Override
 	public VerificationToken getVerificationToken(String token) {
@@ -130,16 +131,12 @@ public class UsuarioServiceImpl implements IUsuarioService, UserDetailsService {
 	@Transactional(readOnly = true)
 	public UserDetails loadUserByUsername(String username) {
 		Usuario usuario = repository.findByCorreoIgnoreCase(username).orElse(null);
-
 		if (usuario == null) {
 			throw new UsernameNotFoundException("No se ha encontrado el usuario en base de datos");
 		}
-
 		List<GrantedAuthority> authorities = usuario.getRoles().stream()
-				.map(rol-> new SimpleGrantedAuthority(rol.getNombreRole()))
-				.collect(Collectors.toList());
+				.map(rol -> new SimpleGrantedAuthority(rol.getNombreRole())).collect(Collectors.toList());
 		return new User(username, usuario.getContrasena(), usuario.getEstado(), true, true, usuario.getVerificado(), authorities);
 	}
 
-	
 }

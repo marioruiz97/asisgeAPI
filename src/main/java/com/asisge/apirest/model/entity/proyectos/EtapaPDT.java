@@ -26,7 +26,7 @@ import lombok.NoArgsConstructor;
 @Table(name = "etapa_plan_trabajo")
 @NoArgsConstructor
 @AllArgsConstructor
-@EqualsAndHashCode(callSuper=false)
+@EqualsAndHashCode(callSuper = false)
 public @Data class EtapaPDT extends AuditModel<String> implements Serializable {
 
 	@Id

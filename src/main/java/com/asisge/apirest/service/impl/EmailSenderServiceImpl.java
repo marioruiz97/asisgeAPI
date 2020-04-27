@@ -13,7 +13,7 @@ import com.asisge.apirest.service.IEmailSenderService;
 @Service
 public class EmailSenderServiceImpl implements IEmailSenderService {
 
-	private static final String API_ENDPOINT = "http://localhost.com:8080/api/v1/";
+	private static final String API_ENDPOINT = "http://localhost:8080/api/v1/";
 	private static final String FROM = "Servicio Asisge <testAsisgeFirebase@gmail.com>";
 
 	@Autowired
@@ -65,6 +65,17 @@ public class EmailSenderServiceImpl implements IEmailSenderService {
 		mailMessage.setSubject(subject);
 		mailMessage.setText(message);
 		sendEmail(mailMessage);
+	}
+
+	@Async
+	@Override
+	public void sendNotifications(String[] to, String subject, String message) {
+		SimpleMailMessage mailMessage = new SimpleMailMessage();
+		mailMessage.setTo(to);
+		mailMessage.setFrom(FROM);
+		mailMessage.setSubject(subject);
+		mailMessage.setText(message);
+		sendEmail(mailMessage);		
 	}
 
 }

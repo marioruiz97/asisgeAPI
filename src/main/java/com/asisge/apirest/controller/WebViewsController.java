@@ -12,10 +12,12 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import com.asisge.apirest.config.paths.Paths.AuthPath;
+import com.asisge.apirest.model.entity.actividades.ColorNotificacion;
 import com.asisge.apirest.model.entity.audit.VerificationToken;
 import com.asisge.apirest.model.entity.terceros.Usuario;
 import com.asisge.apirest.repository.IVerificationTokenDao;
 import com.asisge.apirest.service.IEmailSenderService;
+import com.asisge.apirest.service.INotificacionService;
 import com.asisge.apirest.service.IUsuarioService;
 
 @Controller
@@ -28,6 +30,9 @@ public class WebViewsController {
 	
 	@Autowired
 	private IEmailSenderService emailService;
+	
+	@Autowired
+	private INotificacionService notificacion;
 	
 	@Autowired
 	private IVerificationTokenDao tokenDao;
@@ -83,7 +88,8 @@ public class WebViewsController {
 			Long idUsuario = verify.getUsuario().getIdUsuario();
 			Usuario usuario = service.findUsuarioById(idUsuario);
 			usuario.setContrasena(model.get("contrasena").toString());
-			service.changeContrasena(usuario);						
+			service.changeContrasena(usuario);	
+			notificacion.notificarUsuario(null, usuario, "La contraseña se ha cambiado exitosamente", ColorNotificacion.PRIMARY, 8);
 			tokenDao.deleteById(verify.getTokenId());
 			return "contrasena-cambiada";
 		} catch (Exception ex) {
