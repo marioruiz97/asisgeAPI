@@ -33,7 +33,7 @@ public class EtapaPlanTrabajoController extends BaseController {
 	private IEtapaPlanService service;
 
 	@GetMapping(ProyectosPath.ETAPA_PLAN)
-	public ResponseEntity<ApiResponse> findAll(@PathVariable("idPlan") Long id) {
+	public ResponseEntity<ApiResponse> findByPlan(@PathVariable("idPlan") Long id) {
 		List<EtapaPDT> etapas = service.findEtapasByPlan(id);
 		if (etapas.isEmpty())
 			return respondNotFound(null);
@@ -57,7 +57,7 @@ public class EtapaPlanTrabajoController extends BaseController {
 		etapa = service.saveEtapa(etapa);
 		String descripcion = String.format(RESULT_CREATED, etapa.toString(), etapa.getIdEtapaPDT());
 		auditManager.saveAudit(etapa.getCreatedBy(), ACTION_CREATE, descripcion);
-		return new ResponseEntity<>(buildSuccess(descripcion, etapa, ""), HttpStatus.CREATED);
+		return new ResponseEntity<>(buildSuccess(descripcion, etapa), HttpStatus.CREATED);
 	}
 
 	@Secured({"ROLE_ADMIN", "ROLE_ASESOR"})

@@ -23,7 +23,7 @@ import com.asisge.apirest.config.paths.Paths.ProyectosPath;
 import com.asisge.apirest.config.response.ApiResponse;
 import com.asisge.apirest.config.utils.Messages;
 import com.asisge.apirest.controller.BaseController;
-import com.asisge.apirest.model.dto.proyectos.DashboardDto;
+import com.asisge.apirest.model.dto.proyectos.Dashboard;
 import com.asisge.apirest.model.dto.proyectos.ProyectoDto;
 import com.asisge.apirest.model.entity.actividades.ColorNotificacion;
 import com.asisge.apirest.model.entity.proyectos.Proyecto;
@@ -72,7 +72,7 @@ public class ProyectoController extends BaseController {
 	
 	@GetMapping(ProyectosPath.DASHBOARD)
 	public ResponseEntity<ApiResponse> findDashboardById(HttpServletRequest request, @PathVariable("id") Long id) {
-		DashboardDto dashboard = null;
+		Dashboard dashboard = null;
 		String email = getCurrentEmail();
 		if (request.isUserInRole("ROLE_ADMIN") || miembroService.existsMiembroInProyecto(id, email)) {
 			dashboard = service.loadDashboard(id);

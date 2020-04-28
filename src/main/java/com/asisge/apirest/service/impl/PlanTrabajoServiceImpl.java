@@ -17,6 +17,7 @@ import com.asisge.apirest.repository.IEtapaPlanDao;
 import com.asisge.apirest.repository.IPlanDeTrabajoDao;
 import com.asisge.apirest.service.IEtapaPlanService;
 import com.asisge.apirest.service.IPlanTrabajoService;
+import com.asisge.apirest.service.IProyectoService;
 
 @Service
 public class PlanTrabajoServiceImpl implements IPlanTrabajoService, IEtapaPlanService {
@@ -26,6 +27,9 @@ public class PlanTrabajoServiceImpl implements IPlanTrabajoService, IEtapaPlanSe
 
 	@Autowired
 	private IEtapaPlanDao etapaDao;
+
+	@Autowired
+	private IProyectoService proyectoService;
 
 	@Override
 	public EtapaPDT saveEtapa(EtapaPDT etapa) {
@@ -44,6 +48,12 @@ public class PlanTrabajoServiceImpl implements IPlanTrabajoService, IEtapaPlanSe
 	@Override
 	public List<EtapaPDT> findAllEtapas() {
 		return etapaDao.findAll(Sort.by(Direction.ASC, "fechaInicio"));
+	}
+
+	@Override
+	public List<PlanDeTrabajo> findPlanesByProyecto(Long idProyecto) {
+		Proyecto proyecto = proyectoService.findProyectoById(idProyecto);
+		return planDao.findByProyecto(proyecto);
 	}
 
 	@Override
@@ -84,11 +94,10 @@ public class PlanTrabajoServiceImpl implements IPlanTrabajoService, IEtapaPlanSe
 
 	@Override
 	public PlanDeTrabajo buildPlanEntity(PlanTrabajoDto dto) {
-		EtapaPDT etapa = findEtapaById(dto.getEtapaActual());
-		Proyecto proyecto = new Proyecto();
-		proyecto.setIdProyecto(dto.getProyecto());
+		EtapaPDT etapa = dto.getEtapaActual() != null ? findEtapaById(dto.getEtapaActual()) : null;
+		Proyecto proyecto = proyectoService.findProyectoById(dto.getProyecto());
 		return new PlanDeTrabajo(null, dto.getFechaInicio(), dto.getFechaFinEstimada(), dto.getFechaFinReal(),
-				dto.getDuracion(), dto.getHorasMes(), dto.getObjetivoPlan(), proyecto, null, etapa);
+				dto.getHorasMes(), dto.getObjetivoPlan(), proyecto, null, etapa);
 	}
 
 	@Override

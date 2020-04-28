@@ -10,6 +10,8 @@ public interface IPlanTrabajoService {
 	PlanDeTrabajo savePlan(PlanDeTrabajo plan);
 
 	List<PlanDeTrabajo> findAllPlanes();
+	
+	List<PlanDeTrabajo> findPlanesByProyecto(Long idProyecto);
 
 	PlanDeTrabajo findPlanById(Long id);
 
