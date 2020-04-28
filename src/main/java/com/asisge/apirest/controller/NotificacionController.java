@@ -34,9 +34,9 @@ public class NotificacionController extends BaseController {
 	}
 
 	@DeleteMapping(NotificacionesPath.NOTIFICACIONES_ID)
-	public ResponseEntity<String> deleteNotificacion(@PathVariable("id") Long id) {
+	public ResponseEntity<ApiResponse> deleteNotificacion(@PathVariable("id") Long id) {
 		service.deleteNotificacionUsuarioById(id);
-		return new ResponseEntity<>("Ok", HttpStatus.OK);
+		return new ResponseEntity<>(buildDeleted("Notificacion", id.toString()), HttpStatus.OK);
 	}
 
 }

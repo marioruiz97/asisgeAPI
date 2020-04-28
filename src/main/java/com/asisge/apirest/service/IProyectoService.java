@@ -9,6 +9,8 @@ import com.asisge.apirest.model.entity.proyectos.Proyecto;
 public interface IProyectoService {
 
 	Proyecto saveProyecto(Proyecto proyecto);
+	
+	Proyecto findProyectoById(Long idProyecto);
 
 	List<Proyecto> findAllProyectos();
 

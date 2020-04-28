@@ -25,6 +25,10 @@ public interface IMiembroProyectoDao extends JpaRepository<MiembroProyecto, Long
 	@Query("SELECT mp.proyecto FROM MiembroProyecto mp WHERE mp.usuario.correo = ?1")
 	List<Proyecto> findProyectosByEmail(String email);
 
+	@Transactional(readOnly = true)
+	@Query("SELECT u FROM Usuario u LEFT JOIN MiembroProyecto mp ON u.idUsuario = mp.usuario.idUsuario AND mp.proyecto.idProyecto = ?1 WHERE mp.usuario.idUsuario IS NULL")
+	List<Usuario> findPosiblesMiembros(Long idProyecto);
+	
 	List<MiembroProyecto> findByProyecto(Proyecto proyecto);
 	
 	@Transactional(readOnly = true)

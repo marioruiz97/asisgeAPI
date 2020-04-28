@@ -35,20 +35,12 @@ public class MiembrosServiceImpl implements IMiembrosService {
 		return repository.saveAll(persist);
 	}
 
-	/*
-	 * @Override
-	 * 
-	 * @Transactional(readOnly = true) public List<MiembroProyecto>
-	 * findAllMiembros() { return repository.findAll(Sort.by(Direction.ASC,
-	 * "proyecto", "usuario"))
-	 */
-
 	@Override
 	@Transactional(readOnly = true)
 	public List<Proyecto> findProyectosByUsuario(Long idUsuario) {
 		return repository.findProyectosUsuario(idUsuario);
 	}
-	
+
 	@Override
 	@Transactional(readOnly = true)
 	public List<Proyecto> findProyectosByEmail(String email) {
@@ -70,6 +62,11 @@ public class MiembrosServiceImpl implements IMiembrosService {
 	}
 
 	@Override
+	public List<Usuario> findPosiblesMiembros(Long idProyecto) {
+		return repository.findPosiblesMiembros(idProyecto);
+	}
+
+	@Override
 	public MiembroProyecto buildEntity(MiembroDto dto) {
 		Proyecto proyecto = new Proyecto();
 		proyecto.setIdProyecto(dto.getProyecto());
@@ -77,15 +74,14 @@ public class MiembrosServiceImpl implements IMiembrosService {
 	}
 
 	@Override
-	public void deleteMiembro(Long idProyecto, Long idUsuario) {
-		repository.deleteMiembro(idProyecto, idUsuario);		
+	public void deleteMiembro(Long idMiembro) {
+		repository.deleteById(idMiembro);
 	}
 
 	@Override
 	@Transactional(readOnly = true)
-	public boolean existsMiembroInProyecto(Long idProyecto, String email) {		
+	public boolean existsMiembroInProyecto(Long idProyecto, String email) {
 		return repository.existsEmailInProyecto(idProyecto, email) > 0;
 	}
-	
 
 }

@@ -96,6 +96,7 @@ public final class Paths {
 		public static final String PROYECTOS = "proyectos";
 		public static final String PROYECTO_ID = "proyectos/{idProyecto}";
 		public static final String DASHBOARD = "dashboard/{id}";
+		public static final String POSIBLES_MIEMBROS = "posibles-miembros/{id}";
 		public static final String PROYECTO_MIEMBROS = "proyectos/{idProyecto}/miembros";
 		public static final String MIEMBRO_PROYECTOS = "usuarios/{idUsuario}/mis-proyectos";
 		public static final String PLANES_TRABAJO = "planes"; // TODO verificar si dejar ruta asi o con proyectos/{idProyecto}/planes

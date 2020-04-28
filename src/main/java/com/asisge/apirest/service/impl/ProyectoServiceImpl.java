@@ -33,6 +33,12 @@ public class ProyectoServiceImpl implements IProyectoService {
 
 	@Override
 	@Transactional(readOnly = true)
+	public Proyecto findProyectoById(Long idProyecto) {
+		return repository.findById(idProyecto).orElse(null);
+	}
+
+	@Override
+	@Transactional(readOnly = true)
 	public DashboardDto loadDashboard(Long id) {
 		Proyecto proyecto = repository.findById(id).orElse(null);
 		Cliente cliente = proyecto.getCliente();

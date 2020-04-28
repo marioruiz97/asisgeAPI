@@ -73,9 +73,9 @@ public class ApiRestExceptionHandler extends ResponseEntityExceptionHandler {
 	@ExceptionHandler(value = {MailException.class})
 	protected ResponseEntity<Object> handleMailExceptions(MailException exception, WebRequest request){
 		ApiError error = new ApiError();
-		error.setMessage(exception.getLocalizedMessage());
+		error.setMessage(Messages.getString("message.error.couldnot-send-email"));
 		error.setErrors(Arrays.asList(exception.getMostSpecificCause().getLocalizedMessage()));
-		return handleExceptionInternal(exception, error, new HttpHeaders(), HttpStatus.NOT_ACCEPTABLE, request);
+		return handleExceptionInternal(exception, error, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR, request);
 	}
 
 }

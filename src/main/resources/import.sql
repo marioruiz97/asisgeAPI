@@ -16,6 +16,7 @@ INSERT INTO roles(nombre_role) VALUES ('ROLE_ASESOR');
 INSERT INTO roles(nombre_role) VALUES ('ROLE_CLIENTE');
 
 INSERT INTO usuario_roles(usuario_id, role_id) VALUES (1,1);
+INSERT INTO usuario_roles(usuario_id, role_id) VALUES (4,1);
 INSERT INTO usuario_roles(usuario_id, role_id) VALUES (2,3);
 INSERT INTO usuario_roles(usuario_id, role_id) VALUES (3,2);
 
@@ -28,11 +29,11 @@ INSERT INTO usuario_cliente(id_usuario, id_cliente) VALUES (3, 2);
 
 insert into contacto_cliente (correo, nombre, telefono, cliente_asociado) values ('marioarb@hotmail.com', 'Mario ruiz', '3015465076', 1);
 insert into contacto_cliente (correo, nombre, telefono, cliente_asociado) values ('carito@hotmail.com', 'carito ruiz', '30463086421', 1);
-insert into contacto_cliente (correo, nombre, telefono, cliente_asociado) values ('glorita@hotmail.com', 'Glori bedoya', '3046304123', 1);
+insert into contacto_cliente (correo, nombre, telefono, cliente_asociado) values ('glorita@hotmail.com', 'Glori bedoya', '3046304123', 3);
 
 insert into contacto_cliente (correo, nombre, telefono, cliente_asociado) values ('marito@hotmail.com', 'mario alberto', '3047654123', 2);
 insert into contacto_cliente (correo, nombre, telefono, cliente_asociado) values ('sarita@hotmail.com', 'sarita laverde', '987654321', 2);
-insert into contacto_cliente (correo, nombre, telefono, cliente_asociado) values ('rosalbita@hotmail.com', 'rosalba bedoya', '3046354321', 2);
+insert into contacto_cliente (correo, nombre, telefono, cliente_asociado) values ('rosalbita@hotmail.com', 'rosalba bedoya', '3046354321', 4);
 
 INSERT INTO estado_proyecto(descripcion, id_estado_anterior, nombre_estado, requerido) VALUES ( 'Estado de inicio de todo proyecto', null, 'Creado', true);
 INSERT INTO estado_proyecto(descripcion, id_estado_anterior, nombre_estado, requerido) VALUES ( 'Estado siguiente a la creación del proyecto si se procede a iniciar', 1, 'Iniciado', true);

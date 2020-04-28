@@ -18,6 +18,7 @@ import com.asisge.apirest.repository.INotificacionDao;
 import com.asisge.apirest.repository.INotificacionUsuarioDao;
 import com.asisge.apirest.repository.IUsuarioDao;
 import com.asisge.apirest.service.IEmailSenderService;
+import com.asisge.apirest.service.IMiembrosService;
 import com.asisge.apirest.service.INotificacionService;
 
 @Service
@@ -31,6 +32,9 @@ public class NotificacionServiceImpl implements INotificacionService {
 	
 	@Autowired
 	private IUsuarioDao userDao;
+	
+	@Autowired
+	private IMiembrosService miembrosService;
 
 	@Autowired
 	private IEmailSenderService emailService;
@@ -76,6 +80,14 @@ public class NotificacionServiceImpl implements INotificacionService {
 			// emails.forEach(email -> emailService.sendNotification(email, subject, message))
 			emailService.sendNotifications(emails.toArray(new String[0]), subject, message);
 		}
+	}
+
+	@Override
+	public void notificarUsuariosProyectos(Proyecto proyecto, String mensaje, ColorNotificacion color) {
+		Notificacion notificacion = repository.saveAndFlush(new Notificacion(proyecto, color, mensaje, 8));
+		List<NotificacionUsuario> notificaciones = miembrosService.findUsuariosByProyecto(proyecto.getIdProyecto())
+				.stream().map(user-> new NotificacionUsuario(null, user, notificacion, false)).collect(Collectors.toList());
+		notificacionUsuarioDao.saveAll(notificaciones);
 	}
 
 	

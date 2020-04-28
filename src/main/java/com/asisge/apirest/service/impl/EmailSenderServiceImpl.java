@@ -13,7 +13,9 @@ import com.asisge.apirest.service.IEmailSenderService;
 @Service
 public class EmailSenderServiceImpl implements IEmailSenderService {
 
-	private static final String API_ENDPOINT = "http://localhost:8080/api/v1/";
+	// path prod = "https://test-bd-elenchos.herokuapp.com/api/v1"
+	// path dev = "http://localhost:8080/api/v1/"
+	private static final String API_ENDPOINT = "https://test-bd-elenchos.herokuapp.com/api/v1";
 	private static final String FROM = "Servicio Asisge <testAsisgeFirebase@gmail.com>";
 
 	@Autowired
