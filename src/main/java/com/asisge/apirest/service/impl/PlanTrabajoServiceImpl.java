@@ -8,6 +8,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
+import com.asisge.apirest.config.utils.Messages;
 import com.asisge.apirest.model.dto.proyectos.EtapaDto;
 import com.asisge.apirest.model.dto.proyectos.PlanTrabajoDto;
 import com.asisge.apirest.model.entity.proyectos.EtapaPDT;
@@ -17,6 +18,7 @@ import com.asisge.apirest.repository.IEtapaPlanDao;
 import com.asisge.apirest.repository.IPlanDeTrabajoDao;
 import com.asisge.apirest.service.IEtapaPlanService;
 import com.asisge.apirest.service.IPlanTrabajoService;
+import com.asisge.apirest.service.IProyectoService;
 
 @Service
 public class PlanTrabajoServiceImpl implements IPlanTrabajoService, IEtapaPlanService {
@@ -26,6 +28,9 @@ public class PlanTrabajoServiceImpl implements IPlanTrabajoService, IEtapaPlanSe
 
 	@Autowired
 	private IEtapaPlanDao etapaDao;
+
+	@Autowired
+	private IProyectoService proyectoService;
 
 	@Override
 	public EtapaPDT saveEtapa(EtapaPDT etapa) {
@@ -47,6 +52,12 @@ public class PlanTrabajoServiceImpl implements IPlanTrabajoService, IEtapaPlanSe
 	}
 
 	@Override
+	public List<PlanDeTrabajo> findPlanesByProyecto(Long idProyecto) {
+		Proyecto proyecto = proyectoService.findProyectoById(idProyecto);
+		return planDao.findByProyecto(proyecto);
+	}
+
+	@Override
 	public EtapaPDT findEtapaById(Long id) {
 		return etapaDao.findById(id).orElse(null);
 	}
@@ -64,6 +75,10 @@ public class PlanTrabajoServiceImpl implements IPlanTrabajoService, IEtapaPlanSe
 
 	@Override
 	public PlanDeTrabajo savePlan(PlanDeTrabajo plan) {
+		boolean cannotCreate = planDao.findByProyecto(plan.getProyecto()).stream()
+				.anyMatch(sinTermino -> sinTermino.getFechaFinReal() == null);
+		if(cannotCreate)
+			throw new IllegalArgumentException(Messages.getString("message.error.plans-without-end"));
 		return planDao.save(plan);
 	}
 
@@ -84,11 +99,10 @@ public class PlanTrabajoServiceImpl implements IPlanTrabajoService, IEtapaPlanSe
 
 	@Override
 	public PlanDeTrabajo buildPlanEntity(PlanTrabajoDto dto) {
-		EtapaPDT etapa = findEtapaById(dto.getEtapaActual());
-		Proyecto proyecto = new Proyecto();
-		proyecto.setIdProyecto(dto.getProyecto());
+		EtapaPDT etapa = dto.getEtapaActual() != null ? findEtapaById(dto.getEtapaActual()) : null;
+		Proyecto proyecto = proyectoService.findProyectoById(dto.getProyecto());
 		return new PlanDeTrabajo(null, dto.getFechaInicio(), dto.getFechaFinEstimada(), dto.getFechaFinReal(),
-				dto.getDuracion(), dto.getHorasMes(), dto.getObjetivoPlan(), proyecto, null, etapa);
+				dto.getHorasMes(), dto.getNombrePlan(), dto.getObjetivoPlan(), proyecto, null, etapa);
 	}
 
 	@Override

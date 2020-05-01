@@ -49,8 +49,7 @@ public @Data class EtapaPDT extends AuditModel<String> implements Serializable {
 
 	@Override
 	public String toString() {
-		return "Etapa plan [id: " + idEtapaPDT + ", nombre etapa: " + nombreEtapa + ", fecha inicio: " + fechaInicio
-				+ "]";
+		return "Etapa plan [id: " + idEtapaPDT + ", nombre etapa: " + nombreEtapa + "]";
 	}
 
 	/**

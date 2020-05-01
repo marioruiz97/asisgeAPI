@@ -15,7 +15,7 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 @AllArgsConstructor
-public @Data class DashboardDto implements Serializable {
+public @Data class Dashboard implements Serializable {
 
 	private Long idDashboard;
 	private Cliente cliente;
@@ -23,7 +23,7 @@ public @Data class DashboardDto implements Serializable {
 	private Proyecto proyecto;
 	private EstadoProyecto estadoActual;
 	private List<Notificacion> notificaciones;
-	private List<EstadoProyectoLineDto> lineaEstados;
+	private List<EstadosProyectoBoard> lineaEstados;
 
 	/**
 	 * 

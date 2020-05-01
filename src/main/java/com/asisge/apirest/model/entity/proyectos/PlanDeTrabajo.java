@@ -13,8 +13,11 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
+import javax.validation.constraints.FutureOrPresent;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+// import javax.validation.constraints.Positive
+import javax.validation.constraints.PositiveOrZero;
 
 import com.asisge.apirest.model.entity.audit.AuditModel;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
@@ -37,10 +40,21 @@ public @Data class PlanDeTrabajo extends AuditModel<String> implements Serializa
 
 	@NotNull
 	private Date fechaInicio;
+	
+	@FutureOrPresent
 	private Date fechaFinEstimada;
+	
+	@FutureOrPresent
 	private Date fechaFinReal;
-	private Integer duracion;
+	
+//	@Positive
+//	private Integer duracion
+	
+	@PositiveOrZero
 	private Integer horasMes;
+	
+	@NotBlank
+	private String nombrePlan;
 
 	@NotBlank
 	private String objetivoPlan;
@@ -59,8 +73,8 @@ public @Data class PlanDeTrabajo extends AuditModel<String> implements Serializa
 
 	@Override
 	public String toString() {
-		return "Plan De Trabajo [id: " + idPlanDeTrabajo + ", fecha inicio: " + fechaInicio + ", objetivo del plan: "
-				+ objetivoPlan + "]";
+		return "Plan De Trabajo [id: " + idPlanDeTrabajo + ", fecha inicio: " + fechaInicio + ", Nombre del plan: "
+				+ nombrePlan + "]";
 	}
 
 	/**

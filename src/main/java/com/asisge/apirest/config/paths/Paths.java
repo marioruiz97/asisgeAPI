@@ -99,8 +99,8 @@ public final class Paths {
 		public static final String POSIBLES_MIEMBROS = "posibles-miembros/{id}";
 		public static final String PROYECTO_MIEMBROS = "proyectos/{idProyecto}/miembros";
 		public static final String MIEMBRO_PROYECTOS = "usuarios/{idUsuario}/mis-proyectos";
-		public static final String PLANES_TRABAJO = "planes"; // TODO verificar si dejar ruta asi o con proyectos/{idProyecto}/planes
-		public static final String PLAN_TRABAJO_ID = PLANES_TRABAJO + "/{idPlan}";
+		public static final String PLANES_TRABAJO = "proyectos/{idProyecto}/planes";
+		public static final String PLAN_TRABAJO_ID = "planes/{idPlan}";
 		public static final String ETAPA_PLAN = "planes/{idPlan}/etapas";
 		public static final String ETAPA_PLAN_ID = ETAPA_PLAN + "/{idEtapa}";
 

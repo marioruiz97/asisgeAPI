@@ -8,7 +8,10 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.Lob;
 import javax.persistence.Table;
+
+import org.hibernate.annotations.Type;
 
 @Entity
 @Table(name = "auditoria")
@@ -20,6 +23,9 @@ public class Auditoria implements Serializable {
 	private String emailUsuario;
 	private Date fechaAccion;
 	private String accionRealizada;
+	
+	@Lob
+	@Type(type = "org.hibernate.type.TextType")
 	private String descripcionAccion;
 
 	

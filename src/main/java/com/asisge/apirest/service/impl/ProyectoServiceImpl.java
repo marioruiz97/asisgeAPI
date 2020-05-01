@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.asisge.apirest.model.dto.proyectos.DashboardDto;
+import com.asisge.apirest.model.dto.proyectos.Dashboard;
 import com.asisge.apirest.model.dto.proyectos.ProyectoDto;
 import com.asisge.apirest.model.entity.proyectos.EstadoProyecto;
 import com.asisge.apirest.model.entity.proyectos.Proyecto;
@@ -39,10 +39,10 @@ public class ProyectoServiceImpl implements IProyectoService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public DashboardDto loadDashboard(Long id) {
+	public Dashboard loadDashboard(Long id) {
 		Proyecto proyecto = repository.findById(id).orElse(null);
 		Cliente cliente = proyecto.getCliente();
-		return new DashboardDto(id, cliente, null, proyecto, proyecto.getEstadoProyecto(), null, null);
+		return new Dashboard(id, cliente, null, proyecto, proyecto.getEstadoProyecto(), null, null);
 	}
 
 	@Override

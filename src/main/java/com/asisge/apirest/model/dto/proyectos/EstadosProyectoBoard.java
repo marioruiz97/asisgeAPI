@@ -10,7 +10,7 @@ import lombok.NoArgsConstructor;
 
 @NoArgsConstructor
 @AllArgsConstructor
-public @Data class EstadoProyectoLineDto implements Serializable {
+public @Data class EstadosProyectoBoard implements Serializable {
 
 	private EstadoProyecto estado;
 	private Boolean actual;

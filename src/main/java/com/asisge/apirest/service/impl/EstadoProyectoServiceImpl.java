@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import com.asisge.apirest.config.utils.Messages;
-import com.asisge.apirest.model.dto.proyectos.EstadoProyectoLineDto;
+import com.asisge.apirest.model.dto.proyectos.EstadosProyectoBoard;
 import com.asisge.apirest.model.entity.proyectos.EstadoProyecto;
 import com.asisge.apirest.repository.IEstadoProyectoDao;
 import com.asisge.apirest.service.IEstadoProyectoService;
@@ -63,18 +63,18 @@ public class EstadoProyectoServiceImpl implements IEstadoProyectoService {
 
 	@Override
 	@Transactional(readOnly = true)
-	public List<EstadoProyectoLineDto> findEstadosLine(EstadoProyecto actual) {
+	public List<EstadosProyectoBoard> findEstadosLine(EstadoProyecto actual) {
 		List<EstadoProyecto> requeridos = repository.findByRequerido(Boolean.TRUE);
-		List<EstadoProyectoLineDto> estadosLine = new ArrayList<>();
+		List<EstadosProyectoBoard> estadosLine = new ArrayList<>();
 		EstadoProyecto cero = requeridos.stream().filter(estado -> estado.getIdEstadoAnterior() == null).findFirst().orElse(actual);
 		requeridos.remove(cero);
 		boolean completadoFlag = true;
 		
 		if (actual.equals(cero)) {
-			estadosLine.add(new EstadoProyectoLineDto(cero, true, true));
+			estadosLine.add(new EstadosProyectoBoard(cero, true, true));
 			completadoFlag = false;
 		} else {
-			estadosLine.add(new EstadoProyectoLineDto(cero, false, true));
+			estadosLine.add(new EstadosProyectoBoard(cero, false, true));
 		}
 		if (actual.getRequerido().booleanValue()) {			
 			EstadoProyecto siguiente = requeridos.stream()
@@ -83,7 +83,7 @@ public class EstadoProyectoServiceImpl implements IEstadoProyectoService {
 			while (siguiente != null) {
 				Long idActual = siguiente.getId();
 				boolean isActual = siguiente.equals(actual);				
-				estadosLine.add(new EstadoProyectoLineDto(siguiente, isActual, completadoFlag));
+				estadosLine.add(new EstadosProyectoBoard(siguiente, isActual, completadoFlag));
 				siguiente = requeridos.stream().filter(estado -> estado.getIdEstadoAnterior().equals(idActual) && estado.getRequerido())
 						.findFirst().orElse(null);
 				if(isActual)
@@ -93,10 +93,10 @@ public class EstadoProyectoServiceImpl implements IEstadoProyectoService {
 			if (actual.equals(cero)) {
 				return estadosLine;
 			}
-			estadosLine.add(new EstadoProyectoLineDto(actual, true, false));
+			estadosLine.add(new EstadosProyectoBoard(actual, true, false));
 			EstadoProyecto anterior = findEstadoById(actual.getIdEstadoAnterior());
 			while(anterior != null && !anterior.equals(cero)) {
-				estadosLine.add(1, new EstadoProyectoLineDto(anterior, false, true));				
+				estadosLine.add(1, new EstadosProyectoBoard(anterior, false, true));				
 				anterior = findEstadoById(anterior.getIdEstadoAnterior());
 			}
 		}
