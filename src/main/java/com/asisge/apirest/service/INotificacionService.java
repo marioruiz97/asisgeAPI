@@ -17,8 +17,10 @@ public interface INotificacionService {
 	List<Notificacion> findByProyecto(Proyecto proyecto);
 	
 	void notificarAdmins(String nombreProyecto);
+	
+	void notificarAdmins(Proyecto proyecto, String mensaje, ColorNotificacion color);
 
-	void notificar(Proyecto proyecto, String mensaje, ColorNotificacion color);
+	void notificarProyecto(Proyecto proyecto, String mensaje, ColorNotificacion color);
 	
 	void notificarUsuariosProyectos(Proyecto proyecto, String mensaje, ColorNotificacion color);
 

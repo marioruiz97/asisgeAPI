@@ -22,7 +22,7 @@ public interface IUsuarioService {
 
 	Usuario changeEstadoUsuario(Long idUsuario, Boolean estado);
 
-	void changeContrasena(Usuario usuario);
+	void changePassword(Usuario usuario);
 
 	VerificationToken createVerificationToken(Usuario usuario);
 

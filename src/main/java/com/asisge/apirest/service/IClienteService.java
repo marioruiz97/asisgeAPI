@@ -23,9 +23,4 @@ public interface IClienteService {
 
 	List<ContactoCliente> findContactosByCliente(Long id);
 
-	@Deprecated
-	ContactoCliente findContactoById(Long id);
-
-	@Deprecated
-	ContactoCliente saveContacto(ContactoCliente contacto);
 }

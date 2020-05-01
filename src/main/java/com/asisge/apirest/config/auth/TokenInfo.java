@@ -13,6 +13,7 @@ import org.springframework.security.oauth2.provider.OAuth2Authentication;
 import org.springframework.security.oauth2.provider.token.TokenEnhancer;
 import org.springframework.stereotype.Component;
 
+import com.asisge.apirest.config.utils.Messages;
 import com.asisge.apirest.model.entity.terceros.Usuario;
 import com.asisge.apirest.service.IUsuarioService;
 
@@ -34,16 +35,17 @@ public class TokenInfo implements TokenEnhancer {
 	@Override
 	public OAuth2AccessToken enhance(OAuth2AccessToken accessToken, OAuth2Authentication authentication) {
 		Map<String, Object> info = new HashMap<>();
-		Usuario user = userService.findUsuarioByCorreo(authentication.getName());		
-		if(user==null) {
-			throw new UsernameNotFoundException("No se ha encontrado el usuario en base de datos");
+		Usuario user = userService.findUsuarioByCorreo(authentication.getName());
+		if (user == null) {
+			String message = Messages.getString("message.username-not-found");
+			throw new UsernameNotFoundException(message);
 		}
 		info.put(EMAIL_KEY, user.getCorreo());
 		info.put(USER_NAME_KEY, user.getNombre().concat(" ").concat(user.getApellido1()));
 		info.put(ENABLED_KEY, user.getEstado());
 		info.put(USER_ID_KEY, user.getIdUsuario());
-		info.put(ROLES_KEY, authentication.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()));		
-		
+		info.put(ROLES_KEY, authentication.getAuthorities().stream().map(GrantedAuthority::getAuthority).collect(Collectors.toList()));
+
 		((DefaultOAuth2AccessToken) accessToken).setAdditionalInformation(info);
 		return accessToken;
 	}

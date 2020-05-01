@@ -15,7 +15,6 @@ import com.asisge.apirest.model.entity.terceros.Cliente;
 import com.asisge.apirest.model.entity.terceros.ContactoCliente;
 import com.asisge.apirest.model.entity.terceros.TipoDocumento;
 import com.asisge.apirest.repository.IClienteDao;
-import com.asisge.apirest.repository.IContactoClienteDao;
 import com.asisge.apirest.service.IAsesorService;
 import com.asisge.apirest.service.IClienteService;
 
@@ -24,12 +23,9 @@ public class ClienteServiceImpl implements IClienteService {
 
 	@Autowired
 	private IClienteDao repository;
-	
-	@Autowired
-	private IAsesorService asesorService;
 
 	@Autowired
-	private IContactoClienteDao contactoDao;
+	private IAsesorService asesorService;
 
 	@Override
 	public Cliente saveCliente(Cliente cliente) {
@@ -58,21 +54,18 @@ public class ClienteServiceImpl implements IClienteService {
 	public Cliente buildEntity(ClienteDto dto) {
 		TipoDocumento tipoDoc = new TipoDocumento();
 		tipoDoc.setId(dto.getTipoDocumento());
-		return new Cliente(null, dto.getIdentificacion(), dto.getNombreComercial(), dto.getRazonSocial(), tipoDoc,
-				null);
+		return new Cliente(null, dto.getIdentificacion(), dto.getNombreComercial(), dto.getRazonSocial(), tipoDoc, null);
 	}
 
 	@Override
 	public void setContactos(List<ContactoDto> contactos, List<ContactoCliente> persistLists) {
-
 		List<ContactoCliente> newList = contactos.stream()
 				.map(dto -> new ContactoCliente(null, dto.getNombre(), dto.getTelefono(), dto.getCorreo()))
 				.collect(Collectors.toList());
 
 		// Si la lista vieja esta vacia se settea directamente la nueva
 		if (!persistLists.isEmpty()) {
-			// Si el nuevo contacto ya existe en la lista vieja, no se modifica
-			// y los contactos viejos que no estan en la nueva se eliminan
+			// Si el nuevo contacto ya existe en la lista vieja, no se modifica y los contactos viejos que no estan en la nueva se eliminan
 			persistLists.retainAll(newList);
 			newList.removeAll(persistLists);
 		}
@@ -86,14 +79,4 @@ public class ClienteServiceImpl implements IClienteService {
 		return repository.findContactosById(id, Sort.by(Direction.ASC, "id"));
 	}
 
-	@Override
-	@Transactional(readOnly = true)
-	public ContactoCliente findContactoById(Long id) {
-		return contactoDao.findById(id).orElse(null);
-	}
-
-	@Override
-	public ContactoCliente saveContacto(ContactoCliente contacto) {
-		return contactoDao.saveAndFlush(contacto);
-	}
 }

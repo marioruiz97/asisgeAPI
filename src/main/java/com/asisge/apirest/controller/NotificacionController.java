@@ -27,14 +27,14 @@ public class NotificacionController extends BaseController {
 	IUsuarioService userService;
 
 	@GetMapping(NotificacionesPath.NOTIFICACIONES)
-	public ResponseEntity<ApiResponse> getMyNotificaciones() {
+	public ResponseEntity<ApiResponse> getMyNotification() {
 		Usuario usuario = userService.findUsuarioByCorreo(getCurrentEmail());
 		List<NotificacionUsuario> notificaciones = service.findByUsuario(usuario);
 		return new ResponseEntity<>(buildOk(notificaciones), HttpStatus.OK);
 	}
 
 	@DeleteMapping(NotificacionesPath.NOTIFICACIONES_ID)
-	public ResponseEntity<ApiResponse> deleteNotificacion(@PathVariable("id") Long id) {
+	public ResponseEntity<ApiResponse> deleteNotification(@PathVariable("id") Long id) {
 		service.deleteNotificacionUsuarioById(id);
 		return new ResponseEntity<>(buildDeleted("Notificacion", id.toString()), HttpStatus.OK);
 	}

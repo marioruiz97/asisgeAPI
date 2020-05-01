@@ -3,7 +3,6 @@ package com.asisge.apirest.controller;
 import java.util.Map;
 
 import javax.validation.Valid;
-import javax.validation.constraints.NotNull;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -20,7 +19,6 @@ import org.springframework.web.server.ResponseStatusException;
 
 import com.asisge.apirest.config.paths.Paths.AuthPath;
 import com.asisge.apirest.config.response.ApiResponse;
-import com.asisge.apirest.config.response.ApiSuccess;
 import com.asisge.apirest.config.utils.Messages;
 import com.asisge.apirest.model.dto.terceros.CuentaDto;
 import com.asisge.apirest.model.entity.audit.VerificationToken;
@@ -34,7 +32,7 @@ public class AuthController extends BaseController {
 
 	@Autowired
 	private IUsuarioService service;
-	
+
 	@Autowired
 	private IEmailSenderService emailService;
 
@@ -61,42 +59,43 @@ public class AuthController extends BaseController {
 		user = service.saveUsuario(user);
 		String descripcion = String.format(RESULT_UPDATED, user.toString(), user.getIdUsuario());
 		auditManager.saveAudit(user.getLastModifiedBy(), ACTION_UPDATE, descripcion + ". Desde mi perfil");
-		return new ResponseEntity<>(buildSuccess(descripcion, user, ""), HttpStatus.CREATED);
+		return new ResponseEntity<>(buildMessage(descripcion), HttpStatus.CREATED);
 	}
 
 	@PostMapping(AuthPath.CAMBIO_CONTRASENA)
-	public ResponseEntity<ApiResponse> changePassword(@RequestBody ModelMap model, @NotNull @PathVariable("usuario") Long id) {
+	public ResponseEntity<ApiResponse> changePassword(@RequestBody ModelMap model, @PathVariable Long id) {
 		try {
-			Usuario user = service.findUsuarioById(id);
+			Usuario user = service.findUsuarioByCorreo(getCurrentEmail());
 			user.setContrasena(model.getAttribute("password").toString());
-			service.changeContrasena(user);
+			service.changePassword(user);
+			String accion = Messages.getString("message.action.change-password");
 			String descripcion = Messages.getString("message.result.password-changed");
-			auditManager.saveAudit("Cambio de contraseña", String.format(descripcion, user.getCorreo()));
-			return new ResponseEntity<>(buildSuccess(descripcion, user, ""), HttpStatus.ACCEPTED);
+			auditManager.saveAudit(accion, String.format(descripcion, user.getCorreo()));
+			return new ResponseEntity<>(buildMessage(descripcion), HttpStatus.ACCEPTED);
 		} catch (Exception e) {
 			String message = String.format(Messages.getString("message.error.change-password"), id.toString());
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, message, e);
+			return new ResponseEntity<>(buildFail(message), HttpStatus.BAD_REQUEST);
 		}
 
 	}
-	
+
 	@PostMapping(AuthPath.RECUPERAR)
-	public ResponseEntity<ApiResponse> recuperarContrasena(@RequestBody Map<String, Object> model){
+	public ResponseEntity<ApiResponse> recoverPassword(@RequestBody Map<String, Object> model) {
 		try {
 			String email = model.get("correo").toString();
 			Usuario usuario = service.findUsuarioByCorreo(email);
-			if(usuario == null) {
+			if (usuario == null) {
+				// excepcion usada para llevar el código al bloque del catch
 				throw new NullPointerException();
 			}
-			VerificationToken token = service.validVerificationToken(usuario);			
+			VerificationToken token = service.validVerificationToken(usuario);
 			emailService.sendRecoveryPassword(token);
-			ApiSuccess success = new ApiSuccess();
-			success.setMessage(Messages.getString("message.result.recovery-sent"));
-			return new ResponseEntity<>(success, HttpStatus.ACCEPTED);
-		} catch (Exception e) {			
-			String message = Messages.getString("message.error.recovery");			
+			String message = Messages.getString("message.result.recovery-sent");
+			return new ResponseEntity<>(buildMessage(message), HttpStatus.ACCEPTED);
+		} catch (Exception e) {
+			String message = Messages.getString("message.error.recovery");
 			return new ResponseEntity<>(buildFail(message), HttpStatus.BAD_REQUEST);
-		}		
+		}
 	}
 
 }
