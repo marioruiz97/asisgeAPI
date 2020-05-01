@@ -8,6 +8,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.stereotype.Service;
 
+import com.asisge.apirest.config.utils.Messages;
 import com.asisge.apirest.model.dto.proyectos.EtapaDto;
 import com.asisge.apirest.model.dto.proyectos.PlanTrabajoDto;
 import com.asisge.apirest.model.entity.proyectos.EtapaPDT;
@@ -74,6 +75,10 @@ public class PlanTrabajoServiceImpl implements IPlanTrabajoService, IEtapaPlanSe
 
 	@Override
 	public PlanDeTrabajo savePlan(PlanDeTrabajo plan) {
+		boolean cannotCreate = planDao.findByProyecto(plan.getProyecto()).stream()
+				.anyMatch(sinTermino -> sinTermino.getFechaFinReal() == null);
+		if(cannotCreate)
+			throw new IllegalArgumentException(Messages.getString("message.error.plans-without-end"));
 		return planDao.save(plan);
 	}
 
@@ -97,7 +102,7 @@ public class PlanTrabajoServiceImpl implements IPlanTrabajoService, IEtapaPlanSe
 		EtapaPDT etapa = dto.getEtapaActual() != null ? findEtapaById(dto.getEtapaActual()) : null;
 		Proyecto proyecto = proyectoService.findProyectoById(dto.getProyecto());
 		return new PlanDeTrabajo(null, dto.getFechaInicio(), dto.getFechaFinEstimada(), dto.getFechaFinReal(),
-				dto.getHorasMes(), dto.getObjetivoPlan(), proyecto, null, etapa);
+				dto.getHorasMes(), dto.getNombrePlan(), dto.getObjetivoPlan(), proyecto, null, etapa);
 	}
 
 	@Override

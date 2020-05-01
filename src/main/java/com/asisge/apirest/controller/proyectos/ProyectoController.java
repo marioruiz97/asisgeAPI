@@ -47,10 +47,10 @@ public class ProyectoController extends BaseController {
 
 	@Autowired
 	private IUsuarioService userService;
-	
+
 	@Autowired
 	private INotificacionService notificacionService;
-	
+
 	@Autowired
 	private IEstadoProyectoService estadosService;
 
@@ -69,7 +69,6 @@ public class ProyectoController extends BaseController {
 		return new ResponseEntity<>(buildOk(proyectos), HttpStatus.OK);
 	}
 
-	
 	@GetMapping(ProyectosPath.DASHBOARD)
 	public ResponseEntity<ApiResponse> findDashboardById(HttpServletRequest request, @PathVariable("id") Long id) {
 		Dashboard dashboard = null;
@@ -93,12 +92,15 @@ public class ProyectoController extends BaseController {
 		}
 		Proyecto newProject = service.buildEntity(dto);
 		newProject = service.saveProyecto(newProject);
-		MiembroProyecto miembro = new MiembroProyecto(null, userService.findUsuarioByCorreo(getCurrentEmail()), newProject, "Líder");
+		MiembroProyecto miembro = new MiembroProyecto(null, userService.findUsuarioByCorreo(getCurrentEmail()),
+				newProject, "Líder");
 		miembroService.saveMiembro(miembro);
-		String descripcion = String.format(RESULT_CREATED, newProject.getNombreProyecto(), newProject.getIdProyecto());
+		String descripcion = String.format(RESULT_CREATED, "proyecto: " + newProject.getNombreProyecto(),
+				newProject.getIdProyecto());
 		auditManager.saveAudit(newProject.getCreatedBy(), ACTION_CREATE, descripcion);
 		notificacionService.notificar(newProject, descripcion, ColorNotificacion.SUCCESS);
-		String added = String.format(Messages.getString("notification.added.member"), getCurrentEmail(), newProject.getNombreProyecto());
+		String added = String.format(Messages.getString("notification.added.member"), getCurrentEmail(),
+				newProject.getNombreProyecto());
 		notificacionService.notificarUsuario(newProject, miembro.getUsuario(), added, ColorNotificacion.PRIMARY, 5);
 		notificacionService.notificarAdmins(newProject.getNombreProyecto());
 		return new ResponseEntity<>(buildSuccess(descripcion, newProject, ""), HttpStatus.CREATED);
@@ -113,9 +115,6 @@ public class ProyectoController extends BaseController {
 		return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
 	}
 
-	
-	
-	
 	// TODO verificar si no hay que quitar este metodo
 	@Deprecated
 	@Secured({ "ROLE_ADMIN", "ROLE_ASESOR" })

@@ -34,12 +34,12 @@ public class PlanTrabajoController extends BaseController {
 
 	@Autowired
 	private IPlanTrabajoService service;
-	
+
 	@Autowired
 	private INotificacionService notificacionService;
 
 	@GetMapping(ProyectosPath.PLANES_TRABAJO)
-	public ResponseEntity<ApiResponse> findByProyecto(@PathVariable("idProyecto") Long idProyecto) {
+	public ResponseEntity<ApiResponse> findPlanByProyecto(@PathVariable("idProyecto") Long idProyecto) {
 		List<PlanDeTrabajo> planes = service.findPlanesByProyecto(idProyecto);
 		if (planes.isEmpty())
 			return respondNotFound(null);
@@ -65,7 +65,8 @@ public class PlanTrabajoController extends BaseController {
 		newPlan = service.savePlan(newPlan);
 		String descripcion = String.format(RESULT_CREATED, newPlan.toString(), newPlan.getIdPlanDeTrabajo());
 		auditManager.saveAudit(newPlan.getCreatedBy(), ACTION_CREATE, descripcion);
-		String notificacion = String.format(Messages.getString("notification.added.plan"), newPlan.getCreatedBy(), idProyecto);
+		String notificacion = String.format(Messages.getString("notification.added.plan"), newPlan.getCreatedBy(),
+				idProyecto);
 		notificacionService.notificarUsuariosProyectos(newPlan.getProyecto(), notificacion, ColorNotificacion.SUCCESS);
 		return new ResponseEntity<>(buildSuccess(notificacion, newPlan), HttpStatus.CREATED);
 	}

@@ -22,7 +22,9 @@ import com.asisge.apirest.config.response.ApiResponse;
 import com.asisge.apirest.controller.BaseController;
 import com.asisge.apirest.model.dto.proyectos.EtapaDto;
 import com.asisge.apirest.model.entity.proyectos.EtapaPDT;
+import com.asisge.apirest.model.entity.proyectos.PlanDeTrabajo;
 import com.asisge.apirest.service.IEtapaPlanService;
+import com.asisge.apirest.service.IPlanTrabajoService;
 
 @RestController
 public class EtapaPlanTrabajoController extends BaseController {
@@ -31,6 +33,9 @@ public class EtapaPlanTrabajoController extends BaseController {
 
 	@Autowired
 	private IEtapaPlanService service;
+
+	@Autowired
+	private IPlanTrabajoService planService;
 
 	@GetMapping(ProyectosPath.ETAPA_PLAN)
 	public ResponseEntity<ApiResponse> findByPlan(@PathVariable("idPlan") Long id) {
@@ -48,19 +53,26 @@ public class EtapaPlanTrabajoController extends BaseController {
 		return new ResponseEntity<>(buildOk(etapa), HttpStatus.OK);
 	}
 
-	@Secured({"ROLE_ADMIN", "ROLE_ASESOR"})
+	@Secured({ "ROLE_ADMIN", "ROLE_ASESOR" })
 	@PostMapping(ProyectosPath.ETAPA_PLAN)
-	public ResponseEntity<ApiResponse> create(@Valid @RequestBody EtapaDto dto, BindingResult result) {
+	public ResponseEntity<ApiResponse> create(@Valid @RequestBody EtapaDto dto, BindingResult result,
+			@PathVariable("idPlan") Long idPlan) {
 		if (result.hasErrors())
 			return validateDto(result);
+		dto.setPlanDeTrabajo(idPlan);
 		EtapaPDT etapa = service.buildEtapaEntity(dto);
 		etapa = service.saveEtapa(etapa);
+		if (service.findEtapasByPlan(idPlan).isEmpty()) {
+			PlanDeTrabajo plan = planService.findPlanById(idPlan);
+			plan.setEtapaActual(etapa);
+			planService.savePlan(plan);
+		}
 		String descripcion = String.format(RESULT_CREATED, etapa.toString(), etapa.getIdEtapaPDT());
 		auditManager.saveAudit(etapa.getCreatedBy(), ACTION_CREATE, descripcion);
 		return new ResponseEntity<>(buildSuccess(descripcion, etapa), HttpStatus.CREATED);
 	}
 
-	@Secured({"ROLE_ADMIN", "ROLE_ASESOR"})
+	@Secured({ "ROLE_ADMIN", "ROLE_ASESOR" })
 	@PatchMapping(ProyectosPath.ETAPA_PLAN_ID)
 	public ResponseEntity<ApiResponse> update(@Valid @RequestBody EtapaDto dto, BindingResult result,
 			@PathVariable(ID_ETAPA) Long idEtapa) {
@@ -77,14 +89,14 @@ public class EtapaPlanTrabajoController extends BaseController {
 		return new ResponseEntity<>(buildSuccess(descripcion, etapa, ""), HttpStatus.CREATED);
 	}
 
-	@Secured({"ROLE_ADMIN", "ROLE_ASESOR"})
+	@Secured({ "ROLE_ADMIN", "ROLE_ASESOR" })
 	@DeleteMapping(ProyectosPath.ETAPA_PLAN_ID)
-	public ResponseEntity<ApiResponse> delete(@PathVariable(ID_ETAPA) Long id) {		
-			service.deleteEtapa(id);
-			ApiResponse response = buildDeleted("Etapa Plan De trabajo", id.toString());
-			String descripcion = response.getMessage();
-			auditManager.saveAudit(ACTION_DELETE, descripcion);
-			return new ResponseEntity<>(response, HttpStatus.ACCEPTED);		
+	public ResponseEntity<ApiResponse> delete(@PathVariable(ID_ETAPA) Long id) {
+		service.deleteEtapa(id);
+		ApiResponse response = buildDeleted("Etapa Plan De trabajo", id.toString());
+		String descripcion = response.getMessage();
+		auditManager.saveAudit(ACTION_DELETE, descripcion);
+		return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
 	}
 
 }

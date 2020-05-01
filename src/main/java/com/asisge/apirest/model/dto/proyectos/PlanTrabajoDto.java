@@ -27,6 +27,9 @@ public @Data class PlanTrabajoDto implements Serializable {
 	private Integer horasMes;
 	
 	@NotBlank
+	private String nombrePlan;
+	
+	@NotBlank
 	private String objetivoPlan;
 	
 	private Long proyecto;

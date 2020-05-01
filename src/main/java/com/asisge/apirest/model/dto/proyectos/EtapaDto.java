@@ -11,7 +11,6 @@ import lombok.Data;
 
 public @Data class EtapaDto implements Serializable {
 
-	@NotNull
 	Long planDeTrabajo;
 
 	@NotBlank

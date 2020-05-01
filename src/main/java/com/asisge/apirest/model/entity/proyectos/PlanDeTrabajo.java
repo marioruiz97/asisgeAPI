@@ -52,6 +52,9 @@ public @Data class PlanDeTrabajo extends AuditModel<String> implements Serializa
 	
 	@PositiveOrZero
 	private Integer horasMes;
+	
+	@NotBlank
+	private String nombrePlan;
 
 	@NotBlank
 	private String objetivoPlan;
@@ -70,8 +73,8 @@ public @Data class PlanDeTrabajo extends AuditModel<String> implements Serializa
 
 	@Override
 	public String toString() {
-		return "Plan De Trabajo [id: " + idPlanDeTrabajo + ", fecha inicio: " + fechaInicio + ", objetivo del plan: "
-				+ objetivoPlan + "]";
+		return "Plan De Trabajo [id: " + idPlanDeTrabajo + ", fecha inicio: " + fechaInicio + ", Nombre del plan: "
+				+ nombrePlan + "]";
 	}
 
 	/**
