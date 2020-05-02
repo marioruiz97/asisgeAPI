@@ -22,4 +22,6 @@ public interface IAsesorService {
 
 	void deleteByCliente(Long idCliente);
 
+	void deleteUsuarioCliente(Long id);
+
 }

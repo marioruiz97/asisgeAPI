@@ -64,4 +64,9 @@ public class AsesorServiceImpl implements IAsesorService {
 		repository.deleteByCliente(idCliente);
 	}
 
+	@Override
+	public void deleteUsuarioCliente(Long id) {
+		repository.deleteById(id);
+	}
+
 }

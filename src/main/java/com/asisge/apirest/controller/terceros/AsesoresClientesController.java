@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -100,6 +101,21 @@ public class AsesoresClientesController extends BaseController {
 		auditManager.saveAudit(ACTION_UPDATE, message);
 		return new ResponseEntity<>(buildSuccess(message, newList), HttpStatus.CREATED);
 	}
-		
+	
+	@DeleteMapping(TercerosPath.ASESORES)
+	public ResponseEntity<ApiResponse> delete(@RequestParam("usuario") Long idUsuario, @RequestParam("cliente") Long idCliente) {
+		if (idUsuario == null || idCliente == null) {
+			return new ResponseEntity<>(buildFail(Messages.getString("message.error.delete.user-client")), HttpStatus.BAD_REQUEST);			
+		}
+		UsuarioCliente uc = service.findByClienteAndUsuario(idCliente, idUsuario);
+		try {
+			service.deleteUsuarioCliente(uc.getId());
+			ApiResponse response = buildDeleted("UsuarioCliente", "" + uc.getId());
+			return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
+		} catch (Exception e) {
+			String message = String.format(Messages.getString("message.error.delete.record"), "Usuario", "" + uc.getId());
+			return new ResponseEntity<>(buildFail(message), HttpStatus.BAD_REQUEST);			
+		}
+	}
 
 }

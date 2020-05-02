@@ -63,20 +63,19 @@ public class AuthController extends BaseController {
 	}
 
 	@PostMapping(AuthPath.CAMBIO_CONTRASENA)
-	public ResponseEntity<ApiResponse> changePassword(@RequestBody ModelMap model, @PathVariable Long id) {
+	public ResponseEntity<ApiResponse> changePassword(@RequestBody ModelMap model, @PathVariable("usuario") Long id) {
 		try {
 			Usuario user = service.findUsuarioByCorreo(getCurrentEmail());
 			user.setContrasena(model.getAttribute("password").toString());
 			service.changePassword(user);
 			String accion = Messages.getString("message.action.change-password");
-			String descripcion = Messages.getString("message.result.password-changed");
-			auditManager.saveAudit(accion, String.format(descripcion, user.getCorreo()));
+			String descripcion = String.format(Messages.getString("message.result.password-changed"), user.getCorreo());			
+			auditManager.saveAudit(accion, descripcion);
 			return new ResponseEntity<>(buildMessage(descripcion), HttpStatus.ACCEPTED);
 		} catch (Exception e) {
 			String message = String.format(Messages.getString("message.error.change-password"), id.toString());
 			return new ResponseEntity<>(buildFail(message), HttpStatus.BAD_REQUEST);
 		}
-
 	}
 
 	@PostMapping(AuthPath.RECUPERAR)
