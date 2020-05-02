@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
 
 import com.asisge.apirest.controller.BaseController;
 import com.asisge.apirest.model.entity.terceros.TipoDocumento;
@@ -59,7 +58,7 @@ public class TipoDocumentoController extends BaseController {
 		newTipo = repository.save(newTipo);
 		String descripcion = String.format(RESULT_CREATED, newTipo.toString(), newTipo.getId());
 		auditManager.saveAudit(newTipo.getCreatedBy(), ACTION_CREATE, descripcion);
-		return new ResponseEntity<>(buildSuccess(descripcion, newTipo, ""), HttpStatus.CREATED);
+		return new ResponseEntity<>(buildSuccess(descripcion, newTipo), HttpStatus.CREATED);
 	}
 
 	@Secured({"ROLE_ADMIN"})
@@ -74,7 +73,7 @@ public class TipoDocumentoController extends BaseController {
 		tipo = repository.save(tipo);
 		String descripcion = String.format(RESULT_UPDATED, tipo.toString(), tipo.getId());
 		auditManager.saveAudit(tipo.getLastModifiedBy(), ACTION_UPDATE, descripcion);
-		return new ResponseEntity<>(buildSuccess(descripcion, tipo, ""), HttpStatus.CREATED);
+		return new ResponseEntity<>(buildSuccess(descripcion, tipo), HttpStatus.CREATED);
 	}
 
 	@Secured({"ROLE_ADMIN"})
@@ -88,7 +87,7 @@ public class TipoDocumentoController extends BaseController {
 			return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
 		} catch (Exception e) {
 			String message = String.format(Messages.getString("message.error.delete.record"), "tipo de documento", id.toString());
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, message, e);
+			return new ResponseEntity<>(buildFail(message), HttpStatus.BAD_REQUEST);			
 		}
 	}
 }

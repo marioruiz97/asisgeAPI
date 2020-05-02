@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.asisge.apirest.config.response.ApiResponse;
-import com.asisge.apirest.config.response.ApiSuccess;
 import com.asisge.apirest.config.utils.Messages;
 import com.asisge.apirest.model.entity.audit.Auditoria;
 import com.asisge.apirest.repository.IVerificationTokenDao;
@@ -31,31 +30,21 @@ public class AuditoriaController extends BaseController {
 	@GetMapping
 	@Secured("ROLE_ADMIN")
 	public ResponseEntity<ApiResponse> getAllAudits() {
-		ApiResponse response;
-		try {
-			List<Auditoria> auditorias = managerService.getAudits();
-			if (auditorias.isEmpty()) {
-				return respondNotFound(null);
-			} else {
-				response = buildSuccess(RESULT_SUCCESS, auditorias, "Consulta de auditoria");
-			}
-		} catch (Exception e) {
-			response = buildFail(e.getLocalizedMessage());
-			return new ResponseEntity<>(response, HttpStatus.INTERNAL_SERVER_ERROR);
-		}
-		return new ResponseEntity<>(response, HttpStatus.OK);
+		List<Auditoria> auditorias = managerService.getAudits();
+		if (auditorias.isEmpty())
+			return respondNotFound(null);
+		return new ResponseEntity<>(buildOk(auditorias), HttpStatus.OK);
 	}
 
 	@DeleteMapping("/delete-tokens")
 	@Secured("ROLE_ADMIN")
 	public ResponseEntity<ApiResponse> deleteTokens() {
-		if (getCurrentEmail() != null) {
+		if (isAuthenticated()) {
 			tokenDao.deleteAll();
+			String accion = Messages.getString("message.action.delete-tokens");
 			String descripcion = Messages.getString("message.result.token-flushed");
-			auditManager.saveAudit("Eliminar Tokens", descripcion);
-			ApiSuccess success = new ApiSuccess();
-			success.setMessage(descripcion);
-			return new ResponseEntity<>(success, HttpStatus.ACCEPTED);
+			auditManager.saveAudit(accion, descripcion);
+			return new ResponseEntity<>(buildMessage(descripcion), HttpStatus.ACCEPTED);
 		}
 		return new ResponseEntity<>(HttpStatus.FORBIDDEN);
 	}

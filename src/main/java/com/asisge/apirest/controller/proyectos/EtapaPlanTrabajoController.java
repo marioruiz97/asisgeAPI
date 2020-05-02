@@ -55,8 +55,7 @@ public class EtapaPlanTrabajoController extends BaseController {
 
 	@Secured({ "ROLE_ADMIN", "ROLE_ASESOR" })
 	@PostMapping(ProyectosPath.ETAPA_PLAN)
-	public ResponseEntity<ApiResponse> create(@Valid @RequestBody EtapaDto dto, BindingResult result,
-			@PathVariable("idPlan") Long idPlan) {
+	public ResponseEntity<ApiResponse> create(@Valid @RequestBody EtapaDto dto, BindingResult result, @PathVariable("idPlan") Long idPlan) {
 		if (result.hasErrors())
 			return validateDto(result);
 		dto.setPlanDeTrabajo(idPlan);
@@ -86,7 +85,7 @@ public class EtapaPlanTrabajoController extends BaseController {
 		etapa = service.saveEtapa(etapa);
 		String descripcion = String.format(RESULT_UPDATED, etapa.toString(), etapa.getIdEtapaPDT());
 		auditManager.saveAudit(etapa.getLastModifiedBy(), ACTION_UPDATE, descripcion);
-		return new ResponseEntity<>(buildSuccess(descripcion, etapa, ""), HttpStatus.CREATED);
+		return new ResponseEntity<>(buildSuccess(descripcion, etapa), HttpStatus.CREATED);
 	}
 
 	@Secured({ "ROLE_ADMIN", "ROLE_ASESOR" })

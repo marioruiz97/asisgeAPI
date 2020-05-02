@@ -23,7 +23,7 @@ public interface IUsuarioDao extends JpaRepository<Usuario, Long> {
 	@Transactional
 	@Modifying(flushAutomatically = true)
 	@Query("UPDATE Usuario u SET u.contrasena = :contrasena WHERE u.id = :id")
-	void changeContrasenaUsuario(@Param("id") Long id, @Param("contrasena") String contrasena);
+	void changePasswordUsuario(@Param("id") Long id, @Param("contrasena") String contrasena);
 	
 	Optional<Usuario> findByCorreoIgnoreCase(String correo);
 	

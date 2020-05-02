@@ -22,28 +22,28 @@ import com.asisge.apirest.service.IUsuarioService;
 
 @Controller
 public class WebViewsController {
-	
+
 	private static final String ADMIN_VIEW = "contacte-administrador";
 
 	@Autowired
-	private IUsuarioService service;
-	
+	private IUsuarioService userService;
+
 	@Autowired
 	private IEmailSenderService emailService;
-	
+
 	@Autowired
-	private INotificacionService notificacion;
-	
+	private INotificacionService notificationService;
+
 	@Autowired
 	private IVerificationTokenDao tokenDao;
 
 	@GetMapping(AuthPath.CONFIRMAR)
 	public String confirmAccount(@RequestParam("token") String token) {
-		VerificationToken verificationToken = service.getVerificationToken(token);
+		VerificationToken verificationToken = userService.getVerificationToken(token);
 		if (verificationToken != null) {
-			Usuario user = service.findUsuarioById(verificationToken.getUsuario().getIdUsuario());
+			Usuario user = userService.findUsuarioById(verificationToken.getUsuario().getIdUsuario());
 			user.setVerificado(true);
-			service.saveUsuario(user);
+			userService.saveUsuario(user);
 		} else {
 			return "confirmacion-fail";
 		}
@@ -54,42 +54,43 @@ public class WebViewsController {
 	public String tryAgain(@RequestParam Map<String, Object> modelMap, HttpServletRequest request, Model model) {
 		try {
 			String email = modelMap.get("email").toString();
-			Usuario usuario = service.findUsuarioByCorreo(email);
-			if(usuario == null) {
+			Usuario usuario = userService.findUsuarioByCorreo(email);
+			if (usuario == null) {
+				// excepcion para que el codigo caiga al bloque del catch
 				throw new NullPointerException();
 			}
 			model.addAttribute("correo", email);
-			VerificationToken token = service.validVerificationToken(usuario);
+			VerificationToken token = userService.validVerificationToken(usuario);
 			emailService.sendConfirmationEmail(token);
 			return "confirmacion-enviada";
 		} catch (Exception ex) {
 			return ADMIN_VIEW;
 		}
 	}
-	
+
 	@GetMapping(AuthPath.RECUPERAR)
 	public String showResetPassword(@RequestParam("token") String token, Model model) {
-		VerificationToken verificationToken = service.getVerificationToken(token);
-		if(verificationToken == null) {
+		VerificationToken verificationToken = userService.getVerificationToken(token);
+		if (verificationToken == null) {
 			return ADMIN_VIEW;
 		}
-		model.addAttribute("token",token);
+		model.addAttribute("token", token);
 		return "recuperar-contrasena";
 	}
-	
-	@PostMapping(AuthPath.RECUPERAR+"/reset")
+
+	@PostMapping(AuthPath.RECUPERAR + "/reset")
 	public String resetPassword(@RequestParam Map<String, Object> model, HttpServletRequest request) {
 		try {
 			String token = model.get("token").toString();
-			VerificationToken verify= service.getVerificationToken(token);
-			if(verify == null) {
+			VerificationToken verify = userService.getVerificationToken(token);
+			if (verify == null) {
 				throw new NullPointerException();
 			}
 			Long idUsuario = verify.getUsuario().getIdUsuario();
-			Usuario usuario = service.findUsuarioById(idUsuario);
+			Usuario usuario = userService.findUsuarioById(idUsuario);
 			usuario.setContrasena(model.get("contrasena").toString());
-			service.changeContrasena(usuario);	
-			notificacion.notificarUsuario(null, usuario, "La contraseña se ha cambiado exitosamente", ColorNotificacion.PRIMARY, 8);
+			userService.changePassword(usuario);
+			notificationService.notificarUsuario(null, usuario, "La contraseña se ha cambiado exitosamente", ColorNotificacion.PRIMARY, 8);
 			tokenDao.deleteById(verify.getTokenId());
 			return "contrasena-cambiada";
 		} catch (Exception ex) {

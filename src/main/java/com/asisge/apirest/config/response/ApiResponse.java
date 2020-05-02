@@ -1,24 +1,19 @@
 package com.asisge.apirest.config.response;
 
+import lombok.Getter;
+import lombok.Setter;
+
 public class ApiResponse {
 
+	@Getter
 	private final String status;
+
+	@Getter
+	@Setter
 	private String message;
 
 	public ApiResponse(String status) {
 		this.status = status;
-	}
-
-	public String getStatus() {
-		return status;
-	}
-
-	public String getMessage() {
-		return message;
-	}
-
-	public void setMessage(String message) {
-		this.message = message;
 	}
 
 	public void formatMessage(String... args) {

@@ -22,8 +22,7 @@ public final class Paths {
 	 * @author Mario Ruiz
 	 */
 	public static final class AuthPath {
-		public static final String ME = "me";
-		public static final String ME_EMAIL = "me/{email}";
+		public static final String ME = "me";		
 		public static final String CAMBIO_CONTRASENA = "cambio-contrasena/{usuario}";
 		public static final String RECUPERAR = "cuenta/recuperar";
 		public static final String CONFIRMAR = "cuenta/confirmar";
@@ -50,20 +49,6 @@ public final class Paths {
 		public static final String CLIENTE_ASESOR = "clientes/usuarios/{idCliente}";
 
 		private TercerosPath() {
-		}
-	}
-
-	/**
-	 * Rutas para: - Login (inicio de sesion) - Recovery (recuperar clave)
-	 * 
-	 * @author Mario Ruiz
-	 *
-	 */
-	public static final class LoginPath {
-		public static final String LOGIN = "login";
-		public static final String RECOVERY = "recovery";
-
-		private LoginPath() {
 		}
 	}
 

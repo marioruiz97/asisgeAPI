@@ -28,8 +28,7 @@ public class ApiRestExceptionHandler extends ResponseEntityExceptionHandler {
 	protected ResponseEntity<Object> handleConstraints(ConstraintViolationException ex, WebRequest request) {
 		ApiError errorResponse = new ApiError();
 		List<String> res = ex.getConstraintViolations().stream().map(err -> {
-			String field = StringUtils.join(StringUtils.splitByCharacterTypeCamelCase(err.getPropertyPath().toString()),
-					' ') + ": ";
+			String field = StringUtils.join(StringUtils.splitByCharacterTypeCamelCase(err.getPropertyPath().toString()), ' ') + ": ";
 			return field + err.getMessage();
 		}).collect(Collectors.toList());
 		errorResponse.setMessage(Messages.getString("message.error.constraint-violation"));
@@ -61,17 +60,8 @@ public class ApiRestExceptionHandler extends ResponseEntityExceptionHandler {
 		return handleExceptionInternal(ex, error, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
 	}
 
-	// TODO verificar si se debe eliminar este handler
-	@ExceptionHandler(value = {NullPointerException.class })
-	protected ResponseEntity<Object> handleGeneralExceptions(RuntimeException ex, WebRequest request) {
-		ApiError error = new ApiError();
-		error.setMessage(Messages.getString("message.error.number-or-null"));
-		error.setErrors(Arrays.asList(ex.getLocalizedMessage()));
-		return handleExceptionInternal(ex, error, new HttpHeaders(), HttpStatus.BAD_REQUEST, request);
-	}
-	
-	@ExceptionHandler(value = {MailException.class})
-	protected ResponseEntity<Object> handleMailExceptions(MailException exception, WebRequest request){
+	@ExceptionHandler(value = { MailException.class })
+	protected ResponseEntity<Object> handleMailExceptions(MailException exception, WebRequest request) {
 		ApiError error = new ApiError();
 		error.setMessage(Messages.getString("message.error.couldnot-send-email"));
 		error.setErrors(Arrays.asList(exception.getMostSpecificCause().getLocalizedMessage()));

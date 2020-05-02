@@ -18,6 +18,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.asisge.apirest.config.utils.Messages;
 import com.asisge.apirest.model.dto.terceros.UsuarioDto;
 import com.asisge.apirest.model.entity.audit.VerificationToken;
 import com.asisge.apirest.model.entity.terceros.TipoDocumento;
@@ -96,9 +97,9 @@ public class UsuarioServiceImpl implements IUsuarioService, UserDetailsService {
 	}
 
 	@Override
-	public void changeContrasena(Usuario u) {
+	public void changePassword(Usuario u) {
 		u.setContrasena(encoder.encode(u.getContrasena()));
-		repository.changeContrasenaUsuario(u.getIdUsuario(), u.getContrasena());
+		repository.changePasswordUsuario(u.getIdUsuario(), u.getContrasena());
 	}
 
 	@Override
@@ -132,7 +133,8 @@ public class UsuarioServiceImpl implements IUsuarioService, UserDetailsService {
 	public UserDetails loadUserByUsername(String username) {
 		Usuario usuario = repository.findByCorreoIgnoreCase(username).orElse(null);
 		if (usuario == null) {
-			throw new UsernameNotFoundException("No se ha encontrado el usuario en base de datos");
+			String message = Messages.getString("message.username-not-found");
+			throw new UsernameNotFoundException(message);
 		}
 		List<GrantedAuthority> authorities = usuario.getRoles().stream()
 				.map(rol -> new SimpleGrantedAuthority(rol.getNombreRole())).collect(Collectors.toList());

@@ -30,7 +30,6 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 	@Qualifier("authenticationManager")
 	private AuthenticationManager authenticationManager;
 
-
 	@Override
 	public void configure(AuthorizationServerSecurityConfigurer security) throws Exception {
 		security.tokenKeyAccess("permitAll()").checkTokenAccess("isAuthenticated()");
@@ -40,10 +39,10 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 	public void configure(ClientDetailsServiceConfigurer clients) throws Exception {
 		// TODO separar secret en un archivo dataSource
 		clients.inMemory().withClient("AsisgeApp").secret(passwordEncoder.encode("clave123"))
-			.scopes("read", "write")
-			.authorizedGrantTypes("password", "refresh_token")
-			.accessTokenValiditySeconds(3600)
-			.refreshTokenValiditySeconds(3600);
+				.scopes("read", "write")
+				.authorizedGrantTypes("password", "refresh_token")
+				.accessTokenValiditySeconds(36000)
+				.refreshTokenValiditySeconds(36000);
 	}
 
 	@Override
@@ -52,8 +51,8 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 		enhancerChain.setTokenEnhancers(Arrays.asList(tokenEnhancer, accessTokenConverter()));
 
 		endpoints.authenticationManager(authenticationManager)
-			.accessTokenConverter(accessTokenConverter())
-			.tokenEnhancer(enhancerChain);
+				.accessTokenConverter(accessTokenConverter())
+				.tokenEnhancer(enhancerChain);
 	}
 
 	@Bean

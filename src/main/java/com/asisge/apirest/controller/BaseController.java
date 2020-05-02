@@ -11,7 +11,6 @@ import org.springframework.lang.Nullable;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.server.ResponseStatusException;
 
 import com.asisge.apirest.config.response.ApiError;
 import com.asisge.apirest.config.response.ApiResponse;
@@ -22,7 +21,6 @@ import com.asisge.apirest.service.IAuditManager;
 @Component
 public abstract class BaseController {
 
-	public static final String RESULT_SUCCESS = Messages.getString("message.result.success");
 	public static final String RESULT_CREATED = Messages.getString("message.result.created");
 	public static final String RESULT_UPDATED = Messages.getString("message.result.updated");
 	public static final String ACTION_CREATE = Messages.getString("message.action.create");
@@ -32,22 +30,10 @@ public abstract class BaseController {
 	@Autowired
 	public IAuditManager auditManager;
 
-	public static Long convertToLong(String toLong, String field, boolean isNulleable) {
-		if (isNulleable && (toLong == null || toLong.equals(""))) {
-			return null;
-		}
-		try {
-			return Long.parseLong(toLong);
-		} catch (NumberFormatException e) {
-			String errorMessage = String.format(Messages.getString("message.error.number-exception"), field, toLong);
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, errorMessage);
-		}
-	}
-
-	
 	/**
 	 * Método usado cuando hay errores en el binding result, retorna un bad_request
-	 * con los errores existentes	 
+	 * con los errores existentes
+	 * 
 	 * @param result
 	 * @return
 	 */
@@ -61,7 +47,6 @@ public abstract class BaseController {
 		return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
 	}
 
-	
 	/**
 	 * método usado para retornar respuestas de tipo 404
 	 * 
@@ -88,8 +73,20 @@ public abstract class BaseController {
 	 */
 	public ApiSuccess buildOk(Object body) {
 		ApiSuccess result = new ApiSuccess();
-		result.setMessage(RESULT_SUCCESS);
-		result.formatMessage("");
+		result.setMessage(Messages.getString("message.result.success"));
+		result.setBody(body);
+		return result;
+	}
+
+	public ApiSuccess buildMessage(String message) {
+		ApiSuccess result = new ApiSuccess();
+		result.setMessage(message);
+		return result;
+	}
+
+	public ApiSuccess buildSuccess(String message, Object body) {
+		ApiSuccess result = new ApiSuccess();
+		result.setMessage(message);
 		result.setBody(body);
 		return result;
 	}
@@ -112,7 +109,7 @@ public abstract class BaseController {
 
 	public ApiError buildFail(String message) {
 		ApiError error = new ApiError();
-		String result = (message != null && !message.isEmpty()) ? message : Messages.getString("message.result.generic-error");
+		String result = (message != null && !message.isEmpty()) ? message : Messages.getString("message.generic-error");
 		error.setMessage(result);
 		return error;
 	}

@@ -29,10 +29,10 @@ public class NotificacionServiceImpl implements INotificacionService {
 
 	@Autowired
 	private INotificacionUsuarioDao notificacionUsuarioDao;
-	
+
 	@Autowired
 	private IUsuarioDao userDao;
-	
+
 	@Autowired
 	private IMiembrosService miembrosService;
 
@@ -41,7 +41,7 @@ public class NotificacionServiceImpl implements INotificacionService {
 
 	@Override
 	public List<NotificacionUsuario> findByUsuario(Usuario usuario) {
-		return this.notificacionUsuarioDao.findByUsuarioOrderByIdNotificacionUsuarioDesc(usuario);
+		return notificacionUsuarioDao.findByUsuarioOrderByIdNotificacionUsuarioDesc(usuario);
 	}
 
 	@Override
@@ -55,9 +55,18 @@ public class NotificacionServiceImpl implements INotificacionService {
 	}
 
 	@Override
-	public void notificar(Proyecto proyecto, String mensaje, ColorNotificacion color) {
+	public void notificarProyecto(Proyecto proyecto, String mensaje, ColorNotificacion color) {
 		Notificacion notificacion = new Notificacion(proyecto, color, mensaje, 8);
 		repository.save(notificacion);
+	}
+
+	@Override
+	public void notificarUsuariosProyectos(Proyecto proyecto, String mensaje, ColorNotificacion color) {
+		Notificacion notificacion = repository.saveAndFlush(new Notificacion(proyecto, color, mensaje, 8));
+		List<NotificacionUsuario> notificaciones = miembrosService.findUsuariosByProyecto(proyecto.getIdProyecto())
+				.stream().map(user -> new NotificacionUsuario(null, user, notificacion, false))
+				.collect(Collectors.toList());
+		notificacionUsuarioDao.saveAll(notificaciones);
 	}
 
 	@Override
@@ -74,22 +83,22 @@ public class NotificacionServiceImpl implements INotificacionService {
 		if (role != null) {
 			final String subject = Messages.getString("notification.created-project.subject");
 			final String message = String.format(Messages.getString("notification.created-project.message"), nombreProyecto);
-			List<String> emails = userDao.findByRoles(role).stream()
-					.map(Usuario::getCorreo)
-					.collect(Collectors.toList());
+			List<String> emails = userDao.findByRoles(role).stream().map(Usuario::getCorreo).collect(Collectors.toList());
 			// emails.forEach(email -> emailService.sendNotification(email, subject, message))
 			emailService.sendNotifications(emails.toArray(new String[0]), subject, message);
 		}
 	}
 
 	@Override
-	public void notificarUsuariosProyectos(Proyecto proyecto, String mensaje, ColorNotificacion color) {
-		Notificacion notificacion = repository.saveAndFlush(new Notificacion(proyecto, color, mensaje, 8));
-		List<NotificacionUsuario> notificaciones = miembrosService.findUsuariosByProyecto(proyecto.getIdProyecto())
-				.stream().map(user-> new NotificacionUsuario(null, user, notificacion, false)).collect(Collectors.toList());
-		notificacionUsuarioDao.saveAll(notificaciones);
+	public void notificarAdmins(Proyecto proyecto, String mensaje, ColorNotificacion color) {
+		Role role = userDao.findRoleByNombre("ROLE_ADMIN").orElse(null);
+		if (role != null) {
+			Notificacion notificacion = new Notificacion(proyecto, color, mensaje, 8);
+			List<NotificacionUsuario> notificaciones = userDao.findByRoles(role)
+					.stream().map(user-> new NotificacionUsuario(null, user, notificacion, false))
+					.collect(Collectors.toList());
+			notificacionUsuarioDao.saveAll(notificaciones);
+		}
 	}
-
-	
 
 }

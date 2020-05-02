@@ -1,12 +1,12 @@
 package com.asisge.apirest.service.impl;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.asisge.apirest.config.utils.Messages;
 import com.asisge.apirest.model.dto.actividades.ActividadDto;
 import com.asisge.apirest.model.dto.actividades.SeguimientoDto;
 import com.asisge.apirest.model.entity.actividades.Actividad;
@@ -80,7 +80,7 @@ public class ActividadSeguimientoServiceImpl implements IActividadService, ISegu
 		if (usuario != null) {
 			return actividadDao.findByResponsables(usuario);
 		}
-		throw new IllegalArgumentException(Messages.getString("message.not-found.list"));
+		return new ArrayList<>();
 	}
 
 	@Override
@@ -89,7 +89,7 @@ public class ActividadSeguimientoServiceImpl implements IActividadService, ISegu
 		if (etapa != null) {
 			return actividadDao.findByEtapa(etapa);
 		}
-		throw new IllegalArgumentException(Messages.getString("message.not-found.list"));
+		return new ArrayList<>();
 	}
 
 	@Override

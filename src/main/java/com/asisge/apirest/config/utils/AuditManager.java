@@ -27,8 +27,8 @@ public class AuditManager implements IAuditManager {
 	public void saveAudit(String accion, String descripcion) {
 		String email = Optional.ofNullable(SecurityContextHolder.getContext())
 				.map(SecurityContext::getAuthentication)
-				.filter(Authentication::isAuthenticated).map(Authentication::getName)
-				.orElse("sistemas@asisge.com");
+				.filter(Authentication::isAuthenticated)
+				.map(Authentication::getName).orElse("sistemas@asisge.com");
 		saveAudit(email, accion, descripcion);
 	}
 

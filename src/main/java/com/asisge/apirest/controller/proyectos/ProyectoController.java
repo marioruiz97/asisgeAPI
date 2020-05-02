@@ -12,7 +12,6 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -92,18 +91,15 @@ public class ProyectoController extends BaseController {
 		}
 		Proyecto newProject = service.buildEntity(dto);
 		newProject = service.saveProyecto(newProject);
-		MiembroProyecto miembro = new MiembroProyecto(null, userService.findUsuarioByCorreo(getCurrentEmail()),
-				newProject, "Líder");
+		MiembroProyecto miembro = new MiembroProyecto(null, userService.findUsuarioByCorreo(getCurrentEmail()), newProject, "Líder");
 		miembroService.saveMiembro(miembro);
-		String descripcion = String.format(RESULT_CREATED, "proyecto: " + newProject.getNombreProyecto(),
-				newProject.getIdProyecto());
+		String descripcion = String.format(RESULT_CREATED, "proyecto: " + newProject.getNombreProyecto(), newProject.getIdProyecto());
 		auditManager.saveAudit(newProject.getCreatedBy(), ACTION_CREATE, descripcion);
-		notificacionService.notificar(newProject, descripcion, ColorNotificacion.SUCCESS);
-		String added = String.format(Messages.getString("notification.added.member"), getCurrentEmail(),
-				newProject.getNombreProyecto());
+		notificacionService.notificarProyecto(newProject, descripcion, ColorNotificacion.SUCCESS);
+		String added = String.format(Messages.getString("notification.added.member"), getCurrentEmail(), newProject.getNombreProyecto());
 		notificacionService.notificarUsuario(newProject, miembro.getUsuario(), added, ColorNotificacion.PRIMARY, 5);
 		notificacionService.notificarAdmins(newProject.getNombreProyecto());
-		return new ResponseEntity<>(buildSuccess(descripcion, newProject, ""), HttpStatus.CREATED);
+		return new ResponseEntity<>(buildSuccess(descripcion, newProject), HttpStatus.CREATED);
 	}
 
 	@Secured({ "ROLE_ADMIN" })
@@ -115,22 +111,4 @@ public class ProyectoController extends BaseController {
 		return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
 	}
 
-	// TODO verificar si no hay que quitar este metodo
-	@Deprecated
-	@Secured({ "ROLE_ADMIN", "ROLE_ASESOR" })
-	@PatchMapping(ProyectosPath.PROYECTO_ID)
-	public ResponseEntity<ApiResponse> update(@Valid @RequestBody ProyectoDto dto, BindingResult result,
-			@PathVariable(ID_PROYECTO) Long id) {
-		if (result.hasErrors()) {
-			return validateDto(result);
-		} else if (service.loadDashboard(id) == null) {
-			return respondNotFound(id.toString());
-		}
-		Proyecto project = service.buildEntity(dto);
-		project.setIdProyecto(id);
-		project = service.saveProyecto(project);
-		String descripcion = String.format(RESULT_UPDATED, project.toString(), id);
-		auditManager.saveAudit(project.getLastModifiedBy(), ACTION_UPDATE, descripcion);
-		return new ResponseEntity<>(buildSuccess(descripcion, project, ""), HttpStatus.CREATED);
-	}
 }

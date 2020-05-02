@@ -55,18 +55,18 @@ public class AsesorServiceImpl implements IAsesorService {
 	}
 
 	@Override
-	public void deleteUsuarioCliente(Long id) {
-		repository.deleteById(id);
-	}
-
-	@Override
 	public void deleteByUsuario(Long idUsuario) {
-		repository.deleteByUsuario(idUsuario);		
+		repository.deleteByUsuario(idUsuario);
 	}
 
 	@Override
 	public void deleteByCliente(Long idCliente) {
 		repository.deleteByCliente(idCliente);
+	}
+
+	@Override
+	public void deleteUsuarioCliente(Long id) {
+		repository.deleteById(id);
 	}
 
 }

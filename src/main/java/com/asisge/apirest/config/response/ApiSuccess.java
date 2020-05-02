@@ -1,20 +1,16 @@
 package com.asisge.apirest.config.response;
 
+import lombok.Getter;
+import lombok.Setter;
+
 public class ApiSuccess extends ApiResponse {
-	
+
+	@Getter
+	@Setter
 	private Object body;
-	
+
 	public ApiSuccess() {
 		super("success");
 	}
 
-	public Object getBody() {
-		return body;
-	}
-
-	public void setBody(Object body) {
-		this.body = body;
-	}
-
-	
 }

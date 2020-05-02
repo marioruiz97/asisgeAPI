@@ -62,7 +62,7 @@ public class EstadoProyectoController extends BaseController {
 		newEstado = service.saveEstado(newEstado);
 		String descripcion = String.format(RESULT_CREATED, newEstado.toString(), newEstado.getId());
 		auditManager.saveAudit(newEstado.getCreatedBy(), ACTION_CREATE, descripcion);
-		return new ResponseEntity<>(buildSuccess(descripcion, newEstado, ""), HttpStatus.CREATED);
+		return new ResponseEntity<>(buildSuccess(descripcion, newEstado), HttpStatus.CREATED);
 	}
 
 	@Secured("ROLE_ADMIN")
@@ -73,7 +73,7 @@ public class EstadoProyectoController extends BaseController {
 		estado = service.saveEstado(estado);
 		String descripcion = String.format(RESULT_UPDATED, estado.toString(), estado.getId());
 		auditManager.saveAudit(estado.getLastModifiedBy(), ACTION_UPDATE, descripcion);
-		return new ResponseEntity<>(buildSuccess(descripcion, estado, ""), HttpStatus.CREATED);
+		return new ResponseEntity<>(buildSuccess(descripcion, estado), HttpStatus.CREATED);
 	}
 
 	@Secured("ROLE_ADMIN")
@@ -86,9 +86,8 @@ public class EstadoProyectoController extends BaseController {
 			auditManager.saveAudit(ACTION_DELETE, descripcion);
 			return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
 		} catch (Exception e) {
-			String message = String.format(Messages.getString("message.error.delete.record"), "Estado de Proyecto",
-					id.toString());
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, message, e);
+			String message = String.format(Messages.getString("message.error.delete.record"), "Estado de Proyecto", id.toString());
+			return new ResponseEntity<>(buildFail(message), HttpStatus.BAD_REQUEST);			
 		}
 	}
 
@@ -99,9 +98,13 @@ public class EstadoProyectoController extends BaseController {
 		String requerido = model.getAttribute("requerido").toString();
 		Long idEstadoAnterior;
 		try {
-			idEstadoAnterior = convertToLong(model.getAttribute(estadoAnterior).toString(), estadoAnterior, Boolean.FALSE);
+			String value = model.getAttribute(estadoAnterior).toString();
+			idEstadoAnterior = Long.parseLong(value);
 		} catch (NullPointerException e) {
 			idEstadoAnterior = null;
+		} catch (NumberFormatException e) {
+			String errorMessage = String.format(Messages.getString("message.error.number-exception"), estadoAnterior, model.getAttribute(estadoAnterior).toString());
+			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, errorMessage);
 		}
 		return new EstadoProyecto(null, nombreEstado, descripcion, idEstadoAnterior, Boolean.valueOf(requerido));
 	}

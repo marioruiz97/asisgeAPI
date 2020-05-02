@@ -13,9 +13,11 @@ import com.asisge.apirest.service.IEmailSenderService;
 @Service
 public class EmailSenderServiceImpl implements IEmailSenderService {
 
-	// path prod = "https://test-bd-elenchos.herokuapp.com/api/v1"
-	// path dev = "http://localhost:8080/api/v1/"
-	private static final String API_ENDPOINT = "https://test-bd-elenchos.herokuapp.com/api/v1";
+	private static final boolean PROD_MODE = false;
+	private static final String DEV_ENDPOINT = "http://localhost:8080/api/v1/";
+	private static final String PROD_ENDPOINT = "https://test-bd-elenchos.herokuapp.com/api/v1";
+
+	private static final String API_ENDPOINT = PROD_MODE ? PROD_ENDPOINT : DEV_ENDPOINT;
 	private static final String FROM = "Servicio Asisge <testAsisgeFirebase@gmail.com>";
 
 	@Autowired
@@ -29,8 +31,7 @@ public class EmailSenderServiceImpl implements IEmailSenderService {
 		mailMessage.setSubject("Registro Completado!");
 		mailMessage.setFrom(FROM);
 
-		StringBuilder content = new StringBuilder(
-				"Para confirmar tu cuenta, por favor haz click en el siguiente enlace : ");
+		StringBuilder content = new StringBuilder("Para confirmar tu cuenta, por favor haz click en el siguiente enlace : ");
 		content.append(API_ENDPOINT).append(AuthPath.CONFIRMAR).append("?token=").append(verify.getToken());
 		content.append("\r\n Si no has hecho ningún proceso de registro, por favor ignora este correo");
 		mailMessage.setText(content.toString());
@@ -45,17 +46,11 @@ public class EmailSenderServiceImpl implements IEmailSenderService {
 		mailMessage.setSubject("Petición de Recuperación de Contraseña!");
 		mailMessage.setFrom(FROM);
 
-		StringBuilder content = new StringBuilder(
-				"Para recuperar tu contraseña, por favor haz click en el siguiente enlace : ");
+		StringBuilder content = new StringBuilder("Para recuperar tu contraseña, por favor haz click en el siguiente enlace : ");
 		content.append(API_ENDPOINT).append(AuthPath.RECUPERAR).append("?token=").append(token.getToken());
 		content.append("\r\n Si no has hecho ningún proceso de recuperación, por favor ignora este correo");
 		mailMessage.setText(content.toString());
 		sendEmail(mailMessage);
-	}
-
-	@Async
-	public void sendEmail(SimpleMailMessage message) {
-		mailSender.send(message);
 	}
 
 	@Async
@@ -77,7 +72,12 @@ public class EmailSenderServiceImpl implements IEmailSenderService {
 		mailMessage.setFrom(FROM);
 		mailMessage.setSubject(subject);
 		mailMessage.setText(message);
-		sendEmail(mailMessage);		
+		sendEmail(mailMessage);
+	}
+
+	@Async
+	public void sendEmail(SimpleMailMessage message) {
+		mailSender.send(message);
 	}
 
 }

@@ -84,7 +84,8 @@ public class EstadoProyectoServiceImpl implements IEstadoProyectoService {
 				Long idActual = siguiente.getId();
 				boolean isActual = siguiente.equals(actual);				
 				estadosLine.add(new EstadosProyectoBoard(siguiente, isActual, completadoFlag));
-				siguiente = requeridos.stream().filter(estado -> estado.getIdEstadoAnterior().equals(idActual) && estado.getRequerido())
+				siguiente = requeridos.stream()
+						.filter(estado -> estado.getIdEstadoAnterior().equals(idActual) && estado.getRequerido())
 						.findFirst().orElse(null);
 				if(isActual)
 					completadoFlag = false;

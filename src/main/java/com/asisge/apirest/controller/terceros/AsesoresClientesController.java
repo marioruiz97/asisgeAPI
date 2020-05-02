@@ -16,14 +16,11 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
 
 import com.asisge.apirest.config.paths.Paths.TercerosPath;
-import com.asisge.apirest.config.response.ApiError;
 import com.asisge.apirest.config.response.ApiResponse;
 import com.asisge.apirest.config.utils.Messages;
 import com.asisge.apirest.controller.BaseController;
@@ -87,9 +84,9 @@ public class AsesoresClientesController extends BaseController {
 			return new UsuarioCliente(null, new Usuario(idUsuario), new Cliente(idCliente));
 		}).collect(Collectors.toList());
 		newList.forEach(uc -> service.saveUsuarioCliente(uc));
-		String message = newList.isEmpty() ? Messages.getString("message.result.delte-user-clients") : Messages.getString("message.result.multiple-client");
+		String message = newList.isEmpty() ? Messages.getString("message.result.delete-user-clients") : Messages.getString("message.result.multiple-client");
 		auditManager.saveAudit(ACTION_UPDATE, message);
-		return new ResponseEntity<>(buildSuccess(message, newList, ""), HttpStatus.CREATED);
+		return new ResponseEntity<>(buildSuccess(message, newList), HttpStatus.CREATED);
 	}
 
 	@PatchMapping(TercerosPath.CLIENTE_ASESOR)
@@ -102,51 +99,13 @@ public class AsesoresClientesController extends BaseController {
 		newList.forEach(uc -> service.saveUsuarioCliente(uc));
 		String message = Messages.getString("message.result.updated-client-user");
 		auditManager.saveAudit(ACTION_UPDATE, message);
-		return new ResponseEntity<>(buildSuccess(message, newList, ""), HttpStatus.CREATED);
+		return new ResponseEntity<>(buildSuccess(message, newList), HttpStatus.CREATED);
 	}
 	
-	
-	
-	@Deprecated
-	@PostMapping(TercerosPath.ASESORES)
-	public ResponseEntity<ApiResponse> saveAsesor(@RequestBody ModelMap model) {
-		Long idUsuario = null;
-		Long idcliente = null;
-		String curValue = null;
-		List<String> errores = new ArrayList<>();
-		try {
-			curValue = model.getAttribute("idUsuario").toString();
-			idUsuario = Long.parseLong(curValue);
-		} catch (Exception e) {
-			String msg = String.format(Messages.getString("message.error.number-exception"), "idUsuario", curValue);
-			errores.add(msg);
-		}
-		try {
-			curValue = null;
-			curValue = model.getAttribute("idCliente").toString();
-			idcliente = Long.parseLong(curValue);
-		} catch (Exception e) {
-			String msg = String.format(Messages.getString("message.error.number-exception"), "idCliente", curValue);
-			errores.add(msg);
-		}
-		if (!errores.isEmpty()) {
-			// bloque ejecutado si hay errores
-			ApiError error = buildFail(Messages.getString("message.error.number-or-null"));
-			error.setErrors(errores);
-			return new ResponseEntity<>(error, HttpStatus.BAD_REQUEST);
-		}
-		// guarda usuarioCliente
-		UsuarioCliente usuarioCliente = new UsuarioCliente(null, new Usuario(idUsuario), new Cliente(idcliente));
-		usuarioCliente = service.saveUsuarioCliente(usuarioCliente);
-		return new ResponseEntity<>(buildSuccess(Messages.getString("message.result.user-client.added"), usuarioCliente,
-				usuarioCliente.toString(), usuarioCliente.getId().toString()), HttpStatus.ACCEPTED);
-	}
-
-	@Deprecated
 	@DeleteMapping(TercerosPath.ASESORES)
 	public ResponseEntity<ApiResponse> delete(@RequestParam("usuario") Long idUsuario, @RequestParam("cliente") Long idCliente) {
 		if (idUsuario == null || idCliente == null) {
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.getString("message.error.delete.user-client"));
+			return new ResponseEntity<>(buildFail(Messages.getString("message.error.delete.user-client")), HttpStatus.BAD_REQUEST);			
 		}
 		UsuarioCliente uc = service.findByClienteAndUsuario(idCliente, idUsuario);
 		try {
@@ -155,7 +114,7 @@ public class AsesoresClientesController extends BaseController {
 			return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
 		} catch (Exception e) {
 			String message = String.format(Messages.getString("message.error.delete.record"), "Usuario", "" + uc.getId());
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, message, e);
+			return new ResponseEntity<>(buildFail(message), HttpStatus.BAD_REQUEST);			
 		}
 	}
 

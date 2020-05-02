@@ -71,7 +71,7 @@ public class UsuarioController extends BaseController {
 		emailService.sendConfirmationEmail(token);
 		String descripcion = String.format(RESULT_CREATED, newUsuario.toString(), newUsuario.getIdUsuario());
 		auditManager.saveAudit(newUsuario.getCreatedBy(), ACTION_CREATE, descripcion);
-		return new ResponseEntity<>(buildSuccess(descripcion, newUsuario, ""), HttpStatus.CREATED);
+		return new ResponseEntity<>(buildSuccess(descripcion, newUsuario), HttpStatus.CREATED);
 	}
 
 	@Secured("ROLE_ADMIN")
@@ -90,7 +90,7 @@ public class UsuarioController extends BaseController {
 		usuario = service.saveUsuario(usuario);
 		String descripcion = String.format(RESULT_UPDATED, usuario.toString(), id);
 		auditManager.saveAudit(usuario.getLastModifiedBy(), ACTION_UPDATE, descripcion);
-		return new ResponseEntity<>(buildSuccess(descripcion, usuario, ""), HttpStatus.CREATED);
+		return new ResponseEntity<>(buildSuccess(descripcion, usuario), HttpStatus.CREATED);
 	}
 
 	@Secured("ROLE_ADMIN")
