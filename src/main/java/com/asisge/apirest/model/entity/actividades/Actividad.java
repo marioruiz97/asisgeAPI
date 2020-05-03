@@ -51,8 +51,9 @@ public @Data class Actividad extends AuditModel<String> implements Serializable 
 	private String nombre;
 
 	@ManyToMany(cascade = CascadeType.REMOVE)
-	@JoinTable(name = "actividad_usuario", joinColumns = @JoinColumn(name = "id_actividad", nullable = false), inverseJoinColumns = @JoinColumn(name = "id_usuario", nullable = false), uniqueConstraints = @UniqueConstraint(columnNames = {
-			"id_actividad", "id_usuario" }))
+	@JoinTable(name = "actividad_usuario", joinColumns = @JoinColumn(name = "id_actividad", nullable = false), 
+		inverseJoinColumns = @JoinColumn(name = "id_usuario", nullable = false), 
+		uniqueConstraints = @UniqueConstraint(columnNames = { "id_actividad", "id_usuario" }))
 	private List<Usuario> responsables;
 
 	@ManyToOne(optional = false)
@@ -60,7 +61,6 @@ public @Data class Actividad extends AuditModel<String> implements Serializable 
 	private EtapaPDT etapa;
 
 	@FutureOrPresent
-	@NotNull
 	private Date fechaVencimiento;
 
 	@NotNull
@@ -70,18 +70,15 @@ public @Data class Actividad extends AuditModel<String> implements Serializable 
 
 	@Lob
 	@Type(type = "org.hibernate.type.TextType")
-	@NotBlank
 	@Column(name = "descripcion_actividad")
 	private String descripcion;
 
-	
 	@Override
 	public String toString() {
-		return "Actividad [idActividad=" + idActividad + ", nombre=" + nombre + ", fechaVencimiento="
-				+ fechaVencimiento + ", duracion=" + duracion + "]";
+		return "Actividad [idActividad=" + idActividad + ", nombre=" + nombre + ", fechaVencimiento=" + fechaVencimiento
+				+ ", duracion=" + duracion + "]";
 	}
 
-	
 	/**
 	 * 
 	 */

@@ -87,7 +87,7 @@ public class TipoDocumentoController extends BaseController {
 			return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
 		} catch (Exception e) {
 			String message = String.format(Messages.getString("message.error.delete.record"), "tipo de documento", id.toString());
-			return new ResponseEntity<>(buildFail(message), HttpStatus.BAD_REQUEST);			
+			return new ResponseEntity<>(buildFail(message), HttpStatus.BAD_REQUEST);
 		}
 	}
 }
