@@ -72,7 +72,7 @@ public class PlantillaController extends BaseController {
 		plantilla.setIdPlantilla(id);
 		plantilla = service.savePlantilla(plantilla);
 		return new ResponseEntity<>(
-				buildSuccess(RESULT_CREATED, plantilla, plantilla.toString(), plantilla.getIdPlantilla().toString()),
+				buildSuccess(RESULT_UPDATED, plantilla, plantilla.toString(), plantilla.getIdPlantilla().toString()),
 				HttpStatus.CREATED);
 	}
 
@@ -84,7 +84,7 @@ public class PlantillaController extends BaseController {
 			if (old == null)
 				return respondNotFound(id.toString());
 			service.deletePlantillaById(id);
-			return new ResponseEntity<>(buildDeleted(id.toString()), HttpStatus.OK);
+			return new ResponseEntity<>(buildDeleted("Plantilla", id.toString()), HttpStatus.ACCEPTED);
 		} catch (Exception e) {
 			String message = String.format(Messages.getString("message.error.delete.record"), "Plantilla", id.toString());
 			return new ResponseEntity<>(buildFail(message), HttpStatus.INTERNAL_SERVER_ERROR);

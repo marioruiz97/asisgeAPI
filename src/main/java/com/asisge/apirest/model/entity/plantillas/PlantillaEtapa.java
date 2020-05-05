@@ -3,6 +3,7 @@ package com.asisge.apirest.model.entity.plantillas;
 import java.io.Serializable;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -39,7 +40,7 @@ public @Data class PlantillaEtapa implements Serializable {
 	private Integer duracion;
 
 	@UniqueElements
-	@OneToMany(orphanRemoval = true, targetEntity = PlantillaActividad.class)
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = PlantillaActividad.class)
 	@JoinColumn(name = "id_etapa_actvidad", nullable = false)
 	private List<@Valid PlantillaActividad> actividades;
 

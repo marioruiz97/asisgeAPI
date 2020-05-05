@@ -3,6 +3,7 @@ package com.asisge.apirest.model.entity.plantillas;
 import java.io.Serializable;
 import java.util.List;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -53,7 +54,7 @@ public @Data class PlantillaPlanTrabajo extends AuditModel<String> implements Se
 	private Integer horasMes;
 
 	@UniqueElements
-	@OneToMany(orphanRemoval = true, targetEntity = PlantillaEtapa.class)
+	@OneToMany(cascade = CascadeType.ALL, orphanRemoval = true, targetEntity = PlantillaEtapa.class)
 	@JoinColumn(name = "id_plantilla_plan", nullable = false)
 	private List<@Valid PlantillaEtapa> etapas;
 

@@ -6,8 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.asisge.apirest.model.entity.plantillas.PlantillaPlanTrabajo;
-import com.asisge.apirest.repository.IPlantillaActividadDao;
-import com.asisge.apirest.repository.IPlantillaEtapaDao;
 import com.asisge.apirest.repository.IPlantillaPlanDao;
 import com.asisge.apirest.service.IPlantillaService;
 
@@ -16,12 +14,6 @@ public class PlantillaServiceImpl implements IPlantillaService {
 
 	@Autowired
 	private IPlantillaPlanDao repository;
-
-	@Autowired
-	private IPlantillaActividadDao actividadDao;
-
-	@Autowired
-	private IPlantillaEtapaDao etapaDao;
 
 	@Override
 	public List<PlantillaPlanTrabajo> findPlantillas() {

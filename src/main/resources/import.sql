@@ -58,6 +58,42 @@ INSERT INTO proyecto( descripcion_general, fecha_cierre_proyecto, nombre_proyect
 INSERT INTO miembro_proyecto(rol_proyecto, id_proyecto, id_usuario) VALUES ('Líder', 3, 1);
 INSERT INTO miembro_proyecto(rol_proyecto, id_proyecto, id_usuario) VALUES ('asesor', 3, 3);
 
+
+-- definicion de plantillas --
+INSERT INTO plantilla_plan_trabajo (id_plantilla, created_by, created_date, last_modified_by, last_modified_date, descripcion_plantilla, duracion, horas_mes, nombre_plantilla) VALUES (1, 'marioarb.97@gmail.com', '2020-05-04 21:28:28.805', 'marioarb.97@gmail.com', '2020-05-04 21:28:28.805', 'para sistemas de gestion de calidad', 120, 12, 'Plantilla SGC');
+
+INSERT INTO plantilla_etapa (id_plantilla_etapa, duracion, nombre_etapa, id_plantilla_plan) VALUES (1, 40, 'Planear', 1);
+INSERT INTO plantilla_etapa (id_plantilla_etapa, duracion, nombre_etapa, id_plantilla_plan) VALUES (2, 45, 'Hacer', 1);
+INSERT INTO plantilla_etapa (id_plantilla_etapa, duracion, nombre_etapa, id_plantilla_plan) VALUES (3, 30, 'Verificar', 1);
+INSERT INTO plantilla_etapa (id_plantilla_etapa, duracion, nombre_etapa, id_plantilla_plan) VALUES (4, 10, 'Actuar', 1);
+
+INSERT INTO plantilla_actividad (id_actividad, duracion, nombre, id_etapa_actvidad) VALUES (1, 20, 'Realizar visitas a instalaciones de la empresa', 1);
+INSERT INTO plantilla_actividad (id_actividad, duracion, nombre, id_etapa_actvidad) VALUES (2, 8, 'Definir plan de actividades SG-SST', 1);
+INSERT INTO plantilla_actividad (id_actividad, duracion, nombre, id_etapa_actvidad) VALUES (3, 2, 'Definir acta de asignación de responsabilidades', 1);
+INSERT INTO plantilla_actividad (id_actividad, duracion, nombre, id_etapa_actvidad) VALUES (4, 16, 'Realizar capacitación inicial a grupos de apoyo', 1);
+INSERT INTO plantilla_actividad (id_actividad, duracion, nombre, id_etapa_actvidad) VALUES (5, 4, 'Realizar informe de avances', 1);
+INSERT INTO plantilla_actividad (id_actividad, duracion, nombre, id_etapa_actvidad) VALUES (6, 6, 'Definición política de prevención', 1);
+INSERT INTO plantilla_actividad (id_actividad, duracion, nombre, id_etapa_actvidad) VALUES (7, 4, 'Matriz de peligros y riesgos', 1);
+INSERT INTO plantilla_actividad (id_actividad, duracion, nombre, id_etapa_actvidad) VALUES (8, 20, 'Definir programa de protección contra caidas', 1);
+INSERT INTO plantilla_actividad (id_actividad, duracion, nombre, id_etapa_actvidad) VALUES (9, 10, 'Definir programa de mantenimiento', 1);
+INSERT INTO plantilla_actividad (id_actividad, duracion, nombre, id_etapa_actvidad) VALUES (10, 10, 'Hacer reuniones del grupo COPASST', 2);
+INSERT INTO plantilla_actividad (id_actividad, duracion, nombre, id_etapa_actvidad) VALUES (11, 10, 'Programacion y presupuesto SST', 2);
+INSERT INTO plantilla_actividad (id_actividad, duracion, nombre, id_etapa_actvidad) VALUES (12, 5, 'Reuniones del comité de convivencia', 2);
+INSERT INTO plantilla_actividad (id_actividad, duracion, nombre, id_etapa_actvidad) VALUES (13, 8, 'Revision de documentos y control de registros', 2);
+INSERT INTO plantilla_actividad (id_actividad, duracion, nombre, id_etapa_actvidad) VALUES (14, 4, 'Análisis de exámenes médicos', 2);
+INSERT INTO plantilla_actividad (id_actividad, duracion, nombre, id_etapa_actvidad) VALUES (15, 4, 'Seguimiento a recomendaciones de salud', 2);
+INSERT INTO plantilla_actividad (id_actividad, duracion, nombre, id_etapa_actvidad) VALUES (16, 4, 'Informe de avance', 2);
+INSERT INTO plantilla_actividad (id_actividad, duracion, nombre, id_etapa_actvidad) VALUES (17, 2, 'Hacer seguimiento al pve muscular', 2);
+INSERT INTO plantilla_actividad (id_actividad, duracion, nombre, id_etapa_actvidad) VALUES (18, 28, 'Matriz de políticas y riesgos', 2);
+INSERT INTO plantilla_actividad (id_actividad, duracion, nombre, id_etapa_actvidad) VALUES (19, 4, 'Planificación de auditoría interna', 3);
+INSERT INTO plantilla_actividad (id_actividad, duracion, nombre, id_etapa_actvidad) VALUES (20, 4, 'Acuerdo de planificación', 3);
+INSERT INTO plantilla_actividad (id_actividad, duracion, nombre, id_etapa_actvidad) VALUES (21, 4, 'Revisión gerencial SG-SST', 3);
+INSERT INTO plantilla_actividad (id_actividad, duracion, nombre, id_etapa_actvidad) VALUES (22, 4, 'resultados de indicadores', 3);
+INSERT INTO plantilla_actividad (id_actividad, duracion, nombre, id_etapa_actvidad) VALUES (23, 4, 'Definir acciones correctivas', 4);
+INSERT INTO plantilla_actividad (id_actividad, duracion, nombre, id_etapa_actvidad) VALUES (24, 4, 'Acciones SG-SST', 4);
+INSERT INTO plantilla_actividad (id_actividad, duracion, nombre, id_etapa_actvidad) VALUES (25, 4, 'plan de trabajo', 4);
+INSERT INTO plantilla_actividad (id_actividad, duracion, nombre, id_etapa_actvidad) VALUES (26, 4, 'plan de acción', 4);
+
 -- INSERT INTO plan_de_trabajo(duracion, fecha_fin_estimada, fecha_fin_real, fecha_inicio, horas_mes, objetivo_plan, etapa_actual, id_proyecto)	VALUES (10, '2021-03-30T00:00.000-0500', '2021-03-30T00:00.000-0500', '2020-04-01T00:00.000-0500', 12, 'objetivo', null, 1);
 -- INSERT INTO etapa_plan_trabajo(fecha_fin, fecha_inicio, nombre_etapa, id_plan_de_trabajo) VALUES ('2021-03-30T00:00.000-0500', '2020-04-03T00:00.000-0500', 'etapa inicial', 1);
 -- UPDATE plan_de_trabajo SET etapa_actual = 1 WHERE id_plan_de_trabajo = 1;
