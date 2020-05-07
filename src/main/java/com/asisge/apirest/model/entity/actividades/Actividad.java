@@ -50,7 +50,7 @@ public @Data class Actividad extends AuditModel<String> implements Serializable 
 	@Column(name = "nombre_actividad")
 	private String nombre;
 
-	@ManyToMany(cascade = CascadeType.REMOVE)
+	@ManyToMany(cascade = CascadeType.ALL)
 	@JoinTable(name = "actividad_usuario", joinColumns = @JoinColumn(name = "id_actividad", nullable = false), 
 		inverseJoinColumns = @JoinColumn(name = "id_usuario", nullable = false), 
 		uniqueConstraints = @UniqueConstraint(columnNames = { "id_actividad", "id_usuario" }))

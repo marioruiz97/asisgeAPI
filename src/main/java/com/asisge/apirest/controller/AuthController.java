@@ -15,8 +15,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
 
+import com.asisge.apirest.config.InvalidProcessException;
 import com.asisge.apirest.config.paths.Paths.AuthPath;
 import com.asisge.apirest.config.response.ApiResponse;
 import com.asisge.apirest.config.utils.Messages;
@@ -40,7 +40,7 @@ public class AuthController extends BaseController {
 	public ResponseEntity<ApiResponse> findMyInfo() {
 		Usuario usuario = service.findUsuarioByCorreo(getCurrentEmail());
 		if (usuario == null) {
-			throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+			throw new InvalidProcessException(HttpStatus.FORBIDDEN);
 		}
 		return new ResponseEntity<>(buildOk(usuario), HttpStatus.OK);
 	}

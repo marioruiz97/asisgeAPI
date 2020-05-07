@@ -25,7 +25,7 @@ import lombok.NoArgsConstructor;
 public class VerificationToken implements Serializable {
 
 	@Id
-	@GeneratedValue(strategy = GenerationType.AUTO)
+	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long tokenId;
 
 	private String token;

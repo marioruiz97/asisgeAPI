@@ -14,8 +14,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
 
+import com.asisge.apirest.config.InvalidProcessException;
 import com.asisge.apirest.config.paths.Paths.MaestrosPath;
 import com.asisge.apirest.config.response.ApiResponse;
 import com.asisge.apirest.config.utils.Messages;
@@ -104,7 +104,7 @@ public class EstadoProyectoController extends BaseController {
 			idEstadoAnterior = null;
 		} catch (NumberFormatException e) {
 			String errorMessage = String.format(Messages.getString("message.error.number-exception"), estadoAnterior, model.getAttribute(estadoAnterior).toString());
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, errorMessage);
+			throw new InvalidProcessException(errorMessage, HttpStatus.BAD_REQUEST);
 		}
 		return new EstadoProyecto(null, nombreEstado, descripcion, idEstadoAnterior, Boolean.valueOf(requerido));
 	}

@@ -7,8 +7,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.server.ResponseStatusException;
 
+import com.asisge.apirest.config.InvalidProcessException;
 import com.asisge.apirest.config.utils.Messages;
 import com.asisge.apirest.model.dto.proyectos.EstadosProyectoBoard;
 import com.asisge.apirest.model.entity.proyectos.EstadoProyecto;
@@ -33,7 +33,7 @@ public class EstadoProyectoServiceImpl implements IEstadoProyectoService {
 	@Override
 	public EstadoProyecto saveEstado(EstadoProyecto estado) {
 		if (!validEstadoAnterior(estado.getIdEstadoAnterior())) {
-			throw new ResponseStatusException(HttpStatus.BAD_REQUEST, Messages.getString("message.error.create.estado-proyecto"));
+			throw new InvalidProcessException(Messages.getString("message.error.create.estado-proyecto"), HttpStatus.BAD_REQUEST);
 		}
 		return repository.save(estado);
 	}

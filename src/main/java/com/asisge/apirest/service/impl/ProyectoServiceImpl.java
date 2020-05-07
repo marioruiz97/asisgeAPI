@@ -42,7 +42,7 @@ public class ProyectoServiceImpl implements IProyectoService {
 	public Dashboard loadDashboard(Long id) {
 		Proyecto proyecto = repository.findById(id).orElse(null);
 		Cliente cliente = proyecto.getCliente();
-		return new Dashboard(id, cliente, null, proyecto, proyecto.getEstadoProyecto(), null, null);
+		return new Dashboard(id, cliente, null, proyecto, proyecto.getEstadoProyecto(), null, null, null);
 	}
 
 	@Override
