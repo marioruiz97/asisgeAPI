@@ -4,9 +4,9 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -50,7 +50,7 @@ public @Data class Actividad extends AuditModel<String> implements Serializable 
 	@Column(name = "nombre_actividad")
 	private String nombre;
 
-	@ManyToMany(cascade = CascadeType.ALL)
+	@ManyToMany(fetch = FetchType.EAGER)
 	@JoinTable(name = "actividad_usuario", joinColumns = @JoinColumn(name = "id_actividad", nullable = false), 
 		inverseJoinColumns = @JoinColumn(name = "id_usuario", nullable = false), 
 		uniqueConstraints = @UniqueConstraint(columnNames = { "id_actividad", "id_usuario" }))

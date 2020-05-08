@@ -112,6 +112,10 @@ public class ActividadSeguimientoServiceImpl implements IActividadService, ISegu
 
 	@Override
 	public void deleteActividad(Long idActividad) {
+		List<Seguimiento> seguimientos = findByActividad(idActividad);
+		if(!seguimientos.isEmpty()) {
+			seguimientoDao.deleteAll(seguimientos);
+		}
 		actividadDao.deleteById(idActividad);
 	}
 

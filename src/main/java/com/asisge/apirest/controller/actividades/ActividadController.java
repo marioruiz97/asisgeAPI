@@ -9,6 +9,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -67,7 +68,8 @@ public class ActividadController extends BaseController {
 	}
 
 	@PostMapping(ProyectosPath.ACTIVIDADES_PLAN)
-	public ResponseEntity<ApiResponse> create(@Valid @RequestBody ActividadDto dto, BindingResult result, @PathVariable(ID_PLAN) Long idPlan) {
+	public ResponseEntity<ApiResponse> create(@Valid @RequestBody ActividadDto dto, BindingResult result,
+			@PathVariable(ID_PLAN) Long idPlan) {
 		if (result.hasErrors())
 			return validateDto(result);
 		Proyecto proyecto = planService.findPlanById(idPlan).getProyecto();
@@ -75,7 +77,7 @@ public class ActividadController extends BaseController {
 			Actividad actividad = service.buildActividad(dto);
 			service.setResponsables(actividad, dto.getResponsables());
 			actividad = service.saveActividad(actividad);
-			String mensajeAuditoria = String.format(Messages.getString("notification.added.activity"), 
+			String mensajeAuditoria = String.format(Messages.getString("notification.added.activity"),
 					getCurrentEmail(), actividad.getNombre());
 			auditManager.saveAudit(actividad.getCreatedBy(), ACTION_CREATE, mensajeAuditoria);
 			notificationService.notificarProyecto(proyecto, mensajeAuditoria, ColorNotificacion.SUCCESS);
@@ -84,24 +86,47 @@ public class ActividadController extends BaseController {
 			notificationService.notificarResponsablesActividad(dto.getResponsables(), notificacion);
 			return new ResponseEntity<>(buildSuccess(mensajeAuditoria, actividad), HttpStatus.CREATED);
 		}
-		throw new InvalidProcessException(Messages.getString("message.error.project-not-found"), HttpStatus.BAD_REQUEST);
+		throw new InvalidProcessException(Messages.getString("message.error.project-not-found"),
+				HttpStatus.BAD_REQUEST);
 	}
 
 	@PatchMapping(ProyectosPath.ACTIVIDADES_PLAN_ID)
-	public ResponseEntity<ApiResponse> update(@Valid @RequestBody ActividadDto dto, BindingResult result, @PathVariable(ID_PLAN) Long idPlan) {
+	public ResponseEntity<ApiResponse> update(@Valid @RequestBody ActividadDto dto, BindingResult result,
+			@PathVariable(ID_PLAN) Long idPlan, @PathVariable(ID_ACTIVIDAD) Long idActividad) {
 		if (result.hasErrors())
 			return validateDto(result);
 		Proyecto proyecto = planService.findPlanById(idPlan).getProyecto();
-		if (proyecto != null) {
+		if (proyecto != null && service.findActividadById(idActividad) != null) {
 			Actividad actividad = service.buildActividad(dto);
+			actividad.setIdActividad(idActividad);
 			service.setResponsables(actividad, dto.getResponsables());
 			actividad = service.saveActividad(actividad);
-			String mensaje = String.format(RESULT_UPDATED, actividad.toString(), actividad.getIdActividad());
+			String mensaje = String.format(RESULT_UPDATED, "Actividad " + actividad.getNombre(),
+					actividad.getIdActividad());
 			auditManager.saveAudit(actividad.getLastModifiedBy(), ACTION_UPDATE, mensaje);
 			notificationService.notificarProyecto(proyecto, mensaje, ColorNotificacion.SUCCESS);
 			return new ResponseEntity<>(buildSuccess(mensaje, actividad), HttpStatus.CREATED);
 		}
-		throw new InvalidProcessException(Messages.getString("message.error.project-not-found"), HttpStatus.BAD_REQUEST);
+		throw new InvalidProcessException(Messages.getString("message.error.project-not-found"),
+				HttpStatus.BAD_REQUEST);
 	}
-	
+
+	@DeleteMapping(ProyectosPath.ACTIVIDADES_PLAN_ID)
+	public ResponseEntity<ApiResponse> delete(@PathVariable(ID_PLAN) Long idPlan, @PathVariable(ID_ACTIVIDAD) Long idActividad) {
+		PlanDeTrabajo plan = planService.findPlanById(idPlan);
+		if (plan != null) {
+			List<Actividad> actividadesPlan = service.findActividadesByPlan(plan);
+			boolean existeEnPlan = actividadesPlan.stream().anyMatch(actividad-> actividad.getIdActividad().equals(idActividad));
+			if(existeEnPlan) {
+				service.deleteActividad(idActividad);
+				ApiResponse response = buildDeleted("Actividad", idActividad.toString());
+				String descripcion = response.getMessage();
+				auditManager.saveAudit(ACTION_DELETE, descripcion);
+				return new ResponseEntity<>(response, HttpStatus.ACCEPTED);								
+			}
+		}
+		String mensaje = Messages.getString("message.error.actividad-not-found");
+		return new ResponseEntity<>(buildFail(mensaje), HttpStatus.NOT_FOUND);
+	}
+
 }
