@@ -1,8 +1,8 @@
 package com.asisge.apirest.service.impl;
 
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -12,6 +12,7 @@ import com.asisge.apirest.model.dto.actividades.SeguimientoDto;
 import com.asisge.apirest.model.entity.actividades.Actividad;
 import com.asisge.apirest.model.entity.actividades.Seguimiento;
 import com.asisge.apirest.model.entity.proyectos.EtapaPDT;
+import com.asisge.apirest.model.entity.proyectos.PlanDeTrabajo;
 import com.asisge.apirest.model.entity.terceros.Usuario;
 import com.asisge.apirest.repository.IActividadDao;
 import com.asisge.apirest.repository.IEtapaPlanDao;
@@ -19,6 +20,7 @@ import com.asisge.apirest.repository.ISeguimientoDao;
 import com.asisge.apirest.repository.IUsuarioDao;
 import com.asisge.apirest.service.IActividadService;
 import com.asisge.apirest.service.ISeguimientoService;
+import com.asisge.apirest.service.IUsuarioService;
 
 @Service
 public class ActividadSeguimientoServiceImpl implements IActividadService, ISeguimientoService {
@@ -31,6 +33,9 @@ public class ActividadSeguimientoServiceImpl implements IActividadService, ISegu
 
 	@Autowired
 	private IUsuarioDao usuarioDao;
+
+	@Autowired
+	private IUsuarioService usuarioService;
 
 	@Autowired
 	private IEtapaPlanDao etapaDao;
@@ -84,6 +89,14 @@ public class ActividadSeguimientoServiceImpl implements IActividadService, ISegu
 	}
 
 	@Override
+	public List<Actividad> findActividadesByPlan(PlanDeTrabajo plan) {
+		List<Actividad> actividades = new ArrayList<>();
+		if(!plan.getEtapas().isEmpty())
+			plan.getEtapas().forEach(etapa -> actividades.addAll(findActividadesByEtapa(etapa.getIdEtapaPDT())));
+		return actividades;
+	}
+
+	@Override
 	public List<Actividad> findActividadesByEtapa(Long idEtapa) {
 		EtapaPDT etapa = etapaDao.findById(idEtapa).orElse(null);
 		if (etapa != null) {
@@ -99,19 +112,33 @@ public class ActividadSeguimientoServiceImpl implements IActividadService, ISegu
 
 	@Override
 	public void deleteActividad(Long idActividad) {
+		List<Seguimiento> seguimientos = findByActividad(idActividad);
+		if(!seguimientos.isEmpty()) {
+			seguimientoDao.deleteAll(seguimientos);
+		}
 		actividadDao.deleteById(idActividad);
 	}
 
 	@Override
 	public Seguimiento buildSeguimiento(SeguimientoDto dto) {
-		return new Seguimiento(null, dto.getActividadAsociada(), new Date(), dto.getHorasTrabajadas(),
-				dto.getUsuarioSeguimiento(), dto.getObservaciones(), dto.getDescripcionLabor());
+		return new Seguimiento(null, dto.getActividadAsociada(), dto.getHorasTrabajadas(), dto.getUsuarioSeguimiento(),
+				dto.getObservaciones(), dto.getDescripcionLabor());
 	}
 
 	@Override
 	public Actividad buildActividad(ActividadDto dto) {
-		return new Actividad(null, dto.getNombre(), dto.getResponsables(), dto.getEtapa(), dto.getFechaVencimiento(),
-				dto.getDuracion(), dto.getDescripcion());
+		EtapaPDT etapa = etapaDao.findById(dto.getEtapa()).orElse(null);
+		return new Actividad(null, dto.getNombre(), null, etapa, dto.getFechaVencimiento(), dto.getDuracion(), dto.getDescripcion());
+	}
+
+	@Override
+	public void setResponsables(Actividad actividad, List<Long> usuarios) {
+		if (usuarios != null && !usuarios.isEmpty()) {
+			List<Usuario> responsables = usuarios.stream().map(idUsuario -> usuarioService.findUsuarioById(idUsuario)).collect(Collectors.toList());
+			actividad.setResponsables(responsables);
+		} else {
+			actividad.setResponsables(new ArrayList<>());
+		}
 	}
 
 }

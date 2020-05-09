@@ -101,4 +101,18 @@ public class NotificacionServiceImpl implements INotificacionService {
 		}
 	}
 
+	@Override
+	public void notificarResponsablesActividad(List<Long> usuarios, String mensaje) {
+		Notificacion notificacion = repository.save(new Notificacion(null, ColorNotificacion.INFO, mensaje, 8));
+		if (!usuarios.isEmpty()) {
+			List<Usuario> responsables = usuarios.stream()
+					.map(idUsuario -> userDao.findById(idUsuario).orElse(null))
+					.collect(Collectors.toList());
+			List<NotificacionUsuario> notificaciones = responsables.stream()
+					.map(user -> new NotificacionUsuario(null, user, notificacion, false))
+					.collect(Collectors.toList());
+			notificacionUsuarioDao.saveAll(notificaciones);
+		}
+	}
+
 }

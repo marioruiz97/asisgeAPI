@@ -16,7 +16,6 @@ import javax.persistence.Table;
 import javax.validation.constraints.FutureOrPresent;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
-// import javax.validation.constraints.Positive
 import javax.validation.constraints.PositiveOrZero;
 
 import com.asisge.apirest.model.entity.audit.AuditModel;
@@ -33,26 +32,23 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @EqualsAndHashCode(callSuper = false)
 public @Data class PlanDeTrabajo extends AuditModel<String> implements Serializable {
-	
+
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long idPlanDeTrabajo;
 
 	@NotNull
 	private Date fechaInicio;
-	
+
 	@FutureOrPresent
 	private Date fechaFinEstimada;
-	
+
 	@FutureOrPresent
 	private Date fechaFinReal;
-	
-//	@Positive
-//	private Integer duracion
-	
+
 	@PositiveOrZero
 	private Integer horasMes;
-	
+
 	@NotBlank
 	private String nombrePlan;
 

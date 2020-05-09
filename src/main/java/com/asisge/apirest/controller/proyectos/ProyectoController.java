@@ -1,6 +1,10 @@
 package com.asisge.apirest.controller.proyectos;
 
+import java.time.Instant;
+import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
@@ -16,20 +20,24 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.server.ResponseStatusException;
 
+import com.asisge.apirest.config.InvalidProcessException;
 import com.asisge.apirest.config.paths.Paths.ProyectosPath;
 import com.asisge.apirest.config.response.ApiResponse;
 import com.asisge.apirest.config.utils.Messages;
 import com.asisge.apirest.controller.BaseController;
 import com.asisge.apirest.model.dto.proyectos.Dashboard;
 import com.asisge.apirest.model.dto.proyectos.ProyectoDto;
+import com.asisge.apirest.model.entity.actividades.Actividad;
 import com.asisge.apirest.model.entity.actividades.ColorNotificacion;
+import com.asisge.apirest.model.entity.proyectos.PlanDeTrabajo;
 import com.asisge.apirest.model.entity.proyectos.Proyecto;
 import com.asisge.apirest.model.entity.terceros.MiembroProyecto;
+import com.asisge.apirest.service.IActividadService;
 import com.asisge.apirest.service.IEstadoProyectoService;
 import com.asisge.apirest.service.IMiembrosService;
 import com.asisge.apirest.service.INotificacionService;
+import com.asisge.apirest.service.IPlanTrabajoService;
 import com.asisge.apirest.service.IProyectoService;
 import com.asisge.apirest.service.IUsuarioService;
 
@@ -52,6 +60,12 @@ public class ProyectoController extends BaseController {
 
 	@Autowired
 	private IEstadoProyectoService estadosService;
+	
+	@Autowired
+	private IPlanTrabajoService planService;
+	
+	@Autowired
+	private IActividadService actividadService;
 
 	@GetMapping(ProyectosPath.PROYECTOS)
 	public ResponseEntity<ApiResponse> findAll(HttpServletRequest request) {
@@ -61,7 +75,7 @@ public class ProyectoController extends BaseController {
 		} else if (isAuthenticated()) {
 			proyectos = miembroService.findProyectosByEmail(getCurrentEmail());
 		} else {
-			throw new ResponseStatusException(HttpStatus.FORBIDDEN);
+			throw new InvalidProcessException(HttpStatus.FORBIDDEN);
 		}
 		if (proyectos.isEmpty())
 			return respondNotFound(null);
@@ -77,6 +91,23 @@ public class ProyectoController extends BaseController {
 			dashboard.setMiembros(miembroService.findMiembrosProyecto(id));
 			dashboard.setNotificaciones(notificacionService.findByProyecto(dashboard.getProyecto()));
 			dashboard.setLineaEstados(estadosService.findEstadosLine(dashboard.getEstadoActual()));
+			List<PlanDeTrabajo> planes = planService.findPlanesByProyecto(id);
+			if (!planes.isEmpty()) {
+				List<Actividad> actividades = new ArrayList<>();
+				planes.forEach(plan -> {
+					List<Actividad> add = actividadService.findActividadesByPlan(plan);
+					if (!add.isEmpty())
+						actividades.addAll(add);
+				});
+				if (!actividades.isEmpty()) {
+					final Calendar cal = Calendar.getInstance();
+					cal.add(Calendar.DATE, 7);
+					Instant oneWeek = cal.getTime().toInstant();
+					List<Actividad> proximas = actividades.stream().filter(act -> act.getFechaVencimiento() != null 
+							&& oneWeek.compareTo(act.getFechaVencimiento().toInstant()) > 0).collect(Collectors.toList());
+					dashboard.setProximasActividades(proximas);
+				}
+			}
 		}
 		if (dashboard == null)
 			return respondNotFound(id.toString());

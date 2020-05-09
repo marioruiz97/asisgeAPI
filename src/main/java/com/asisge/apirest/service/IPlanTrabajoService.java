@@ -9,8 +9,10 @@ public interface IPlanTrabajoService {
 
 	PlanDeTrabajo savePlan(PlanDeTrabajo plan);
 
+	PlanDeTrabajo createFromTemplate(PlanDeTrabajo plan, Long idPlantilla);
+
 	List<PlanDeTrabajo> findAllPlanes();
-	
+
 	List<PlanDeTrabajo> findPlanesByProyecto(Long idProyecto);
 
 	PlanDeTrabajo findPlanById(Long id);
@@ -18,4 +20,5 @@ public interface IPlanTrabajoService {
 	void deletePlan(Long id);
 
 	PlanDeTrabajo buildPlanEntity(PlanTrabajoDto dto);
+
 }

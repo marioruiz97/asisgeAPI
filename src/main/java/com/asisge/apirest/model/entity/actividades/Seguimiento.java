@@ -1,7 +1,6 @@
 package com.asisge.apirest.model.entity.actividades;
 
 import java.io.Serializable;
-import java.util.Date;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -40,9 +39,7 @@ public @Data class Seguimiento extends AuditModel<String> implements Serializabl
 	@ManyToOne(cascade = CascadeType.ALL, optional = false)
 	@JoinColumn(name = "id_actividad_asociada")
 	private Actividad actividadAsociada;
-
-	@NotNull
-	private Date fechaSeguimiento;
+	
 
 	@NotNull
 	@Positive
@@ -65,7 +62,7 @@ public @Data class Seguimiento extends AuditModel<String> implements Serializabl
 	@Override
 	public String toString() {
 		return "Seguimiento [idSeguimiento=" + idSeguimiento + ", actividadAsociada= (" + actividadAsociada.toString()
-				+ "), fechaSeguimiento=" + fechaSeguimiento + ", horasTrabajadas=" + horasTrabajadas + "]";
+				+ "), fechaSeguimiento=" + getCreatedDate() + ", horasTrabajadas=" + horasTrabajadas + "]";
 	}
 	
 	/**

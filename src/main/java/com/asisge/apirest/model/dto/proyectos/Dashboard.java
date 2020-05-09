@@ -3,6 +3,7 @@ package com.asisge.apirest.model.dto.proyectos;
 import java.io.Serializable;
 import java.util.List;
 
+import com.asisge.apirest.model.entity.actividades.Actividad;
 import com.asisge.apirest.model.entity.actividades.Notificacion;
 import com.asisge.apirest.model.entity.proyectos.EstadoProyecto;
 import com.asisge.apirest.model.entity.proyectos.Proyecto;
@@ -24,6 +25,7 @@ public @Data class Dashboard implements Serializable {
 	private EstadoProyecto estadoActual;
 	private List<Notificacion> notificaciones;
 	private List<EstadosProyectoBoard> lineaEstados;
+	private List<Actividad> proximasActividades;
 
 	/**
 	 * 

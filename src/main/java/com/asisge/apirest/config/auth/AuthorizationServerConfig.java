@@ -41,8 +41,8 @@ public class AuthorizationServerConfig extends AuthorizationServerConfigurerAdap
 		clients.inMemory().withClient("AsisgeApp").secret(passwordEncoder.encode("clave123"))
 				.scopes("read", "write")
 				.authorizedGrantTypes("password", "refresh_token")
-				.accessTokenValiditySeconds(36000)
-				.refreshTokenValiditySeconds(36000);
+				.accessTokenValiditySeconds(3600)
+				.refreshTokenValiditySeconds(3600);
 	}
 
 	@Override

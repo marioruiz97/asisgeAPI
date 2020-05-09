@@ -64,6 +64,8 @@ public final class Paths {
 		public static final String ESTADO_PROYECTO = "estado-proyecto";
 		public static final String ESTADO_PROYECTO_ID = "estado-proyecto/{idEstado}";
 		public static final String POSIBLES_ESTADOS = ESTADO_PROYECTO_ID + "/estados-siguientes";
+		public static final String PLANTILLA = "plantilla";
+		public static final String PLANTILLA_ID = "plantilla/{idPlantilla}";
 
 		private MaestrosPath() {
 		}
@@ -88,6 +90,9 @@ public final class Paths {
 		public static final String PLAN_TRABAJO_ID = "planes/{idPlan}";
 		public static final String ETAPA_PLAN = "planes/{idPlan}/etapas";
 		public static final String ETAPA_PLAN_ID = ETAPA_PLAN + "/{idEtapa}";
+		public static final String ACTIVIDADES_PLAN = "planes/{idPlan}/actividades";
+		public static final String ACTIVIDADES_PLAN_ID = "planes/{idPlan}/actividades/{idActividad}";
+		public static final String ACTIVIDAD_ID = "actividades/{idActividad}";
 
 		private ProyectosPath() {
 		}

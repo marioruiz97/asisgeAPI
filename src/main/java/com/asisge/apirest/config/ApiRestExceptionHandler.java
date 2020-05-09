@@ -68,4 +68,12 @@ public class ApiRestExceptionHandler extends ResponseEntityExceptionHandler {
 		return handleExceptionInternal(exception, error, new HttpHeaders(), HttpStatus.INTERNAL_SERVER_ERROR, request);
 	}
 
+	@ExceptionHandler(value = { InvalidProcessException.class })
+	protected ResponseEntity<Object> handleInvalidProccessExceptions(InvalidProcessException ex, WebRequest request) {
+		ApiError error = new ApiError();
+		String message = ex.getMessage() != null ? ex.getMessage() : Messages.getString("message.invalid-process"); 
+		error.setMessage(message);
+		return handleExceptionInternal(ex, error, new HttpHeaders(), ex.getStatus(), request);
+	}
+
 }

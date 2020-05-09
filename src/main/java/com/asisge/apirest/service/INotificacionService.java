@@ -23,6 +23,8 @@ public interface INotificacionService {
 	void notificarProyecto(Proyecto proyecto, String mensaje, ColorNotificacion color);
 	
 	void notificarUsuariosProyectos(Proyecto proyecto, String mensaje, ColorNotificacion color);
+	
+	void notificarResponsablesActividad(List<Long> usuarios, String mensaje);
 
 	void notificarUsuario(Proyecto proyecto, Usuario usuario, String mensaje, ColorNotificacion color, int duracion);
 	

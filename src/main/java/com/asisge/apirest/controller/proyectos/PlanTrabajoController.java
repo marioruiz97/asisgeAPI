@@ -1,6 +1,8 @@
 package com.asisge.apirest.controller.proyectos;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
@@ -14,15 +16,20 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.asisge.apirest.config.paths.Paths.ProyectosPath;
 import com.asisge.apirest.config.response.ApiResponse;
 import com.asisge.apirest.config.utils.Messages;
 import com.asisge.apirest.controller.BaseController;
+import com.asisge.apirest.model.dto.proyectos.EtapaBoard;
+import com.asisge.apirest.model.dto.proyectos.PlanTrabajoBoard;
 import com.asisge.apirest.model.dto.proyectos.PlanTrabajoDto;
+import com.asisge.apirest.model.entity.actividades.Actividad;
 import com.asisge.apirest.model.entity.actividades.ColorNotificacion;
 import com.asisge.apirest.model.entity.proyectos.PlanDeTrabajo;
+import com.asisge.apirest.service.IActividadService;
 import com.asisge.apirest.service.INotificacionService;
 import com.asisge.apirest.service.IPlanTrabajoService;
 
@@ -33,6 +40,9 @@ public class PlanTrabajoController extends BaseController {
 
 	@Autowired
 	private IPlanTrabajoService service;
+	
+	@Autowired
+	private IActividadService actividadService;
 
 	@Autowired
 	private INotificacionService notificationService;
@@ -50,31 +60,44 @@ public class PlanTrabajoController extends BaseController {
 		PlanDeTrabajo plan = service.findPlanById(id);
 		if (plan == null)
 			return respondNotFound(id.toString());
-		return new ResponseEntity<>(buildOk(plan), HttpStatus.OK);
+		List<EtapaBoard> etapas = plan.getEtapas().stream().map(etapa -> {
+			List<Actividad> actividades = actividadService.findActividadesByEtapa(etapa.getIdEtapaPDT());
+			return new EtapaBoard(etapa, actividades);
+		}).collect(Collectors.toList());
+		PlanTrabajoBoard board = new PlanTrabajoBoard(id, plan, etapas);
+		return new ResponseEntity<>(buildOk(board), HttpStatus.OK);
 	}
 
 	@Secured({ "ROLE_ADMIN", "ROLE_ASESOR" })
 	@PostMapping(ProyectosPath.PLANES_TRABAJO)
-	public ResponseEntity<ApiResponse> create(@Valid @RequestBody PlanTrabajoDto dto, BindingResult result, @PathVariable("idProyecto") Long idProyecto) {
+	public ResponseEntity<ApiResponse> create(@Valid @RequestBody PlanTrabajoDto dto, BindingResult result,
+			@PathVariable("idProyecto") Long idProyecto, @RequestParam("plantilla") Optional<Long> plantilla) {
+
 		if (result.hasErrors())
 			return validateDto(result);
 		dto.setProyecto(idProyecto);
 		PlanDeTrabajo newPlan = service.buildPlanEntity(dto);
-		newPlan = service.savePlan(newPlan);
+		Long idPlantilla = plantilla.orElse(null);
+		// crear plan desde plantilla o crea plan de forma manual
+		if (idPlantilla != null) {
+			newPlan = service.createFromTemplate(newPlan, idPlantilla);
+		} else {
+			newPlan = service.savePlan(newPlan);
+		}
 		String descripcion = String.format(RESULT_CREATED, newPlan.toString(), newPlan.getIdPlanDeTrabajo());
 		auditManager.saveAudit(newPlan.getCreatedBy(), ACTION_CREATE, descripcion);
-		String notificacion = String.format(Messages.getString("notification.added.plan"), newPlan.getCreatedBy(), idProyecto);
+		String notificacion = String.format(Messages.getString("notification.added.plan"), newPlan.getCreatedBy(),
+				idProyecto);
 		notificationService.notificarUsuariosProyectos(newPlan.getProyecto(), notificacion, ColorNotificacion.SUCCESS);
 		return new ResponseEntity<>(buildSuccess(notificacion, newPlan), HttpStatus.CREATED);
 	}
-	
 
 	@Secured({ "ROLE_ADMIN", "ROLE_ASESOR" })
 	@DeleteMapping(ProyectosPath.PLAN_TRABAJO_ID)
 	public ResponseEntity<ApiResponse> delete(@PathVariable(ID_PLAN) Long id) {
 		service.deletePlan(id);
 		ApiResponse response = buildDeleted("Plan De trabajo", id.toString());
-		String descripcion = response.getMessage();		
+		String descripcion = response.getMessage();
 		auditManager.saveAudit(ACTION_DELETE, descripcion);
 		return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
 	}
