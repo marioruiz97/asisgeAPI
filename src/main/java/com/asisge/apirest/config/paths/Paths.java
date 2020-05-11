@@ -63,6 +63,8 @@ public final class Paths {
 		public static final String TIPO_DOCUMENTO_ID = "tipo-documento/{idTipo}";
 		public static final String ESTADO_PROYECTO = "estado-proyecto";
 		public static final String ESTADO_PROYECTO_ID = "estado-proyecto/{idEstado}";
+		public static final String ESTADO_ACTIVIDAD = "estado-actividad";
+		public static final String ESTADO_ACTIVIDAD_ID = "estado-actividad/{idEstado}";
 		public static final String POSIBLES_ESTADOS = ESTADO_PROYECTO_ID + "/estados-siguientes";
 		public static final String PLANTILLA = "plantilla";
 		public static final String PLANTILLA_ID = "plantilla/{idPlantilla}";
