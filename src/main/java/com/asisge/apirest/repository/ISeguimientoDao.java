@@ -9,5 +9,5 @@ import com.asisge.apirest.model.entity.actividades.Seguimiento;
 
 public interface ISeguimientoDao extends JpaRepository<Seguimiento, Long> {
 	
-	List<Seguimiento> findByActividadAsociada(Actividad actividadAsociada);
+	List<Seguimiento> findByActividadAsociadaOrderByIdSeguimientoAsc(Actividad actividadAsociada);
 }

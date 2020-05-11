@@ -61,8 +61,7 @@ public @Data class Seguimiento extends AuditModel<String> implements Serializabl
 
 	@Override
 	public String toString() {
-		return "Seguimiento [idSeguimiento=" + idSeguimiento + ", actividadAsociada= (" + actividadAsociada.toString()
-				+ "), fechaSeguimiento=" + getCreatedDate() + ", horasTrabajadas=" + horasTrabajadas + "]";
+		return "Seguimiento [idSeguimiento=" + idSeguimiento + ", fechaSeguimiento=" + getCreatedDate() + ", horasTrabajadas=" + horasTrabajadas + "]";
 	}
 	
 	/**

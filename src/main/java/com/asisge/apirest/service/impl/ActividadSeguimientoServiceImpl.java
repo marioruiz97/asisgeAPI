@@ -54,7 +54,7 @@ public class ActividadSeguimientoServiceImpl implements IActividadService, ISegu
 	public List<Seguimiento> findByActividad(Long idActividad) {
 		Actividad actividad = findActividadById(idActividad);
 		if (actividad != null) {
-			return seguimientoDao.findByActividadAsociada(actividad);
+			return seguimientoDao.findByActividadAsociadaOrderByIdSeguimientoAsc(actividad);
 		}
 		return seguimientoDao.findAll();
 	}
@@ -118,19 +118,7 @@ public class ActividadSeguimientoServiceImpl implements IActividadService, ISegu
 		}
 		actividadDao.deleteById(idActividad);
 	}
-
-	@Override
-	public Seguimiento buildSeguimiento(SeguimientoDto dto) {
-		return new Seguimiento(null, dto.getActividadAsociada(), dto.getHorasTrabajadas(), dto.getUsuarioSeguimiento(),
-				dto.getObservaciones(), dto.getDescripcionLabor());
-	}
-
-	@Override
-	public Actividad buildActividad(ActividadDto dto) {
-		EtapaPDT etapa = etapaDao.findById(dto.getEtapa()).orElse(null);
-		return new Actividad(null, dto.getNombre(), null, etapa, dto.getFechaVencimiento(), dto.getDuracion(), dto.getDescripcion());
-	}
-
+	
 	@Override
 	public void setResponsables(Actividad actividad, List<Long> usuarios) {
 		if (usuarios != null && !usuarios.isEmpty()) {
@@ -140,5 +128,17 @@ public class ActividadSeguimientoServiceImpl implements IActividadService, ISegu
 			actividad.setResponsables(new ArrayList<>());
 		}
 	}
+
+	@Override
+	public Seguimiento buildSeguimiento(SeguimientoDto dto) {
+		Actividad actividad = findActividadById(dto.getActividadAsociada());
+		return new Seguimiento(null, actividad, dto.getHorasTrabajadas(), null, dto.getObservaciones(), dto.getDescripcionLabor());
+	}
+
+	@Override
+	public Actividad buildActividad(ActividadDto dto) {
+		EtapaPDT etapa = etapaDao.findById(dto.getEtapa()).orElse(null);
+		return new Actividad(null, dto.getNombre(), null, etapa, dto.getFechaVencimiento(), dto.getDuracion(), dto.getDescripcion());
+	}	
 
 }
