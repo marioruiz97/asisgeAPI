@@ -59,6 +59,10 @@ public @Data class Actividad extends AuditModel<String> implements Serializable 
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "id_etapa_actividad")
 	private EtapaPDT etapa;
+	
+	@ManyToOne(optional = false)
+	@JoinColumn(name = "id_estado_actividad")
+	private EstadoActividad estadoActividad;
 
 	@FutureOrPresent
 	private Date fechaVencimiento;

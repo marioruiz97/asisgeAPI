@@ -52,22 +52,31 @@ public class EstadoActividadController extends BaseController {
 	@PostMapping(MaestrosPath.ESTADO_ACTIVIDAD)
 	public ResponseEntity<ApiResponse> create(@Valid @RequestBody EstadoActividadDto dto) {
 		EstadoActividad newEstado = service.buildEstado(dto);
-		newEstado = service.saveEstado(newEstado);
-		String mensaje = String.format(RESULT_CREATED, newEstado.toString(), newEstado.getIdEstado());
-		auditManager.saveAudit(newEstado.getCreatedBy(), ACTION_CREATE, mensaje);
-		return new ResponseEntity<>(buildSuccess(mensaje, newEstado), HttpStatus.CREATED);
+		if (!newEstado.getEstadoInicial().booleanValue() || (newEstado.getEstadoInicial() && service.findEstadoInicial() == null)) {
+			newEstado = service.saveEstado(newEstado);
+			String mensaje = String.format(RESULT_CREATED, newEstado.toString(), newEstado.getIdEstado());
+			auditManager.saveAudit(newEstado.getCreatedBy(), ACTION_CREATE, mensaje);
+			return new ResponseEntity<>(buildSuccess(mensaje, newEstado), HttpStatus.CREATED);
+		} else {
+			return new ResponseEntity<>(buildFail(Messages.getString("message.error.cannot-save-estado-inicial")), HttpStatus.BAD_REQUEST);
+		}
 	}
 
 	@Secured("ROLE_ADMIN")
 	@PatchMapping(MaestrosPath.ESTADO_ACTIVIDAD_ID)
 	public ResponseEntity<ApiResponse> update(@Valid @RequestBody EstadoActividadDto dto, @PathVariable(ID_ESTADO) Long id) {
 		if (service.findEstadoById(id) != null) {
+			EstadoActividad estadoInicial = service.findEstadoInicial();
 			EstadoActividad estado = service.buildEstado(dto);
-			estado.setIdEstado(id);
-			estado = service.saveEstado(estado);
-			String mensaje = String.format(RESULT_UPDATED, estado.toString(), estado.getIdEstado());
-			auditManager.saveAudit(estado.getCreatedBy(), ACTION_UPDATE, mensaje);
-			return new ResponseEntity<>(buildSuccess(mensaje, estado), HttpStatus.CREATED);
+			if (estadoInicial == null || !estado.getEstadoInicial() || estadoInicial.getIdEstado().equals(id)) {
+				estado.setIdEstado(id);
+				estado = service.saveEstado(estado);
+				String mensaje = String.format(RESULT_UPDATED, estado.toString(), estado.getIdEstado());
+				auditManager.saveAudit(estado.getCreatedBy(), ACTION_UPDATE, mensaje);
+				return new ResponseEntity<>(buildSuccess(mensaje, estado), HttpStatus.CREATED);
+			} else {
+				return new ResponseEntity<>(buildFail(Messages.getString("message.error.cannot-save-estado-inicial")), HttpStatus.BAD_REQUEST);
+			}
 		} else {
 			return respondNotFound(id.toString());
 		}
@@ -83,7 +92,8 @@ public class EstadoActividadController extends BaseController {
 			auditManager.saveAudit(ACTION_DELETE, descripcion);
 			return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
 		} catch (Exception e) {
-			String message = String.format(Messages.getString("message.error.delete.record"), "Estado de Actividad", id.toString());
+			String message = String.format(Messages.getString("message.error.delete.record"), "Estado de Actividad",
+					id.toString());
 			return new ResponseEntity<>(buildFail(message), HttpStatus.BAD_REQUEST);
 		}
 	}

@@ -16,6 +16,7 @@ import com.asisge.apirest.config.utils.Messages;
 import com.asisge.apirest.model.dto.proyectos.EtapaDto;
 import com.asisge.apirest.model.dto.proyectos.PlanTrabajoDto;
 import com.asisge.apirest.model.entity.actividades.Actividad;
+import com.asisge.apirest.model.entity.actividades.EstadoActividad;
 import com.asisge.apirest.model.entity.plantillas.PlantillaPlanTrabajo;
 import com.asisge.apirest.model.entity.proyectos.EtapaPDT;
 import com.asisge.apirest.model.entity.proyectos.PlanDeTrabajo;
@@ -23,6 +24,7 @@ import com.asisge.apirest.model.entity.proyectos.Proyecto;
 import com.asisge.apirest.repository.IActividadDao;
 import com.asisge.apirest.repository.IEtapaPlanDao;
 import com.asisge.apirest.repository.IPlanDeTrabajoDao;
+import com.asisge.apirest.service.IEstadoActividadService;
 import com.asisge.apirest.service.IEtapaPlanService;
 import com.asisge.apirest.service.IPlanTrabajoService;
 import com.asisge.apirest.service.IPlantillaService;
@@ -46,6 +48,9 @@ public class PlanTrabajoServiceImpl implements IPlanTrabajoService, IEtapaPlanSe
 	@Autowired
 	private IPlantillaService plantillaService;
 
+	@Autowired
+	private IEstadoActividadService estadoActividadService;
+	
 	@Override
 	public EtapaPDT saveEtapa(EtapaPDT etapa) {
 		return etapaDao.save(etapa);
@@ -116,8 +121,9 @@ public class PlanTrabajoServiceImpl implements IPlanTrabajoService, IEtapaPlanSe
 			plantilla.getEtapas().stream().forEach(etapa -> {
 				EtapaPDT etapaPdt = planEtapas.stream()
 						.filter(et -> et.getNombreEtapa().equalsIgnoreCase(etapa.getNombreEtapa())).findFirst().orElse(null);
+				EstadoActividad estadoInicial = estadoActividadService.findEstadoInicial();
 				List<Actividad> actividades = etapa.getActividades().stream()
-						.map(ac -> new Actividad(null, ac.getNombre(), null, etapaPdt, null, ac.getDuracion(), null))
+						.map(ac -> new Actividad(null, ac.getNombre(), null, etapaPdt, estadoInicial, null, ac.getDuracion(), null))
 						.collect(Collectors.toList());
 				actividadDao.saveAll(actividades);
 			});
