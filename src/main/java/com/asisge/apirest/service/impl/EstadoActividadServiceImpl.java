@@ -25,6 +25,12 @@ public class EstadoActividadServiceImpl implements IEstadoActividadService {
 	public List<EstadoActividad> findAll() {
 		return repository.findAll();
 	}
+	
+	@Override
+	public EstadoActividad findEstadoInicial() {
+		// return findAll().stream().filter(EstadoActividad::getEstadoInicial).findFirst().orElse(null)
+		return repository.findByEstadoInicial(Boolean.TRUE).orElse(null);
+	}
 
 	@Override
 	public EstadoActividad findEstadoById(Long idEstado) {
@@ -40,6 +46,6 @@ public class EstadoActividadServiceImpl implements IEstadoActividadService {
 	public EstadoActividad buildEstado(EstadoActividadDto dto) {
 		return new EstadoActividad(null, dto.getNombreEstado(), dto.getDescripcion(), dto.getEstadoInicial(),
 				dto.getActividadNoAprobada(), dto.getActividadCompletada());
-	}
+	}	
 
 }

@@ -25,6 +25,9 @@ public @Data class ActividadDto implements Serializable {
 
 	@NotNull
 	private Long etapa;
+	
+	@NotNull
+	private Long estadoActividad;
 
 	@FutureOrPresent
 	@NotNull

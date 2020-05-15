@@ -2,7 +2,6 @@ package com.asisge.apirest.model.entity.actividades;
 
 import java.io.Serializable;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -36,7 +35,7 @@ public @Data class Seguimiento extends AuditModel<String> implements Serializabl
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long idSeguimiento;
 
-	@ManyToOne(cascade = CascadeType.ALL, optional = false)
+	@ManyToOne(optional = false)
 	@JoinColumn(name = "id_actividad_asociada")
 	private Actividad actividadAsociada;
 	
@@ -45,13 +44,12 @@ public @Data class Seguimiento extends AuditModel<String> implements Serializabl
 	@Positive
 	private Integer horasTrabajadas;
 
-	@ManyToOne(cascade = CascadeType.ALL, optional = false)
+	@ManyToOne(optional = false)
 	@JoinColumn(name = "id_usuario_seguimiento")
 	private Usuario usuarioSeguimiento;
 
 	@Lob
-	@Type(type = "org.hibernate.type.TextType")
-	@NotBlank
+	@Type(type = "org.hibernate.type.TextType")	
 	private String observaciones;
 
 	@Lob

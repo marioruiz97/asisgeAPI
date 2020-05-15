@@ -93,7 +93,7 @@ public class NotificacionServiceImpl implements INotificacionService {
 	public void notificarAdmins(Proyecto proyecto, String mensaje, ColorNotificacion color) {
 		Role role = userDao.findRoleByNombre("ROLE_ADMIN").orElse(null);
 		if (role != null) {
-			Notificacion notificacion = new Notificacion(proyecto, color, mensaje, 8);
+			Notificacion notificacion = repository.save(new Notificacion(proyecto, color, mensaje, 8));
 			List<NotificacionUsuario> notificaciones = userDao.findByRoles(role)
 					.stream().map(user-> new NotificacionUsuario(null, user, notificacion, false))
 					.collect(Collectors.toList());

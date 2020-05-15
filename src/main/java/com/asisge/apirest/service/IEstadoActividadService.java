@@ -12,6 +12,8 @@ public interface IEstadoActividadService {
 	List<EstadoActividad> findAll();
 
 	EstadoActividad findEstadoById(Long idEstado);
+	
+	EstadoActividad findEstadoInicial();
 
 	void deleteEstado(Long idEstado);
 

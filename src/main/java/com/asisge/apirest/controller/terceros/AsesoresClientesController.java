@@ -11,6 +11,7 @@ import javax.validation.constraints.NotNull;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -76,6 +77,7 @@ public class AsesoresClientesController extends BaseController {
 		return new ResponseEntity<>(buildOk(listado), HttpStatus.OK);
 	}
 
+	@Secured({ "ROLE_ADMIN", "ROLE_ASESOR" })
 	@PatchMapping(TercerosPath.ASESORES + "/{usuario}")
 	public ResponseEntity<ApiResponse> setUsuariosClientes(@RequestBody List<ModelMap> dtos, @NotNull @PathVariable("usuario") Long idUsuario) {
 		service.deleteByUsuario(idUsuario);
@@ -102,6 +104,7 @@ public class AsesoresClientesController extends BaseController {
 		return new ResponseEntity<>(buildSuccess(message, newList), HttpStatus.CREATED);
 	}
 	
+	@Secured({ "ROLE_ADMIN" })
 	@DeleteMapping(TercerosPath.ASESORES)
 	public ResponseEntity<ApiResponse> delete(@RequestParam("usuario") Long idUsuario, @RequestParam("cliente") Long idCliente) {
 		if (idUsuario == null || idCliente == null) {

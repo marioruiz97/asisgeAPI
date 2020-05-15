@@ -2,6 +2,7 @@ package com.asisge.apirest.controller.actividades;
 
 import java.util.List;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,7 +10,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.BindingResult;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -70,7 +73,7 @@ public class SeguimientoController extends BaseController {
 		if(actividad != null && usuarioSeguimiento != null) {
 			Seguimiento seguimiento = service.buildSeguimiento(dto);
 			seguimiento.setUsuarioSeguimiento(usuarioSeguimiento);
-			service.saveSeguimiento(seguimiento);			
+			seguimiento = service.saveSeguimiento(seguimiento);			
 			String mensajeAuditoria = String.format(RESULT_CREATED,	seguimiento.toString(), seguimiento.getIdSeguimiento());
 			auditManager.saveAudit(ACTION_CREATE, mensajeAuditoria);			
 			return new ResponseEntity<>(buildSuccess(mensajeAuditoria, seguimiento), HttpStatus.CREATED);
@@ -78,4 +81,46 @@ public class SeguimientoController extends BaseController {
 		String message = String.format(Messages.getString("message.error.actividad-or-user-not-found"), idActividad);
 		throw new InvalidProcessException(message, HttpStatus.BAD_REQUEST);
 	}
+	
+	@PatchMapping(ProyectosPath.SEGUIMIENTO_ID)
+	public ResponseEntity<ApiResponse> update(@Valid @RequestBody SeguimientoDto dto, BindingResult result, HttpServletRequest request, 
+			@PathVariable(ID_ACTIVIDAD) Long idActividad, @PathVariable(ID_SEGUIMIENTO) Long idSeguimiento) {
+		if (result.hasErrors())
+			return validateDto(result);
+		Actividad actividad = actividadService.findActividadById(idActividad);
+		Usuario usuarioSeguimiento = usuarioService.findUsuarioByCorreo(getCurrentEmail());
+		Seguimiento seguimiento = service.findSeguimientoById(idSeguimiento);
+		if (actividad != null && (request.isUserInRole("ROLE_ADMIN") || usuarioSeguimiento.equals(seguimiento.getUsuarioSeguimiento()))) {
+			seguimiento = service.buildSeguimiento(dto);
+			seguimiento.setIdSeguimiento(idSeguimiento);
+			seguimiento.setUsuarioSeguimiento(usuarioSeguimiento);
+			seguimiento = service.saveSeguimiento(seguimiento);
+			String mensajeAuditoria = String.format(RESULT_UPDATED, seguimiento.toString(), seguimiento.getIdSeguimiento());
+			auditManager.saveAudit(ACTION_UPDATE, mensajeAuditoria);
+			return new ResponseEntity<>(buildSuccess(mensajeAuditoria, seguimiento), HttpStatus.CREATED);
+		}
+		String message = Messages.getString("message.error.update-seguimiento");
+		throw new InvalidProcessException(message, HttpStatus.BAD_REQUEST);
+	}
+
+	@DeleteMapping(ProyectosPath.SEGUIMIENTO_ID)
+	public ResponseEntity<ApiResponse> delete(HttpServletRequest request, @PathVariable(ID_ACTIVIDAD) Long idActividad, @PathVariable(ID_SEGUIMIENTO) Long idSeguimiento) {
+		Actividad actividad = actividadService.findActividadById(idActividad);
+		Seguimiento seguimiento = service.findSeguimientoById(idSeguimiento);
+		Usuario usuarioSeguimiento = usuarioService.findUsuarioByCorreo(getCurrentEmail());
+		if (actividad != null && actividad.equals(seguimiento.getActividadAsociada())) {
+			if (request.isUserInRole("ROLE_ADMIN") || seguimiento.getUsuarioSeguimiento().equals(usuarioSeguimiento)) {
+				service.deleteSeguimiento(idSeguimiento);
+				ApiResponse response = buildDeleted("Seguimiento", idSeguimiento.toString());
+				String descripcion = response.getMessage();
+				auditManager.saveAudit(ACTION_DELETE, descripcion);
+				return new ResponseEntity<>(response, HttpStatus.ACCEPTED);
+			}
+			String message = Messages.getString("message.error.delete-seguimiento");
+			throw new InvalidProcessException(message, HttpStatus.BAD_REQUEST);
+		}
+		String message = String.format(Messages.getString("message.error.actividad-or-user-not-found"), idActividad);
+		throw new InvalidProcessException(message, HttpStatus.BAD_REQUEST);
+	}
+	
 }
