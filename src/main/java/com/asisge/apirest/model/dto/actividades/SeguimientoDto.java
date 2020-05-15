@@ -17,7 +17,7 @@ public @Data class SeguimientoDto implements Serializable {
 	@Positive
 	private Integer horasTrabajadas;
 
-	@NotBlank
+	
 	private String observaciones;
 
 	@NotBlank

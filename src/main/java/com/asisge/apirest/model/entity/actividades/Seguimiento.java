@@ -49,8 +49,7 @@ public @Data class Seguimiento extends AuditModel<String> implements Serializabl
 	private Usuario usuarioSeguimiento;
 
 	@Lob
-	@Type(type = "org.hibernate.type.TextType")
-	@NotBlank
+	@Type(type = "org.hibernate.type.TextType")	
 	private String observaciones;
 
 	@Lob
