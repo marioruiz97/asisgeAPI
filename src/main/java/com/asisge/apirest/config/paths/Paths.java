@@ -97,6 +97,7 @@ public final class Paths {
 		public static final String ACTIVIDAD_ID = "actividades/{idActividad}";
 		public static final String SEGUIMIENTOS = ACTIVIDAD_ID + "/seguimientos";
 		public static final String SEGUIMIENTO_ID = SEGUIMIENTOS + "/{idSeguimiento}";
+		public static final String TIEMPOS = "planes/{idPlan}/tiempos";
 		
 		private ProyectosPath() {
 		}
