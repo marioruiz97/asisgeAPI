@@ -47,8 +47,12 @@ public class EstadoProyectoController extends BaseController {
 
 	@GetMapping(MaestrosPath.POSIBLES_ESTADOS)
 	public ResponseEntity<ApiResponse> findPosiblesEstados(@PathVariable("idEstado") Long actual) {
+		EstadoProyecto estado = service.findEstadoById(actual);
 		actual = actual.equals(0L) ? null : actual;
 		List<EstadoProyecto> estados = service.findNextEstados(actual);
+		if(estado != null && estado.getIdEstadoAnterior() != null) {
+			estados.add(service.findEstadoById(estado.getIdEstadoAnterior()));
+		}
 		if(estados.isEmpty())
 			return respondNotFound(null);
 		return new ResponseEntity<>(buildOk(estados), HttpStatus.OK);

@@ -8,6 +8,7 @@ import java.util.stream.Collectors;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
+import javax.validation.constraints.NotNull;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -16,9 +17,11 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.asisge.apirest.config.InvalidProcessException;
@@ -30,6 +33,7 @@ import com.asisge.apirest.model.dto.proyectos.Dashboard;
 import com.asisge.apirest.model.dto.proyectos.ProyectoDto;
 import com.asisge.apirest.model.entity.actividades.Actividad;
 import com.asisge.apirest.model.entity.actividades.ColorNotificacion;
+import com.asisge.apirest.model.entity.proyectos.EstadoProyecto;
 import com.asisge.apirest.model.entity.proyectos.PlanDeTrabajo;
 import com.asisge.apirest.model.entity.proyectos.Proyecto;
 import com.asisge.apirest.model.entity.terceros.MiembroProyecto;
@@ -45,6 +49,7 @@ import com.asisge.apirest.service.IUsuarioService;
 public class ProyectoController extends BaseController {
 
 	private static final String ID_PROYECTO = "idProyecto";
+	private static final String ROLE_ADMIN = "ROLE_ADMIN";
 
 	@Autowired
 	private IProyectoService service;
@@ -70,7 +75,7 @@ public class ProyectoController extends BaseController {
 	@GetMapping(ProyectosPath.PROYECTOS)
 	public ResponseEntity<ApiResponse> findAll(HttpServletRequest request) {
 		List<Proyecto> proyectos;
-		if (request.isUserInRole("ROLE_ADMIN")) {
+		if (request.isUserInRole(ROLE_ADMIN)) {
 			proyectos = service.findAllProyectos();
 		} else if (isAuthenticated()) {
 			proyectos = miembroService.findProyectosByEmail(getCurrentEmail());
@@ -81,12 +86,25 @@ public class ProyectoController extends BaseController {
 			return respondNotFound(null);
 		return new ResponseEntity<>(buildOk(proyectos), HttpStatus.OK);
 	}
+	
+	@Secured({ "ROLE_ADMIN", "ROLE_ASESOR" })
+	@GetMapping(ProyectosPath.PROYECTO_ID)
+	public ResponseEntity<ApiResponse> findProyectoById(HttpServletRequest request, @PathVariable(ID_PROYECTO) Long idProyecto) {
+		String email = getCurrentEmail();
+		Proyecto proyecto = null;
+		if (request.isUserInRole(ROLE_ADMIN) || miembroService.existsMiembroInProyecto(idProyecto, email)) {
+			proyecto = service.findProyectoById(idProyecto);
+		}
+		if (proyecto == null)
+			return respondNotFound(idProyecto.toString());
+		return new ResponseEntity<>(buildOk(proyecto), HttpStatus.OK);
+	}
 
 	@GetMapping(ProyectosPath.DASHBOARD)
 	public ResponseEntity<ApiResponse> findDashboardById(HttpServletRequest request, @PathVariable("id") Long id) {
 		Dashboard dashboard = null;
 		String email = getCurrentEmail();
-		if (request.isUserInRole("ROLE_ADMIN") || miembroService.existsMiembroInProyecto(id, email)) {
+		if (request.isUserInRole(ROLE_ADMIN) || miembroService.existsMiembroInProyecto(id, email)) {
 			dashboard = service.loadDashboard(id);
 			dashboard.setMiembros(miembroService.findMiembrosProyecto(id));
 			dashboard.setNotificaciones(notificacionService.findByProyecto(dashboard.getProyecto()));
@@ -131,6 +149,38 @@ public class ProyectoController extends BaseController {
 		notificacionService.notificarUsuario(newProject, miembro.getUsuario(), added, ColorNotificacion.PRIMARY, 5);
 		notificacionService.notificarAdmins(newProject.getNombreProyecto());
 		return new ResponseEntity<>(buildSuccess(descripcion, newProject), HttpStatus.CREATED);
+	}
+	
+	@Secured({ "ROLE_ADMIN", "ROLE_ASESOR" })
+	@PatchMapping(ProyectosPath.PROYECTO_ID)
+	public ResponseEntity<ApiResponse> update(@Valid @RequestBody ProyectoDto dto, BindingResult result, @PathVariable(ID_PROYECTO) Long idProyecto) {
+		if (result.hasErrors()) {
+			return validateDto(result);
+		}
+		Proyecto proyecto = service.buildEntity(dto);
+		proyecto.setIdProyecto(idProyecto);
+		proyecto = service.saveProyecto(proyecto);
+		String descripcion = String.format(RESULT_UPDATED, "proyecto: " + proyecto.getNombreProyecto(), proyecto.getIdProyecto());
+		auditManager.saveAudit(proyecto.getLastModifiedBy(), ACTION_UPDATE, descripcion);
+		notificacionService.notificarProyecto(proyecto, descripcion, ColorNotificacion.SUCCESS);
+		return new ResponseEntity<>(buildSuccess(descripcion, proyecto), HttpStatus.CREATED);
+	}
+
+	@Secured({ "ROLE_ADMIN", "ROLE_ASESOR" })
+	@PostMapping(ProyectosPath.PROYECTO_ID)
+	public ResponseEntity<ApiResponse> changeEstado(@PathVariable(ID_PROYECTO) Long idProyecto, @NotNull @RequestParam("estado") Long idEstado) {
+		Proyecto proyecto = service.findProyectoById(idProyecto);
+		if (proyecto == null) {
+			return respondNotFound(idProyecto.toString());
+		}
+		EstadoProyecto estado = estadosService.findEstadoById(idEstado);
+		proyecto.setEstadoProyecto(estado);
+		proyecto = service.saveProyecto(proyecto);
+		String descripcion = Messages.getString("notification.new-project-state");
+		String mensaje = String.format(descripcion, proyecto.getNombreProyecto(), estado.getNombreEstado());
+		auditManager.saveAudit(Messages.getString("message.action.project-change-status"), mensaje);
+		notificacionService.notificarUsuariosProyectos(proyecto, mensaje, ColorNotificacion.SUCCESS);
+		return new ResponseEntity<>(buildSuccess(mensaje, proyecto), HttpStatus.CREATED);
 	}
 
 	@Secured({ "ROLE_ADMIN" })

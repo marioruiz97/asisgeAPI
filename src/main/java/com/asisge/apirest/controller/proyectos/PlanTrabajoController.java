@@ -13,6 +13,7 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -91,7 +92,28 @@ public class PlanTrabajoController extends BaseController {
 		notificationService.notificarUsuariosProyectos(newPlan.getProyecto(), notificacion, ColorNotificacion.SUCCESS);
 		return new ResponseEntity<>(buildSuccess(notificacion, newPlan), HttpStatus.CREATED);
 	}
-
+	
+	@Secured({ "ROLE_ADMIN", "ROLE_ASESOR" })
+	@PatchMapping(ProyectosPath.PLAN_TRABAJO_ID)
+	public ResponseEntity<ApiResponse> update(@Valid @RequestBody PlanTrabajoDto dto, BindingResult result, @PathVariable(ID_PLAN) Long idPlan) {
+		if (result.hasErrors())
+			return validateDto(result);
+		PlanDeTrabajo plan = service.findPlanById(idPlan);
+		if (plan != null) {
+			plan.setNombrePlan(dto.getNombrePlan());
+			plan.setObjetivoPlan(dto.getObjetivoPlan());
+			plan.setHorasMes(dto.getHorasMes());
+			plan.setFechaInicio(dto.getFechaInicio());
+			plan.setFechaFinEstimada(dto.getFechaFinEstimada());
+			plan = service.savePlan(plan);
+			String descripcion = String.format(RESULT_UPDATED, plan.toString(), plan.getIdPlanDeTrabajo());
+			auditManager.saveAudit(ACTION_UPDATE, descripcion);
+			notificationService.notificarUsuariosProyectos(plan.getProyecto(), descripcion, ColorNotificacion.SUCCESS);
+			return new ResponseEntity<>(buildSuccess(descripcion, plan), HttpStatus.CREATED);
+		}
+		return respondNotFound(idPlan.toString());
+	}
+	
 	@Secured({ "ROLE_ADMIN", "ROLE_ASESOR" })
 	@DeleteMapping(ProyectosPath.PLAN_TRABAJO_ID)
 	public ResponseEntity<ApiResponse> delete(@PathVariable(ID_PLAN) Long id) {
