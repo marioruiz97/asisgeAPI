@@ -68,6 +68,7 @@ public final class Paths {
 		public static final String POSIBLES_ESTADOS = ESTADO_PROYECTO_ID + "/estados-siguientes";
 		public static final String PLANTILLA = "plantilla";
 		public static final String PLANTILLA_ID = "plantilla/{idPlantilla}";
+		public static final String APROBACIONES_PLAN = "planes/{idPlan}/aprobaciones";
 
 		private MaestrosPath() {
 		}
