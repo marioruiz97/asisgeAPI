@@ -29,7 +29,9 @@ import com.asisge.apirest.model.dto.proyectos.PlanTrabajoBoard;
 import com.asisge.apirest.model.dto.proyectos.PlanTrabajoDto;
 import com.asisge.apirest.model.entity.actividades.Actividad;
 import com.asisge.apirest.model.entity.actividades.ColorNotificacion;
+import com.asisge.apirest.model.entity.proyectos.AprobacionPlan;
 import com.asisge.apirest.model.entity.proyectos.PlanDeTrabajo;
+import com.asisge.apirest.repository.IAprobacionDao;
 import com.asisge.apirest.service.IActividadService;
 import com.asisge.apirest.service.INotificacionService;
 import com.asisge.apirest.service.IPlanTrabajoService;
@@ -47,6 +49,9 @@ public class PlanTrabajoController extends BaseController {
 
 	@Autowired
 	private INotificacionService notificationService;
+	
+	@Autowired
+	private IAprobacionDao aprobacionDao;
 
 	@GetMapping(ProyectosPath.PLANES_TRABAJO)
 	public ResponseEntity<ApiResponse> findPlanByProyecto(@PathVariable("idProyecto") Long idProyecto) {
@@ -65,7 +70,9 @@ public class PlanTrabajoController extends BaseController {
 			List<Actividad> actividades = actividadService.findActividadesByEtapa(etapa.getIdEtapaPDT());
 			return new EtapaBoard(etapa, actividades);
 		}).collect(Collectors.toList());
-		PlanTrabajoBoard board = new PlanTrabajoBoard(id, plan, etapas);
+		AprobacionPlan aprobacion = aprobacionDao.findByPlan(plan).orElse(null);
+		Boolean aprobado =  aprobacion != null && aprobacion.getAvalCliente();
+		PlanTrabajoBoard board = new PlanTrabajoBoard(id, plan, etapas, aprobado);
 		return new ResponseEntity<>(buildOk(board), HttpStatus.OK);
 	}
 

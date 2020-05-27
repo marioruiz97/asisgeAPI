@@ -55,7 +55,7 @@ public class ProyectoServiceImpl implements IProyectoService {
 		Cliente cliente = new Cliente(dto.getCliente());
 		EstadoProyecto estado = new EstadoProyecto();
 		estado.setId(dto.getEstadoProyecto());
-		return new Proyecto(null, dto.getNombreProyecto(), dto.getDescripcionGeneral(), dto.getFechaCierreProyecto(), estado, cliente);
+		return new Proyecto(null, dto.getNombreProyecto(), dto.getDescripcionGeneral(), dto.getFechaCierreProyecto(), estado, cliente, null, null);
 	}
 
 }

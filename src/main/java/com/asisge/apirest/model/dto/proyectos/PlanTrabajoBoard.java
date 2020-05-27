@@ -16,6 +16,7 @@ public @Data class PlanTrabajoBoard implements Serializable {
 	private Long idPlanDeTrabajo;
 	private PlanDeTrabajo planDeTrabajo;
 	private List<EtapaBoard> etapas;
+	private Boolean aprobado;
 
 	/**
 	 * 

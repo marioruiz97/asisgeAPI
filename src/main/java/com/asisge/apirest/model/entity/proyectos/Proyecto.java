@@ -56,6 +56,9 @@ public @Data class Proyecto extends AuditModel<String> implements Serializable {
 	@ManyToOne(optional = false)
 	@JoinColumn(name = "id_cliente")
 	private Cliente cliente;
+	
+	private String contrato;
+	private String anticipo;
 
 	@Override
 	public String toString() {
