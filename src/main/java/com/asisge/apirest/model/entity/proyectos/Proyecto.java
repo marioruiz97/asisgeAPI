@@ -48,7 +48,6 @@ public @Data class Proyecto extends AuditModel<String> implements Serializable {
 	@FutureOrPresent
 	@Nullable
 	private Date fechaCierreProyecto;
-	// TODO revisar si quitar este atributo
 
 	@ManyToOne(optional = false)
 	private EstadoProyecto estadoProyecto;	
