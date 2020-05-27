@@ -30,8 +30,7 @@ public class AsisgeApiApplication {
 						.setCredentials(GoogleCredentials.fromStream(serviceAccount))
 						.setStorageBucket(bucketName)
 						.build();
-				FirebaseApp.initializeApp(options);
-				System.out.println("Firebase iniciado con éxito");
+				FirebaseApp.initializeApp(options);				
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
