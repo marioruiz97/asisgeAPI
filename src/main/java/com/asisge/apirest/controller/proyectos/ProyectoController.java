@@ -20,9 +20,11 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.multipart.MultipartFile;
 
 import com.asisge.apirest.config.InvalidProcessException;
 import com.asisge.apirest.config.paths.Paths.ProyectosPath;
@@ -43,6 +45,7 @@ import com.asisge.apirest.service.IMiembrosService;
 import com.asisge.apirest.service.INotificacionService;
 import com.asisge.apirest.service.IPlanTrabajoService;
 import com.asisge.apirest.service.IProyectoService;
+import com.asisge.apirest.service.IUploadFileService;
 import com.asisge.apirest.service.IUsuarioService;
 
 @RestController
@@ -71,6 +74,9 @@ public class ProyectoController extends BaseController {
 	
 	@Autowired
 	private IActividadService actividadService;
+	
+	@Autowired
+	private IUploadFileService fileService;
 
 	@GetMapping(ProyectosPath.PROYECTOS)
 	public ResponseEntity<ApiResponse> findAll(HttpServletRequest request) {
@@ -157,8 +163,13 @@ public class ProyectoController extends BaseController {
 		if (result.hasErrors()) {
 			return validateDto(result);
 		}
+		Proyecto old = service.findProyectoById(idProyecto);
+		if(old == null)
+			return respondNotFound(idProyecto.toString());
 		Proyecto proyecto = service.buildEntity(dto);
 		proyecto.setIdProyecto(idProyecto);
+		proyecto.setContrato(old.getContrato());
+		proyecto.setAnticipo(old.getAnticipo());
 		proyecto = service.saveProyecto(proyecto);
 		String descripcion = String.format(RESULT_UPDATED, "proyecto: " + proyecto.getNombreProyecto(), proyecto.getIdProyecto());
 		auditManager.saveAudit(proyecto.getLastModifiedBy(), ACTION_UPDATE, descripcion);
@@ -181,6 +192,30 @@ public class ProyectoController extends BaseController {
 		auditManager.saveAudit(Messages.getString("message.action.project-change-status"), mensaje);
 		notificacionService.notificarUsuariosProyectos(proyecto, mensaje, ColorNotificacion.SUCCESS);
 		return new ResponseEntity<>(buildSuccess(mensaje, proyecto), HttpStatus.CREATED);
+	}
+	
+	@Secured({ "ROLE_ADMIN", "ROLE_ASESOR" })
+	@PutMapping(ProyectosPath.PROYECTO_ID)
+	public ResponseEntity<ApiResponse> uploadArchivos(@RequestParam("archivo") MultipartFile archivo, @RequestParam("contrato") boolean contrato, 
+			@PathVariable(ID_PROYECTO) Long idProyecto) {
+		Proyecto proyecto = service.findProyectoById(idProyecto);
+		if (proyecto == null)
+			return respondNotFound(idProyecto.toString());
+		try {
+			if (!archivo.isEmpty()) {
+				String rutaArchivo = fileService.cargarContratoOAnticipo(archivo, proyecto.getIdProyecto());
+				if (contrato) {
+					proyecto.setContrato(rutaArchivo);
+				} else {
+					proyecto.setAnticipo(rutaArchivo);
+				}
+				proyecto = service.saveProyecto(proyecto);
+				return new ResponseEntity<>(buildSuccess("Se ha cargado archivo: " + rutaArchivo, proyecto), HttpStatus.CREATED);
+			}
+			throw new IllegalArgumentException();
+		} catch (Exception e) {
+			throw new InvalidProcessException("No se ha podido cargar archivo", HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 
 	@Secured({ "ROLE_ADMIN" })

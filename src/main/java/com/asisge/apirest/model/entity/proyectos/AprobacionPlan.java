@@ -35,6 +35,8 @@ public @Data class AprobacionPlan extends AuditModel<String> implements Serializ
 	private Boolean avalCliente;
 
 	private String observaciones;
+	
+	private String rutaArchivo;
 
 	/**
 	 * 
