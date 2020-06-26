@@ -31,6 +31,7 @@ import com.asisge.apirest.model.entity.actividades.ColorNotificacion;
 import com.asisge.apirest.model.entity.proyectos.PlanDeTrabajo;
 import com.asisge.apirest.model.entity.proyectos.Proyecto;
 import com.asisge.apirest.service.IActividadService;
+import com.asisge.apirest.service.ICierreService;
 import com.asisge.apirest.service.IEstadoActividadService;
 import com.asisge.apirest.service.IMiembrosService;
 import com.asisge.apirest.service.INotificacionService;
@@ -56,6 +57,9 @@ public class ActividadController extends BaseController {
 	
 	@Autowired
 	private IMiembrosService miembroService;
+	
+	@Autowired
+	private ICierreService cierreService;
 
 	@GetMapping(ProyectosPath.ACTIVIDADES_PLAN)
 	public ResponseEntity<ApiResponse> getActividadesByPlan(@PathVariable(ID_PLAN) Long idPlan) {
@@ -86,6 +90,8 @@ public class ActividadController extends BaseController {
 		Proyecto proyecto = planService.findPlanById(idPlan).getProyecto();
 		if (proyecto != null) {
 			Actividad actividad = service.buildActividad(dto);
+			if(actividad.getEtapa() != null)
+				cierreService.validarCierreEtapa(actividad.getEtapa());
 			service.setResponsables(actividad, dto.getResponsables());
 			actividad.setEstadoActividad(estadoActividadService.findEstadoInicial());
 			actividad = service.saveActividad(actividad);
@@ -109,6 +115,7 @@ public class ActividadController extends BaseController {
 			Actividad actividad = service.buildActividad(dto);
 			if (actividad.getEstadoActividad().getActividadCompletada().booleanValue())
 				throw new InvalidProcessException(Messages.getString("message.error.update-finished-actividad"), HttpStatus.BAD_REQUEST);
+			cierreService.validarCierreEtapa(actividad.getEtapa());
 			actividad.setIdActividad(idActividad);
 			service.setResponsables(actividad, dto.getResponsables());
 			actividad = service.saveActividad(actividad);
@@ -135,6 +142,7 @@ public class ActividadController extends BaseController {
 		Actividad actividad = service.findActividadById(idActividad);
 		if (actividad == null)
 			return respondNotFound(idActividad.toString());
+		cierreService.validarCierreEtapa(actividad.getEtapa());
 		if (aprobar.booleanValue()) {
 			service.solicitarAprobacion(actividad);
 		} else {

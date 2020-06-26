@@ -26,6 +26,7 @@ public @Data class Dashboard implements Serializable {
 	private List<Notificacion> notificaciones;
 	private List<EstadosProyectoBoard> lineaEstados;
 	private List<Actividad> proximasActividades;
+	private Integer avance;
 
 	/**
 	 * 

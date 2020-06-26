@@ -13,7 +13,6 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.persistence.OneToOne;
 import javax.persistence.Table;
-import javax.validation.constraints.FutureOrPresent;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
@@ -39,11 +38,10 @@ public @Data class PlanDeTrabajo extends AuditModel<String> implements Serializa
 
 	@NotNull
 	private Date fechaInicio;
-
-	@FutureOrPresent
+	
+	@NotNull
 	private Date fechaFinEstimada;
 
-	@FutureOrPresent
 	private Date fechaFinReal;
 
 	@PositiveOrZero
@@ -67,10 +65,13 @@ public @Data class PlanDeTrabajo extends AuditModel<String> implements Serializa
 	@JoinColumn(name = "etapa_actual")
 	private EtapaPDT etapaActual;
 
+	@ManyToOne
+	@JoinColumn(name = "id_cierre_plan")
+	private Cierre cierre;
+
 	@Override
 	public String toString() {
-		return "Plan De Trabajo [id: " + idPlanDeTrabajo + ", fecha inicio: " + fechaInicio + ", Nombre del plan: "
-				+ nombrePlan + "]";
+		return "Plan De Trabajo [id: " + idPlanDeTrabajo + ", fecha inicio: " + fechaInicio + ", Nombre del plan: " + nombrePlan + "]";
 	}
 
 	/**

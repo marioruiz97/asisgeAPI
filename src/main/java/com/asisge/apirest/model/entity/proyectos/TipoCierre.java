@@ -1,7 +1,8 @@
 package com.asisge.apirest.model.entity.proyectos;
 
 public enum TipoCierre {
-	CIERRE_ETAPA("CIERRE_ETAPA"), CIERRE_PLAN("CIERRE_PLAN");
+	CIERRE_ETAPA("CIERRE_ETAPA"), 
+	CIERRE_PLAN("CIERRE_PLAN");
 
 	private final String value;
 
