@@ -1,5 +1,6 @@
 package com.asisge.apirest.controller.proyectos;
 
+import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -24,15 +25,19 @@ import com.asisge.apirest.config.paths.Paths.ProyectosPath;
 import com.asisge.apirest.config.response.ApiResponse;
 import com.asisge.apirest.config.utils.Messages;
 import com.asisge.apirest.controller.BaseController;
+import com.asisge.apirest.model.dto.proyectos.CierreDto;
 import com.asisge.apirest.model.dto.proyectos.EtapaBoard;
 import com.asisge.apirest.model.dto.proyectos.PlanTrabajoBoard;
 import com.asisge.apirest.model.dto.proyectos.PlanTrabajoDto;
 import com.asisge.apirest.model.entity.actividades.Actividad;
 import com.asisge.apirest.model.entity.actividades.ColorNotificacion;
 import com.asisge.apirest.model.entity.proyectos.AprobacionPlan;
+import com.asisge.apirest.model.entity.proyectos.Cierre;
 import com.asisge.apirest.model.entity.proyectos.PlanDeTrabajo;
+import com.asisge.apirest.model.entity.proyectos.TipoCierre;
 import com.asisge.apirest.repository.IAprobacionDao;
 import com.asisge.apirest.service.IActividadService;
+import com.asisge.apirest.service.ICierreService;
 import com.asisge.apirest.service.INotificacionService;
 import com.asisge.apirest.service.IPlanTrabajoService;
 
@@ -49,6 +54,9 @@ public class PlanTrabajoController extends BaseController {
 
 	@Autowired
 	private INotificacionService notificationService;
+	
+	@Autowired
+	private ICierreService cierreService;
 	
 	@Autowired
 	private IAprobacionDao aprobacionDao;
@@ -78,8 +86,7 @@ public class PlanTrabajoController extends BaseController {
 
 	@Secured({ "ROLE_ADMIN", "ROLE_ASESOR" })
 	@PostMapping(ProyectosPath.PLANES_TRABAJO)
-	public ResponseEntity<ApiResponse> create(@Valid @RequestBody PlanTrabajoDto dto, BindingResult result,
-			@PathVariable("idProyecto") Long idProyecto, @RequestParam("plantilla") Optional<Long> plantilla) {
+	public ResponseEntity<ApiResponse> create(@Valid @RequestBody PlanTrabajoDto dto, BindingResult result, @PathVariable("idProyecto") Long idProyecto, @RequestParam("plantilla") Optional<Long> plantilla) {
 
 		if (result.hasErrors())
 			return validateDto(result);
@@ -106,6 +113,7 @@ public class PlanTrabajoController extends BaseController {
 		if (result.hasErrors())
 			return validateDto(result);
 		PlanDeTrabajo plan = service.findPlanById(idPlan);
+		cierreService.validarCierrePlan(plan);
 		if (plan != null) {
 			plan.setNombrePlan(dto.getNombrePlan());
 			plan.setObjetivoPlan(dto.getObjetivoPlan());
@@ -119,6 +127,30 @@ public class PlanTrabajoController extends BaseController {
 			return new ResponseEntity<>(buildSuccess(descripcion, plan), HttpStatus.CREATED);
 		}
 		return respondNotFound(idPlan.toString());
+	}
+	
+	@PostMapping(ProyectosPath.CIERRE_PLAN)
+	public ResponseEntity<ApiResponse> cerrarPlan(@Valid @RequestBody CierreDto dto, BindingResult result, @PathVariable(ID_PLAN) Long idPlan) {
+		if (result.hasErrors())
+			return validateDto(result);
+		PlanDeTrabajo old = service.findPlanById(idPlan);
+		if (old == null)
+			return respondNotFound(idPlan.toString());
+		Cierre cierre = null;
+		if (old.getCierre() == null) {
+			cierre = new Cierre(null, dto.getObservaciones(), dto.getAvalCliente(), TipoCierre.CIERRE_PLAN);
+		} else {
+			cierre = old.getCierre();
+			cierre.setObservaciones(dto.getObservaciones());
+			cierre.setAvalCliente(dto.getAvalCliente());
+		}
+		cierre = cierreService.saveCierre(cierre);
+		old.setCierre(cierre);
+		old.setFechaFinReal(new Date());
+		service.savePlan(old);
+		String descripcion = String.format("Se ha guardado el cierre (%s) para el plan con id %s", cierre.toString(), old.getIdPlanDeTrabajo());
+		auditManager.saveAudit(ACTION_CREATE, descripcion);
+		return new ResponseEntity<>(buildSuccess(descripcion, cierre), HttpStatus.CREATED);
 	}
 	
 	@Secured({ "ROLE_ADMIN", "ROLE_ASESOR" })

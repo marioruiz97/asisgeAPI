@@ -17,7 +17,6 @@ import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.persistence.UniqueConstraint;
-import javax.validation.constraints.FutureOrPresent;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
@@ -64,7 +63,7 @@ public @Data class Actividad extends AuditModel<String> implements Serializable 
 	@JoinColumn(name = "id_estado_actividad")
 	private EstadoActividad estadoActividad;
 
-	@FutureOrPresent
+	
 	private Date fechaVencimiento;
 
 	@NotNull

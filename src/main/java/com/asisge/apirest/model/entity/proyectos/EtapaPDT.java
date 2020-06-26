@@ -10,7 +10,6 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.validation.constraints.FutureOrPresent;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
@@ -44,8 +43,12 @@ public @Data class EtapaPDT extends AuditModel<String> implements Serializable {
 	@NotNull
 	private Date fechaInicio;
 
-	@FutureOrPresent
+	@NotNull
 	private Date fechaFin;
+	
+	@ManyToOne
+	@JoinColumn(name = "id_cierre_etapa")
+	private Cierre cierre;
 
 	@Override
 	public String toString() {

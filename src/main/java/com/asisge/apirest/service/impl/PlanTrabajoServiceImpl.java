@@ -60,7 +60,7 @@ public class PlanTrabajoServiceImpl implements IPlanTrabajoService, IEtapaPlanSe
 	public List<EtapaPDT> saveAllEtapas(List<EtapaDto> dtoList) {
 		List<EtapaPDT> etapas = dtoList.stream().map(dto -> {
 			PlanDeTrabajo plan = findPlanById(dto.getPlanDeTrabajo());
-			return new EtapaPDT(null, plan, dto.getNombreEtapa(), dto.getFechaInicio(), dto.getFechaFin());
+			return new EtapaPDT(null, plan, dto.getNombreEtapa(), dto.getFechaInicio(), dto.getFechaFin(), null);
 		}).collect(Collectors.toList());
 		return etapaDao.saveAll(etapas);
 	}
@@ -111,7 +111,7 @@ public class PlanTrabajoServiceImpl implements IPlanTrabajoService, IEtapaPlanSe
 				final Calendar cal = Calendar.getInstance();
 				cal.add(Calendar.DATE, etapa.getDuracion());
 				Date fechaFin = cal.getTime();
-				return new EtapaPDT(null, null, etapa.getNombreEtapa(), new Date(), fechaFin);
+				return new EtapaPDT(null, null, etapa.getNombreEtapa(), new Date(), fechaFin, null);
 			}).collect(Collectors.toList());
 
 			final PlanDeTrabajo newPlan = planDao.save(plan);
@@ -165,7 +165,7 @@ public class PlanTrabajoServiceImpl implements IPlanTrabajoService, IEtapaPlanSe
 			throw new InvalidProcessException(message, HttpStatus.BAD_REQUEST);
 		}
 		return new PlanDeTrabajo(null, dto.getFechaInicio(), dto.getFechaFinEstimada(), dto.getFechaFinReal(),
-				dto.getHorasMes(), dto.getNombrePlan(), dto.getObjetivoPlan(), proyecto, null, etapa);
+				dto.getHorasMes(), dto.getNombrePlan(), dto.getObjetivoPlan(), proyecto, null, etapa, null);
 	}
 
 	@Override
@@ -174,7 +174,7 @@ public class PlanTrabajoServiceImpl implements IPlanTrabajoService, IEtapaPlanSe
 		if (plan.getFechaFinEstimada().compareTo(dto.getFechaFin()) < 0 || plan.getFechaInicio().compareTo(dto.getFechaInicio()) > 0) {
 			throw new InvalidProcessException(Messages.getString("message.error.etapa-end-date"), HttpStatus.BAD_REQUEST);
 		}
-		return new EtapaPDT(null, plan, dto.getNombreEtapa(), dto.getFechaInicio(), dto.getFechaFin());
+		return new EtapaPDT(null, plan, dto.getNombreEtapa(), dto.getFechaInicio(), dto.getFechaFin(), null);
 	}
 
 }

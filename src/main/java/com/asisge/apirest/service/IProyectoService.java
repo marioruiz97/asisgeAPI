@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.asisge.apirest.model.dto.proyectos.Dashboard;
 import com.asisge.apirest.model.dto.proyectos.ProyectoDto;
+import com.asisge.apirest.model.entity.actividades.Actividad;
 import com.asisge.apirest.model.entity.proyectos.Proyecto;
 
 public interface IProyectoService {
@@ -19,5 +20,7 @@ public interface IProyectoService {
 	void deleteProyecto(Long id);
 
 	Proyecto buildEntity(ProyectoDto dto);
+	
+	Integer calcAvance(List<Actividad> actividades);
 
 }

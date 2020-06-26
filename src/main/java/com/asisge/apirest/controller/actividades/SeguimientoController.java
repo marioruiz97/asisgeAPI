@@ -28,6 +28,7 @@ import com.asisge.apirest.model.entity.actividades.Actividad;
 import com.asisge.apirest.model.entity.actividades.Seguimiento;
 import com.asisge.apirest.model.entity.terceros.Usuario;
 import com.asisge.apirest.service.IActividadService;
+import com.asisge.apirest.service.ICierreService;
 import com.asisge.apirest.service.ISeguimientoService;
 import com.asisge.apirest.service.IUsuarioService;
 
@@ -46,6 +47,8 @@ public class SeguimientoController extends BaseController {
 	@Autowired
 	private IUsuarioService usuarioService;
 	
+	@Autowired
+	private ICierreService cierreService;
 
 	@GetMapping(ProyectosPath.SEGUIMIENTOS)
 	public ResponseEntity<ApiResponse> getAllByActividad(@PathVariable(ID_ACTIVIDAD) Long idActividad) {
@@ -68,9 +71,10 @@ public class SeguimientoController extends BaseController {
 	public ResponseEntity<ApiResponse> create(@Valid @RequestBody SeguimientoDto dto, BindingResult result, @PathVariable(ID_ACTIVIDAD) Long idActividad ) {
 		if(result.hasErrors())
 			return validateDto(result);
-		Actividad actividad = actividadService.findActividadById(idActividad);
+		Actividad actividad = actividadService.findActividadById(idActividad);		
 		Usuario usuarioSeguimiento = usuarioService.findUsuarioByCorreo(getCurrentEmail());
 		if(actividad != null && usuarioSeguimiento != null) {
+			cierreService.validarCierreEtapa(actividad.getEtapa());
 			Seguimiento seguimiento = service.buildSeguimiento(dto);
 			seguimiento.setUsuarioSeguimiento(usuarioSeguimiento);
 			seguimiento = service.saveSeguimiento(seguimiento);			
@@ -87,10 +91,11 @@ public class SeguimientoController extends BaseController {
 			@PathVariable(ID_ACTIVIDAD) Long idActividad, @PathVariable(ID_SEGUIMIENTO) Long idSeguimiento) {
 		if (result.hasErrors())
 			return validateDto(result);
-		Actividad actividad = actividadService.findActividadById(idActividad);
+		Actividad actividad = actividadService.findActividadById(idActividad);		
 		Usuario usuarioSeguimiento = usuarioService.findUsuarioByCorreo(getCurrentEmail());
 		Seguimiento seguimiento = service.findSeguimientoById(idSeguimiento);
 		if (actividad != null && (request.isUserInRole("ROLE_ADMIN") || usuarioSeguimiento.equals(seguimiento.getUsuarioSeguimiento()))) {
+			cierreService.validarCierreEtapa(actividad.getEtapa());
 			seguimiento = service.buildSeguimiento(dto);
 			seguimiento.setIdSeguimiento(idSeguimiento);
 			seguimiento.setUsuarioSeguimiento(usuarioSeguimiento);

@@ -3,7 +3,6 @@ package com.asisge.apirest.model.dto.proyectos;
 import java.io.Serializable;
 import java.util.Date;
 
-import javax.validation.constraints.FutureOrPresent;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.PositiveOrZero;
@@ -15,10 +14,10 @@ public @Data class PlanTrabajoDto implements Serializable {
 	@NotNull
 	private Date fechaInicio;
 	
-	@FutureOrPresent
+	@NotNull
 	private Date fechaFinEstimada;
 	
-	@FutureOrPresent
+	
 	private Date fechaFinReal;
 	
 	// private Integer duracion

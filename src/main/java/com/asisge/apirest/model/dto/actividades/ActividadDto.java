@@ -4,7 +4,6 @@ import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
-import javax.validation.constraints.FutureOrPresent;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
@@ -29,7 +28,7 @@ public @Data class ActividadDto implements Serializable {
 	@NotNull
 	private Long estadoActividad;
 
-	@FutureOrPresent
+	
 	@NotNull
 	private Date fechaVencimiento;
 

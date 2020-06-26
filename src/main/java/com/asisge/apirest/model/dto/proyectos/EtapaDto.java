@@ -3,7 +3,6 @@ package com.asisge.apirest.model.dto.proyectos;
 import java.io.Serializable;
 import java.util.Date;
 
-import javax.validation.constraints.FutureOrPresent;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
@@ -19,7 +18,7 @@ public @Data class EtapaDto implements Serializable {
 	@NotNull
 	private Date fechaInicio;
 
-	@FutureOrPresent
+	@NotNull
 	private Date fechaFin;
 
 	/**

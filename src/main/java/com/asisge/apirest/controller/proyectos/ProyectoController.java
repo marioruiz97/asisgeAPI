@@ -115,6 +115,7 @@ public class ProyectoController extends BaseController {
 			dashboard.setMiembros(miembroService.findMiembrosProyecto(id));
 			dashboard.setNotificaciones(notificacionService.findByProyecto(dashboard.getProyecto()));
 			dashboard.setLineaEstados(estadosService.findEstadosLine(dashboard.getEstadoActual()));
+			dashboard.setAvance(5);
 			List<PlanDeTrabajo> planes = planService.findPlanesByProyecto(id);
 			if (!planes.isEmpty()) {
 				List<Actividad> actividades = new ArrayList<>();
@@ -124,6 +125,7 @@ public class ProyectoController extends BaseController {
 						actividades.addAll(add);
 				});
 				if (!actividades.isEmpty()) {
+					dashboard.setAvance(service.calcAvance(actividades));
 					final Calendar cal = Calendar.getInstance();
 					cal.add(Calendar.DATE, 7);
 					Instant oneWeek = cal.getTime().toInstant();

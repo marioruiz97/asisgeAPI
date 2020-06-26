@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import com.asisge.apirest.model.dto.proyectos.Dashboard;
 import com.asisge.apirest.model.dto.proyectos.ProyectoDto;
+import com.asisge.apirest.model.entity.actividades.Actividad;
 import com.asisge.apirest.model.entity.proyectos.EstadoProyecto;
 import com.asisge.apirest.model.entity.proyectos.Proyecto;
 import com.asisge.apirest.model.entity.terceros.Cliente;
@@ -42,8 +43,17 @@ public class ProyectoServiceImpl implements IProyectoService {
 	public Dashboard loadDashboard(Long id) {
 		Proyecto proyecto = repository.findById(id).orElse(null);
 		Cliente cliente = proyecto.getCliente();
-		return new Dashboard(id, cliente, null, proyecto, proyecto.getEstadoProyecto(), null, null, null);
+		return new Dashboard(id, cliente, null, proyecto, proyecto.getEstadoProyecto(), null, null, null, null);
 	}
+	
+
+	@Override
+	public Integer calcAvance(List<Actividad> actividades) {
+		Long avance = actividades.stream().filter(act -> act.getEstadoActividad().getActividadCompletada()).count();
+		Integer result = (avance.intValue() * 100) / actividades.size();
+		return result < 5 ? (5 + result) : result;
+	}
+	
 
 	@Override
 	public void deleteProyecto(Long id) {
