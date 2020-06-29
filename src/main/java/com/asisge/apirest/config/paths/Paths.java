@@ -82,7 +82,6 @@ public final class Paths {
 	 *
 	 */
 	public static final class ProyectosPath {
-		// TODO al terminar proyecto, verificar estas rutas
 		public static final String PROYECTOS = "proyectos";
 		public static final String PROYECTO_ID = "proyectos/{idProyecto}";
 		public static final String DASHBOARD = "dashboard/{id}";

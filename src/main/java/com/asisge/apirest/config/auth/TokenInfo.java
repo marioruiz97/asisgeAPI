@@ -24,9 +24,7 @@ public class TokenInfo implements TokenEnhancer {
 	private static final String ENABLED_KEY = "usuario_enabled";			
 	private static final String USER_ID_KEY = "usuario_id";
 	private static final String USER_NAME_KEY = "usuario_name";
-	private static final String ROLES_KEY = "usuario_roles";		
-			static final String PICTURE_URL = "picture_url";
-			static final String VALIDATED_KEY = "usuario_validated";
+	private static final String ROLES_KEY = "usuario_roles";
 
 	@Autowired
 	private IUsuarioService userService;

@@ -22,9 +22,6 @@ public interface IActividadService {
 
 	List<Actividad> findActividadesByEtapa(Long idEtapa);
 
-	// TODO que parametros debe recibir
-	// List<Actividad> actividadesVencimientoProximo()
-
 	Actividad findActividadById(Long idActividad);
 
 	Actividad changeEstadoActividad(HttpServletRequest request, Actividad actividad, Long idEstado);
